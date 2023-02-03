@@ -2,7 +2,7 @@
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 1. [Quickstart](hello_world/README.md) - a refresher before deep diving next month !
 
-# study plan:
+# Rust 🦀 study plan:
 
 
 - Rust book https://doc.rust-lang.org/book/ 
