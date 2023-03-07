@@ -20,6 +20,10 @@ fn main() {
     structs::use_structs();
 
     pattern_matching::usage();
+
+    common_collections::vectors();
+    common_collections::strings();
+    common_collections::hashmaps();
 }
 
 mod modules { // CH07
@@ -398,4 +402,93 @@ mod pattern_matching { //CH06
         }
     }
     
+}
+
+mod common_collections { //CH08
+    pub fn vectors(){
+        let mut v: Vec<i32> = Vec::new();
+        let v2 = vec![1, 2, 3];
+        v.push(5);
+        v.push(6);
+        v.push(7);
+        v.push(8);
+
+        let third: &i32 = &v[2];
+        println!("The third element is {third}");
+
+        let third: Option<&i32> = v.get(2);
+        match third {
+            Some(third) => println!("The third element is {third}"),
+            None => println!("There is no third element."),
+        }
+
+        for i in &v2 {
+            println!("{i}");
+        }
+
+        for i in &mut v {
+            *i += 50; //dereference
+        }
+
+        enum SpreadsheetCell {
+            Int(i32),
+            Float(f64),
+            Text(String),
+        }
+        let row = vec![
+            SpreadsheetCell::Int(3),
+            SpreadsheetCell::Text(String::from("blue")),
+            SpreadsheetCell::Float(10.12),
+        ];
+
+    }
+
+    pub fn strings(){
+        let mut s = String::new();
+        s.push_str("bar");
+        let s = "initial contents".to_string();
+        let s = String::from("initial contents");
+
+        let s1 = String::from("Hello, ");
+        let s2 = String::from("world!");
+        let s3 = s1 + &s2; // s1  moved here -> can no longer be used
+
+        for c in "Зд".chars() {
+            println!("{c}");
+        }
+        for b in "Зд".bytes() {
+            println!("{b}");
+        }
+    }
+
+    pub fn hashmaps(){
+        use std::collections::HashMap;
+
+        let mut scores = HashMap::new();
+        scores.insert(String::from("Blue"), 10);
+        scores.insert(String::from("Yellow"), 50);
+        let team_name = String::from("Blue");
+        let score = scores.get(&team_name).copied().unwrap_or(0);
+        for (key, value) in &scores {
+            println!("{key}: {value}");
+        }
+        scores.insert(String::from("Blue"), score + 1);
+        scores.entry(String::from("Blue")).or_insert(50);
+
+        let field_name = String::from("Favorite color");
+        let field_value = String::from("Blue");
+        let mut map = HashMap::new();
+        map.insert(field_name, field_value);
+        // field_name and field_value are invalid at this point
+
+        let text = "hello world wonderful world";
+
+        let mut word_count = HashMap::new();
+        for word in text.split_whitespace() {
+            let count = word_count.entry(word).or_insert(0);
+            *count += 1;
+        }
+        println!("{:?}", word_count);
+
+    }
 }
