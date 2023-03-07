@@ -37,6 +37,8 @@ mod foundation { //CH03
         println!("The value of x is: {x}");
 
         const THREE_HOURS_IN_SECONDS: u32 = 60 * 60 * 3;
+        let z = THREE_HOURS_IN_SECONDS;
+        println!("{}",z);
 
         //shadowing:
         let y = 5;
@@ -49,13 +51,13 @@ mod foundation { //CH03
     }
 
     pub fn data_types() {
-        let guess: u32 = "42".parse().expect("Not a number!");
+        let _guess: u32 = "42".parse().expect("Not a number!");
 
         let tup: (i32, f64, u8) = (500, 6.4, 1);
-        let (x, y, z) = tup;
-        let five_hundred = tup.0;
-        let six_point_four = tup.1;
-        let one = tup.2;
+        let (_x, _y, _z) = tup;
+        let _five_hundred = tup.0;
+        let _six_point_four = tup.1;
+        let _one = tup.2;
 
         let a: [i32; 5] = [1, 2, 3, 4, 5];
         println!("Please enter an array index.");
@@ -127,7 +129,7 @@ mod ownership { //CH04
         let mut s1 = String::from("hello");
         s1.push_str(", bob!"); 
         let s2 = s1; // take ownership of heap value
-        let s3 = s2.clone();
+        let _s3 = s2.clone();
         doesnt_take_ownership(&s2);
         println!("{}", s2); 
         takes_ownership(s2);
@@ -179,9 +181,9 @@ mod ownership { //CH04
         println!("{} and {}", r1, r2);
         // variables r1 and r2 will not be used after this point
         {
-            let r3 = &mut s;
+            let _r3 = &mut s;
         } // r1 goes out of scope here, so we can make a new reference with no problems.
-        let r4 = &mut s;
+        let _r4 = &mut s;
     }
     fn calculate_length2(s: &String) -> usize {
         s.len()
@@ -192,19 +194,19 @@ mod ownership { //CH04
 
     pub fn slices(){
         let mut s = String::from("hello world");
-        let word = first_word_size(&s); // word will get the value 5
+        let _word = first_word_size(&s); // word will get the value 5
 
-        let hello = &s[0..5];
-        let world = &s[6..11];
+        let _hello = &s[0..5];
+        let _world = &s[6..11];
 
         let len = s.len();
-        let slice = &s[3..len];
-        let slice = &s[3..];
+        let _slice = &s[3..len];
+        let _slice = &s[3..];
         let slice = &s[..];
 
         let word = first_word(&s);
-        let word2 = first_word(slice);
-        let word3 = first_word("xxx yyy");
+        let _word2 = first_word(slice);
+        let _word3 = first_word("xxx yyy");
         println!("the first word is: {}", word);
         s.clear(); // this empties the String, making it equal to ""
 

@@ -4,16 +4,16 @@ mod front_of_house {
     pub mod hosting {
         pub fn add_to_waitlist() {}
 
-        fn seat_at_table() {}
+       // fn seat_at_table() {}
     }
 
-    mod serving {
-        fn take_order() {}
+    // mod serving {
+    //     fn take_order() {}
 
-        fn serve_order() {}
+    //     fn serve_order() {}
 
-        fn take_payment() {}
-    }
+    //     fn take_payment() {}
+    // }
 }
 
 
@@ -36,13 +36,15 @@ pub mod customer {
         // Change our mind about what bread we'd like
         meal.toast = String::from("Wheat");
         println!("I'd like {} toast please", meal.toast);
+        let _fruit = meal.seasonal_fruit();
         
         // The next line won't compile if we uncomment it; we're not allowed
         // to see or modify the seasonal fruit that comes with the meal
         // meal.seasonal_fruit = String::from("blueberries");
 
-        let order1 = back_of_house::Appetizer::Soup;
-        let order2 = back_of_house::Appetizer::Salad;
+        let _order1 = back_of_house::Appetizer::Soup;
+        let _order2 = back_of_house::Appetizer::Salad;
+        back_of_house::fix_incorrect_order();
         
     }
 }
@@ -50,7 +52,7 @@ pub mod customer {
 fn deliver_order() {}
 
 mod back_of_house {
-    fn fix_incorrect_order() {
+    pub fn fix_incorrect_order() {
         cook_order();
         super::deliver_order();
     }
@@ -68,6 +70,10 @@ mod back_of_house {
                 toast: String::from(toast),
                 seasonal_fruit: String::from("peaches"),
             }
+        }
+
+        pub fn seasonal_fruit(self: &Breakfast) -> &str { //getter
+            &self.seasonal_fruit
         }
     }
 
