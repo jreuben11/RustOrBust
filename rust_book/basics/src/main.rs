@@ -11,9 +11,13 @@ fn main() {
     foundation::data_types();
     foundation::expressions_and_functions();
     foundation::control_flow();
+
+    ownership::ownership_examples();
+    ownership::borrowing();
+    ownership::slices();
 }
 
-mod modules { // CH7
+mod modules { // CH07
     use crate::module1::submodule1::Dummy;
     use basics::customer; // prefix with package name as it is in lib.rs
 
@@ -25,7 +29,7 @@ mod modules { // CH7
     }
 }
 
-mod foundation { //CH3
+mod foundation { //CH03
     pub fn variables_and_mutability() {
         let mut x = 5;
         println!("The value of x is: {x}");
@@ -116,4 +120,115 @@ mod foundation { //CH3
     }
 }
 
+mod ownership { //CH04
 
+    pub fn ownership_examples () {
+        // string - goes on heap
+        let mut s1 = String::from("hello");
+        s1.push_str(", bob!"); 
+        let s2 = s1; // take ownership of heap value
+        let s3 = s2.clone();
+        doesnt_take_ownership(&s2);
+        println!("{}", s2); 
+        takes_ownership(s2);
+
+        // i32 - goes on stack
+        let x = 5;
+        let y = x; // copies value
+        makes_copy(x);
+        println!("x = {}, y = {}", x, y);
+
+        let mut s3 = gives_ownership(); //also shadow s3
+        s3 = takes_and_gives_back(s3);
+        println!("{}", s3);
+
+        let (s4, len) = calculate_length(s3); // takes ownership of s3
+        println!("The length of '{}' is {}.", s4, len);
+
+    }
+    fn takes_ownership(some_string: String) { 
+        println!("{}", some_string);
+    }
+    fn doesnt_take_ownership(some_string: &str) { 
+        println!("{}", some_string);
+    }
+    fn makes_copy(some_integer: i32) { 
+        println!("{}", some_integer);
+    } 
+    fn gives_ownership() -> String {            
+        let some_string = String::from("yours"); 
+        some_string                            
+    }
+    fn takes_and_gives_back(a_string: String) -> String { 
+        a_string
+    }
+    fn calculate_length(s: String) -> (String, usize) {
+        let length = s.len(); 
+        (s, length)
+    }
+
+    pub fn borrowing(){
+        let mut s = String::from("hello");
+        let len = calculate_length2(&s); //refers to s1 but does not own it
+
+        change(&mut s); //pass in a mutable reference
+        println!("The length of '{}' was {}.", s, len);
+
+        let r1 = &s; // no problem
+        let r2 = &s; // no problem
+        println!("{} and {}", r1, r2);
+        // variables r1 and r2 will not be used after this point
+        {
+            let r3 = &mut s;
+        } // r1 goes out of scope here, so we can make a new reference with no problems.
+        let r4 = &mut s;
+    }
+    fn calculate_length2(s: &String) -> usize {
+        s.len()
+    }
+    fn change(some_string: &mut String) {
+        some_string.push_str(", world");
+    }
+
+    pub fn slices(){
+        let mut s = String::from("hello world");
+        let word = first_word_size(&s); // word will get the value 5
+
+        let hello = &s[0..5];
+        let world = &s[6..11];
+
+        let len = s.len();
+        let slice = &s[3..len];
+        let slice = &s[3..];
+        let slice = &s[..];
+
+        let word = first_word(&s);
+        let word2 = first_word(slice);
+        let word3 = first_word("xxx yyy");
+        println!("the first word is: {}", word);
+        s.clear(); // this empties the String, making it equal to ""
+
+        let a = [1, 2, 3, 4, 5];
+        let slice2 = &a[1..3]; // i32 array slice
+        assert_eq!(slice2, &[2, 3]);
+
+    }
+    fn first_word_size(s: &String) -> usize {
+        let bytes = s.as_bytes();
+        for (i, &item) in bytes.iter().enumerate() {
+            if item == b' ' {
+                return i;
+            }
+        }
+        s.len()
+    }
+    fn first_word(s: &str) -> &str { // param deref coercion: can pass a slice of the String or a reference to the String
+        let bytes = s.as_bytes();
+        for (i, &item) in bytes.iter().enumerate() {
+            if item == b' ' {
+                return &s[0..i];
+            }
+        }
+        &s[..]
+    }
+}
