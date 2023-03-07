@@ -24,6 +24,8 @@ fn main() {
     common_collections::vectors();
     common_collections::strings();
     common_collections::hashmaps();
+
+    error_handling::dont_panic();
 }
 
 mod modules { // CH07
@@ -490,5 +492,41 @@ mod common_collections { //CH08
         }
         println!("{:?}", word_count);
 
+    }
+}
+
+mod error_handling { //CH09
+    pub fn dont_panic(){
+        // panic!("crash and burn");
+        // let v = vec![1, 2, 3];
+        // v[99];
+
+        use std::fs::{self,File,OpenOptions};
+        use std::io::{self, Read};
+
+        let file_name = "hello.txt";
+        let file_result = OpenOptions::new().write(true).create(true).open(file_name);
+        let greeting_file = match file_result {
+            Ok(file) => file,
+            Err(error) => panic!("Problem opening the file: {:?}", error),
+        };
+
+        let greeting_file = File::open(file_name)
+            .expect("hello.txt should be included in this project");
+        
+        fn read_username_from_file() -> Result<String, io::Error> {
+            let mut username = String::new();
+            File::open("hello.txt")?.read_to_string(&mut username)?;
+            Ok(username)
+        }
+        fn read_username_from_file2() -> Result<String, io::Error> {
+            fs::read_to_string("hello.txt")
+        }
+        read_username_from_file();
+
+        use std::net::IpAddr;
+        let home: IpAddr = "127.0.0.1"
+            .parse()
+            .expect("Hardcoded IP address should be valid");
     }
 }
