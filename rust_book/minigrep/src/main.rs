@@ -3,7 +3,7 @@ use std::process;
 
 use minigrep::Config;
 
-/// cargo run -- you poem.txt
+/// IGNORE_CASE=1 cargo run -- yOu poem.txt
 fn main() {
     let args: Vec<String> = env::args().collect();
     dbg!(&args);
