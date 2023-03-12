@@ -172,7 +172,7 @@ mod iterator_tests {
         ];
 
         let in_my_size = shoes_in_size(shoes, 10);
-        
+
         assert_eq!(
             in_my_size,
             vec![
@@ -187,4 +187,20 @@ mod iterator_tests {
             ]
         );
     }
+}
+
+// cargo doc --open 
+
+/// Adds one to the number given.
+///
+/// # Examples
+///
+/// ```
+/// let arg = 5;
+/// let answer = my_crate::add_one(arg);
+///
+/// assert_eq!(6, answer);
+/// ```
+pub fn add_one(x: i32) -> i32 {
+    x + 1
 }
