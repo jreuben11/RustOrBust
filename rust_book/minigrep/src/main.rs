@@ -11,7 +11,7 @@ fn main() {
     // let (query, file_path) = parse_config(&args);
     // let config = Config::new(&args);
     let config = Config::build(&args).unwrap_or_else(|err| {
-        println!("Problem parsing arguments: {err}");
+        eprintln!("Problem parsing arguments: {err}");
         process::exit(1);
     });
 
@@ -19,7 +19,7 @@ fn main() {
     println!("In file {}", config.file_path);
 
     if let Err(e) = minigrep::run(config){
-        println!("Should have been able to read the file - Application error: {e}");
+        eprintln!("Should have been able to read the file - Application error: {e}");
         process::exit(1);
     }
 }
