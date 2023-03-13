@@ -3,6 +3,9 @@
 fn main() {
     fp::closures();
     fp::iterators();
+
+    smart_pointers::on_heap();
+    smart_pointers::ref_counting();
 }
 
 mod fp { //CH13
@@ -118,7 +121,7 @@ mod fp { //CH13
         pub size: u32,
         pub style: String,
     }
-
+    
     pub fn shoes_in_size(shoes: Vec<Shoe>, shoe_size: u32) -> Vec<Shoe> {
         shoes.into_iter().filter(|s| s.size == shoe_size).collect()
     }
@@ -189,6 +192,7 @@ mod iterator_tests {
     }
 }
 
+// CH14
 // cargo doc --open 
 
 /// Adds one to the number given.
@@ -203,4 +207,80 @@ mod iterator_tests {
 /// ```
 pub fn add_one(x: i32) -> i32 {
     x + 1
+}
+
+pub mod smart_pointers { //CH15
+    pub fn on_heap() {
+        let b = Box::new(5);
+        println!("b = {}", b);
+
+        let x = 5;
+        let y = &x;
+        let z = Box::new(x);
+        assert_eq!(5, x);
+        assert_eq!(5, *y);
+        assert_eq!(5, *z);
+        println!("{x}-{y}-{z}");
+
+        enum List {
+            Cons(i32, Box<List>),
+            Nil,
+        }
+        use List::*;
+        let list = Cons(1, Box::new(Cons(2, Box::new(Cons(3, Box::new(Nil))))));
+
+        use std::ops::Deref;
+
+        struct MyBox<T>(T);
+        impl<T> MyBox<T> {
+            fn new(x: T) -> MyBox<T> {
+                MyBox(x)
+            }
+        }
+        impl<T> Deref for MyBox<T> {
+            type Target = T;
+            fn deref(&self) -> &Self::Target {
+                &self.0
+            }
+        }
+        let a = 5;
+        let b = MyBox::new(a);
+        assert_eq!(5, a);
+        assert_eq!(5, *b);
+
+        fn hello(name: &str) {
+            println!("Hello, {name}!");
+        }
+        let m = MyBox::new(String::from("Rust"));
+        hello(&m);
+        hello(&(*m)[..]);
+
+        struct CustomSmartPointer {
+            data: String,
+        }
+        impl Drop for CustomSmartPointer {
+            fn drop(&mut self) {
+                println!("Dropping CustomSmartPointer with data `{}`!", self.data);
+            }
+        }
+        {
+            let c = CustomSmartPointer {
+                data: String::from("my stuff"),
+            };
+            let d = CustomSmartPointer {
+                data: String::from("other stuff"),
+            };
+            let e = CustomSmartPointer {
+                data: String::from("some data"),
+            };
+            println!("CustomSmartPointers created.");
+            drop(e);
+            println!("CustomSmartPointer e explicitly dropped before the end of main.");
+        }
+
+        pub fn ref_counting(){
+
+        }
+
+    }
 }
