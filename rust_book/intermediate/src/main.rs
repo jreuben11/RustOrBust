@@ -8,6 +8,7 @@ fn main() {
     smart_pointers::ref_counting();
     smart_pointers::interior_mutability();
     smart_pointers::multiple_owner_mut();
+    smart_pointers::circular_ref_prevention();
 }
 
 mod fp { //CH13
@@ -382,5 +383,33 @@ pub mod smart_pointers { //CH15
         println!("a after = {:?}", a);
         println!("b after = {:?}", b);
         println!("c after = {:?}", c);
+    }
+
+    pub fn circular_ref_prevention(){
+        use std::cell::RefCell;
+        use std::rc::{Rc, Weak};
+
+        #[derive(Debug)]
+        struct Node {
+            value: i32,
+            parent: RefCell<Weak<Node>>,
+            children: RefCell<Vec<Rc<Node>>>,
+        }
+        
+
+        let leaf = Rc::new(Node {
+            value: 3,
+            parent: RefCell::new(Weak::new()),
+            children: RefCell::new(vec![]),
+        });
+        println!("leaf parent = {:?}", leaf.parent.borrow().upgrade());
+
+        let branch = Rc::new(Node {
+            value: 5,
+            parent: RefCell::new(Weak::new()),
+            children: RefCell::new(vec![Rc::clone(&leaf)]),
+        });
+        *leaf.parent.borrow_mut() = Rc::downgrade(&branch);
+        println!("leaf parent = {:?}", leaf.parent.borrow().upgrade());
     }
 }
