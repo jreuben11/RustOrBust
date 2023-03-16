@@ -9,6 +9,10 @@ fn main() {
     smart_pointers::interior_mutability();
     smart_pointers::multiple_owner_mut();
     smart_pointers::circular_ref_prevention();
+
+    concurrency::thread_spawn();
+    concurrency::message_passing();
+    concurrency::shared_state();
 }
 
 mod fp { //CH13
@@ -436,3 +440,100 @@ pub mod smart_pointers { //CH15
         );
     }
 }
+
+pub mod concurrency { //CH16
+    pub fn thread_spawn(){
+        use std::thread;
+        use std::time::Duration;
+
+        let handle = thread::spawn(|| {
+            for i in 1..10 {
+                println!("hi number {} from the spawned thread!", i);
+                thread::sleep(Duration::from_millis(1));
+            }
+        }); 
+        for i in 1..5 {
+            println!("hi number {} from the main thread!", i);
+            thread::sleep(Duration::from_millis(1));
+        }
+        handle.join().unwrap();
+
+        let v = vec![1, 2, 3];
+        let handle = thread::spawn(move || {
+            println!("Here's a vector: {:?}", v);
+        });
+        handle.join().unwrap();
+    }
+
+    pub fn message_passing(){
+        use std::sync::mpsc;
+        use std::thread;
+        use std::time::Duration;
+
+        let (tx, rx) = mpsc::channel();
+        let tx1 = tx.clone();
+
+        thread::spawn(move || {
+            let vals = vec![
+                String::from("hi"),
+                String::from("from"),
+                String::from("the"),
+                String::from("thread"),
+            ];
+    
+            for val in vals {
+                tx.send(val).unwrap();
+                thread::sleep(Duration::from_millis(100));
+            }
+        });
+
+        thread::spawn(move || {
+            let vals = vec![
+                String::from("more"),
+                String::from("messages"),
+                String::from("for"),
+                String::from("you"),
+            ];
+    
+            for val in vals {
+                tx1.send(val).unwrap();
+                thread::sleep(Duration::from_millis(100));
+            }
+        });
+
+        // let received = rx.recv().unwrap();
+        // println!("Got: {}", received);
+        for received in rx {
+            println!("Got: {}", received);
+        }
+    }
+
+    pub fn shared_state(){
+        use std::sync::{Arc,Mutex};
+        use std::thread;
+
+        let m = Mutex::new(5);
+        {
+            let mut num = m.lock().unwrap();
+            *num = 6;
+        }
+        println!("m = {:?}", m);
+
+        let counter = Arc::new(Mutex::new(0));
+        let mut handles = vec![]; // vector for holding thread handles, so we can join on all
+        for _ in 0..10 {
+            let counter = Arc::clone(&counter);
+            let handle = thread::spawn(move || {
+                let mut num = counter.lock().unwrap();
+                *num += 1;
+            });
+            handles.push(handle);
+        }
+        for handle in handles {
+            handle.join().unwrap();
+        }
+        println!("Result: {}", *counter.lock().unwrap());
+    }
+
+}
+
