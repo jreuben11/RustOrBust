@@ -17,6 +17,8 @@ fn main() {
     oop::encapsulation();
     oop::duck_typing();
     oop::states_as_types();
+
+    pattern_matching::patterns_everywhere();
 }
 
 mod fp { //CH13
@@ -691,3 +693,132 @@ pub mod oop { //CH17
     }
 }
 
+pub mod pattern_matching { //CH18
+    pub fn patterns_everywhere(){
+        let mut stack = Vec::new();
+        stack.push(1);
+        stack.push(2);
+        stack.push(3);
+        while let Some(top) = stack.pop() {
+            println!("{}", top);
+        }
+
+        let v = vec!['a', 'b', 'c'];
+        for (index, value) in v.iter().enumerate() {
+            println!("{} is at index {}", value, index);
+        }
+
+        let (x, y, z) = (1, 2, 3);
+
+        fn print_coordinates(&(x, y): &(i32, i32)) {
+            println!("Current location: ({}, {})", x, y);
+        }
+        let point = (3, 5);
+        print_coordinates(&point);
+
+        let x = 1;
+        match x {
+            1 | 2 => println!("one or two"),
+            3 => println!("three"),
+            1..=5 => println!("one through five"),
+            _ => println!("anything"),
+        }
+
+        struct Point {
+            x: i32,
+            y: i32,
+        }
+        let p = Point { x: 0, y: 7 };
+        let Point { x: a, y: b } = p;
+        let Point { x, y } = p;
+        match p {
+            Point { x, y: 0 } => println!("On the x axis at {x}"),
+            Point { x: 0, y } => println!("On the y axis at {y}"),
+            Point { x, y } => {
+                println!("On neither axis: ({x}, {y})");
+            }
+        }
+
+        enum Color {
+            Rgb(i32, i32, i32),
+            Hsv(i32, i32, i32),
+        }
+        enum Message {
+            Quit,
+            Move { x: i32, y: i32 },
+            Write(String),
+            ChangeColor(Color),
+        }
+        let msg = Message::ChangeColor(Color::Hsv(0, 160, 255));
+        match msg {
+            Message::ChangeColor(Color::Rgb(r, g, b)) => {
+                println!("Change color to red {r}, green {g}, and blue {b}");
+            }
+            Message::ChangeColor(Color::Hsv(h, s, v)) => {
+                println!("Change color to hue {h}, saturation {s}, value {v}")
+            }
+            _ => (),
+        }
+
+        let mut setting_value = Some(5);
+        let new_setting_value = Some(10);
+        match (setting_value, new_setting_value) {
+            (Some(_), Some(_)) => {
+                println!("Can't overwrite an existing customized value");
+            }
+            _ => {
+                setting_value = new_setting_value;
+            }
+        }
+        println!("setting is {:?}", setting_value);
+
+        struct Point3 {
+            x: i32,
+            y: i32,
+            z: i32,
+        }
+        let origin = Point3 { x: 0, y: 0, z: 0 };
+        match origin {
+            Point3 { x, .. } => println!("x is {}", x),
+        }
+
+        let numbers = (2, 4, 8, 16, 32);
+        match numbers {
+            (first, .., last) => {
+                println!("Some numbers: {first}, {last}");
+            }
+        }
+
+        let num = Some(4);
+        match num {
+            Some(x) if x % 2 == 0 => println!("The number {} is even", x),
+            Some(x) => println!("The number {} is odd", x),
+            None => (),
+        }
+
+        let x = 4;
+        let y = false;
+        match x {
+            4 | 5 | 6 if y => println!("yes"),
+            _ => println!("no"),
+        }
+
+        enum Message2 {
+            Hello { id: i32 },
+        }  
+        let msg = Message2::Hello { id: 5 };  
+        match msg {
+            Message2::Hello {
+                id: id_variable @ 3..=7,
+            } => println!("Found an id in range: {}", id_variable),
+            Message2::Hello { id: 10..=12 } => {
+                println!("Found an id in another range")
+            }
+            Message2::Hello { id } => println!("Found some other id: {}", id),
+        }
+        
+    }
+
+    
+    
+}
