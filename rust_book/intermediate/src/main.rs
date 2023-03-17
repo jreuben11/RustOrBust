@@ -21,6 +21,7 @@ fn main() {
     pattern_matching::patterns_everywhere();
 
     advanced::safety_off();
+    advanced::trait_patterns();
 }
 
 mod fp { //CH13
@@ -889,6 +890,115 @@ pub mod advanced { // CH19
         unsafe impl Foo for i32 {
             // method implementations go here
         }
+    }
+
+    pub fn trait_patterns(){
+        pub trait Iterator {
+            type Item;
+            fn next(&mut self) -> Option<Self::Item>;
+        }
+        pub struct Counter {}
+        impl Iterator for Counter {
+            type Item = u32;
+            fn next(&mut self) -> Option<Self::Item> {
+                Some(1)
+            }
+        }
+        let mut c = Counter{};
+        let i = c.next().unwrap_or_default();
+        println!("{}",i);
+
+        use std::ops::Add;
+        #[derive(Debug, Copy, Clone, PartialEq)]
+        struct Point {
+            x: i32,
+            y: i32,
+        }
+        impl Add for Point {
+            type Output = Point;
+            fn add(self, other: Point) -> Point {
+                Point {
+                    x: self.x + other.x,
+                    y: self.y + other.y,
+                }
+            }
+        }
+        assert_eq!(
+            Point { x: 1, y: 0 } + Point { x: 2, y: 3 },
+            Point { x: 3, y: 3 }
+        );
+        struct Millimeters(u32);
+        struct Meters(u32);
+        impl Add<Meters> for Millimeters {
+            type Output = Millimeters;
+            fn add(self, other: Meters) -> Millimeters {
+                Millimeters(self.0 + (other.0 * 1000))
+            }
+        }
+        let x = Millimeters{0:10} + Meters{0:1};
+        println!("length:{}", x.0);
+
+        use std::fmt;
+        trait OutlinePrint: fmt::Display {
+            fn outline_print(&self) {
+                let output = self.to_string();
+                let len = output.len();
+                println!("{}", "*".repeat(len + 4));
+                println!("*{}*", " ".repeat(len + 2));
+                println!("* {} *", output);
+                println!("*{}*", " ".repeat(len + 2));
+                println!("{}", "*".repeat(len + 4));
+            }
+        }
+        impl fmt::Display for Point {
+            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                write!(f, "({}, {})", self.x, self.y)
+            }
+        }
+        impl OutlinePrint for Point {}
+        let p = Point{x:1,y:2};
+        println!("{p}");
+        p.outline_print();
+
+        struct Wrapper(Vec<String>);
+        impl fmt::Display for Wrapper {
+            fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+                write!(f, "[{}]", self.0.join(", "))
+            }
+        }
+        let w = Wrapper(vec![String::from("NewType"), String::from("Pattern!")]);
+        println!("w = {}", w);
+
+        type Thunk = Box<dyn Fn() + Send + 'static>; // on heap multi-trait contract
+        fn takes_long_type(f: Thunk) {
+            f();
+        }
+        fn returns_long_type() -> Thunk {
+            Box::new(|| println!("hi"))
+        }
+        let f: Thunk = returns_long_type();
+        takes_long_type(f);
+
+        fn add_one(x: i32) -> i32 {
+            x + 1
+        }
+        fn do_twice(f: fn(i32) -> i32, arg: i32) -> i32 {
+            f(arg) + f(arg)
+        }
+        let answer = do_twice(add_one, 5);
+        println!("The answer is: {}", answer);
+
+        enum Status {
+            Value(u32),
+            Stop,
+        }
+        let list_of_statuses: Vec<Status> = (0u32..20).map(Status::Value).collect();
+
+        fn returns_closure() -> Box<dyn Fn(i32) -> i32> {
+            Box::new(|x| x + 1)
+        }
+        let c = returns_closure();
+        println!("{}",c(1));
     }
 
     
