@@ -1,7 +1,7 @@
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
 1. [Quickstart](hello_world/README.md) - a refresher before deep diving next month !
-2. the Rust Book worked examples
+2. [the Rust Book worked examples](rust_book/README.md)
 
 # Rust 🦀 study plan:
 
