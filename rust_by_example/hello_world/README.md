@@ -1,0 +1,2 @@
+rustc hello.rs
+./hello
