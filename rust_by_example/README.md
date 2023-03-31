@@ -68,7 +68,26 @@
     if_let();
     while_let();
     ```
-9.  functions
+9.  [functions](functions/examples.rs)
+    ```rust
+    fizzbuzz::fizzbuzz_to(100);
+    methods::call();
+    closures::basic();
+    closures::capturing();
+    /*
+        - Fn: the closure uses the captured value by reference (&T)
+        - FnMut: the closure uses the captured value by mutable reference (&mut T)
+        - FnOnce: the closure uses the captured value by value (T)
+    */
+    closures::pass_as_param();
+    closures::type_anonymity();
+    closures::function_substitution();
+    closures::returning_closures();
+    closures::iterator_any();   // NOTE: iter / into_iter both work for Vec<T>, but only iter worked for Array
+    closures::iterator_search();
+    higher_order_functions();
+    diverging_functions();
+    ```
 10. modules
 11. crates
 12. cargo
