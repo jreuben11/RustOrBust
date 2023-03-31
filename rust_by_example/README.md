@@ -24,7 +24,14 @@
     enums::linked_list_enum();
     constants();
    ```
-4. variable bindings
+4. [variable bindings](variable_bindings/examples.rs)
+   ```rust
+    mutability();
+    scope();
+    variable_shadowing();
+    declare_first();
+    freezing();
+   ```
 5. types
 6. conversion
 7. expressions
