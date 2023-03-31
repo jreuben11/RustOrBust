@@ -32,7 +32,13 @@
     declare_first();
     freezing();
    ```
-5. types
+5. [types](types/examples.rs)
+   ```rust
+    casting();
+    literal_sizes();
+    type_inference();
+    type_aliasing();
+   ```
 6. conversion
 7. expressions
 8. flow control
