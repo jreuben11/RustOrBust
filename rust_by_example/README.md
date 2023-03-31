@@ -45,7 +45,7 @@
     tryfrom_and_tryinto();
     string_conversions();
     ```
-7. expressions
+7. [expressions](expressions/examples.rs)
 8. flow control
 9.  functions
 10. modules
