@@ -39,7 +39,12 @@
     type_inference();
     type_aliasing();
    ```
-6. conversion
+6. [conversions](conversions/examples.rs)
+    ```rust
+    from_and_into();
+    tryfrom_and_tryinto();
+    string_conversions();
+    ```
 7. expressions
 8. flow control
 9.  functions
