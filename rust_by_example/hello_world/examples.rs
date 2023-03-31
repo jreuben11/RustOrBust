@@ -7,11 +7,11 @@ fn main() {
     print_debug();
     print_display();
     print_display2();
-    formatting();
+    composite_formatting();
 }
 
 fn formatted_print(){
-
+    println!("\nFORMATTED PRINT:");
     // In general, the `{}` will be automatically replaced with any
     // arguments. These will be stringified.
     println!("{} days", 31);
@@ -98,6 +98,7 @@ struct Person<'a> {
 }
 
 fn print_debug() {
+    println!("\nPRINT DEBUG:");
     // Printing with `{:?}` is similar to with `{}`.
     println!("{:?} months in a year.", 12);
     println!("{1:?} {0:?} is the {actor:?} name.",
@@ -169,6 +170,8 @@ impl fmt::Display for Point2D {
 }
 
 fn print_display() {
+    println!("\nPRINT DISPLAY:");
+
     let minmax = MinMax(0, 14);
 
     println!("Compare structures:");
@@ -219,6 +222,8 @@ impl fmt::Display for List {
 }
 
 fn print_display2() {
+    println!("\nPRINT DISPLAY2:");
+
     let v = List(vec![1, 2, 3]);
     println!("{}", v);
 }
@@ -255,7 +260,9 @@ struct Color {
     blue: u8,
 }
 
-fn formatting() {
+fn composite_formatting() {
+    println!("\nCOMPOSITE FORMATTING:");
+
     for city in [
         City { name: "Dublin", lat: 53.347778, lon: -6.259722 },
         City { name: "Oslo", lat: 59.95, lon: 10.75 },

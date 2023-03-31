@@ -1,2 +1,0 @@
-rustc hello.rs
-./hello
