@@ -46,7 +46,28 @@
     string_conversions();
     ```
 7. [expressions](expressions/examples.rs)
-8. flow control
+8. [flow control](flow_control/examples.rs)
+    ```rust
+    if_else();
+    loops::basic_loop();
+    loops::nested_labeled_loops();
+    loops::break_early();
+    fizzbuzz_while();
+    for_and_range::fizzbuzz_for();
+    for_and_range::borrowing_for();
+    for_and_range::consuming_for();
+    for_and_range::mutating_for();
+    matches::basic();
+    matches::destructuring_tuples();
+    matches::destructuring_arrays();
+    matches::destructuring_enums();
+    matches::dereferencing();
+    matches::destructuring_structs();
+    matches::guards();
+    matches::bindings();
+    if_let();
+    while_let();
+    ```
 9.  functions
 10. modules
 11. crates
