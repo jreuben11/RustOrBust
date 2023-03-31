@@ -15,13 +15,21 @@
     arrays_and_slices();
     ```
 
-3. custom types
+3. [custom types](custom_types/examples.rs)
+   ```rust
+    structs();
+    enums::enum_match();
+    enums::enum_use();
+    enums::c_like_enums();
+    enums::linked_list_enum();
+    constants();
+   ```
 4. variable bindings
 5. types
 6. conversion
 7. expressions
 8. flow control
-9. functions
+9.  functions
 10. modules
 11. crates
 12. cargo
