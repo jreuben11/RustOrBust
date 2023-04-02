@@ -115,7 +115,20 @@
     bar = { path = "../bar" } # from a path in the local filesystem
     ```
 13. [attributes](attributes/examples.rs)
-14. generics
+14. [generics](generics/examples.rs)
+    ```rust
+    basics();
+    generic_functions();
+    generic_impl();
+    generic_traits();
+    generic_bounds();
+    marker_generic_bounds();
+    multiple_generic_bounds();
+    where_clauses();
+    newtype_idiom();
+    associated_types();
+    phantom_generic_types();
+    ```
 15. scoping rules
 16. traits
 17. macros_rules!
