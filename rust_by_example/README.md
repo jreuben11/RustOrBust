@@ -114,8 +114,7 @@
     rand = { git = "https://github.com/rust-lang-nursery/rand" } # from online repo
     bar = { path = "../bar" } # from a path in the local filesystem
     ```
-13. attributes
-
+13. [attributes](attributes/examples.rs)
 14. generics
 15. scoping rules
 16. traits
