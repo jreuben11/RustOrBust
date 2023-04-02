@@ -88,10 +88,34 @@
     higher_order_functions();
     diverging_functions();
     ```
-10. modules
-11. crates
-12. cargo
+10. [modules](modules/examples.rs)
+    - `pub(crate)` makes functions visible only within the current crate
+    - `pub(in path)`  only visible within the given path
+    - `pub(super)` only visible within the parent module
+    - `pub(self)` only visible within the current module - same as leaving them private
+    - The `self::` keyword refers to the current module scope
+    - The `super::` keyword refers to the parent module scope
+11. crates (without Cargo)
+    ```bash
+    rustc --crate-type=lib rary.rs
+    rustc executable.rs --extern rary=library.rlib
+    ```
+12. cargo (basics)
+    ```bash
+    cargo new foo # A binary
+    cargo new --lib bar # A library
+    cd foo
+    cargo build 
+    cargo test
+    ```
+    ```toml
+    [dependencies]
+    clap = "4.1.9" # from crates.io
+    rand = { git = "https://github.com/rust-lang-nursery/rand" } # from online repo
+    bar = { path = "../bar" } # from a path in the local filesystem
+    ```
 13. attributes
+
 14. generics
 15. scoping rules
 16. traits
@@ -105,7 +129,8 @@
 24. meta
 
 # To run:
-```
+```bash
+cd xxx
 rustc examples.rs
 ./examples
 ```
