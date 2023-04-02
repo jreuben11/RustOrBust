@@ -88,7 +88,13 @@
     higher_order_functions();
     diverging_functions();
     ```
-10. modules
+10. [modules](modules/examples.rs)
+    - `pub(crate)` makes functions visible only within the current crate
+    - `pub(in path)`  only visible within the given path
+    - `pub(super)` only visible within the parent module
+    - `pub(self)` only visible within the current module - same as leaving them private
+    - The `self::` keyword refers to the current module scope
+    - The `super::` keyword refers to the parent module scope
 11. crates
 12. cargo
 13. attributes
