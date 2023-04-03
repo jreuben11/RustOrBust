@@ -129,7 +129,25 @@
     associated_types();
     phantom_generic_types();
     ```
-15. scoping rules
+15. [scoping rules](scoping/examples.rs)
+    ```rust
+    raii_and_drop();
+    ownership::move_ownership();
+    ownership::partial_move();
+    borrowing::basics();
+    borrowing::mutability();
+    borrowing::mutability_aliasing();
+    borrowing::ref_pattern();
+    lifetimes::explicit();
+    lifetimes::functions();
+    lifetimes::methods();
+    lifetimes::structs();
+    lifetimes::traits();
+    lifetimes::generic_bounds();
+    lifetimes::coercion();
+    lifetimes::statics();
+    lifetimes::ellision();
+    ```
 16. traits
 17. macros_rules!
 18. error handling
