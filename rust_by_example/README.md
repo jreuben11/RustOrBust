@@ -148,7 +148,18 @@
     lifetimes::statics();
     lifetimes::ellision();
     ```
-16. traits
+16. [traits](traits/examples.rs)
+```rust
+    basics::impl_trait_for_struct();
+    auto_derive::comparison_traits();
+    box_dyn::return_pointer_to_trait_on_heap();
+    operator_overloading::add_foo_plus_bar();
+    drop_trait::drop_it();
+    iterators::impl_iterator_for_fibonacci();
+    impl_traits::return_impl_trait();
+    clone_trait::clone();
+    trait_disambiguation::qualify();
+```
 17. macros_rules!
 18. error handling
 19. std lib types
