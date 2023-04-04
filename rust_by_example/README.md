@@ -162,8 +162,39 @@
 ```
 17. macros_rules!
 18. error handling
-19. std lib types
-20. std misc
+19. [std lib types](std_lib_types/examples.rs)
+```rust
+    stack_and_heap::mem_sizes();
+    vectors();
+    strings::basics();
+    strings::literal_escapes();
+    strings::raw_literals();
+    strings::byte_arrays();
+    options();
+    println!("{}", handle_results::op(10.0, 1.0));
+    handle_results::op2(10.0, 1.0);
+    hashmaps::basics();
+    hashmaps::custom_keys();
+    hashmaps::hashsets();
+    ref_counts::rc();
+    ref_counts::arc();
+```
+20. [std misc](std_misc/examples.rs)
+```rust
+    threads::spawn_and_join();
+    threads::map_reduce();
+    threads::channels();
+    path_from_string();
+    io::create();
+    io::open();
+    io::read_lines();
+    processes::call_process();
+    processes::pipes();
+    processes::wait();
+    filesystem::ops();
+    args::parse_args();
+    ffi::call_c();
+```
 21. testing
 22. unsafe ops
 23. compat
