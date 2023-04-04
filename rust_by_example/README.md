@@ -179,7 +179,22 @@
     ref_counts::rc();
     ref_counts::arc();
 ```
-20. std misc
+20. [std misc](std_misc/examples.rs)
+```rust
+    threads::spawn_and_join();
+    threads::map_reduce();
+    threads::channels();
+    path_from_string();
+    io::create();
+    io::open();
+    io::read_lines();
+    processes::call_process();
+    processes::pipes();
+    processes::wait();
+    filesystem::ops();
+    args::parse_args();
+    ffi::call_c();
+```
 21. testing
 22. unsafe ops
 23. compat
