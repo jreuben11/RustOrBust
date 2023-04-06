@@ -160,7 +160,59 @@
     clone_trait::clone();
     trait_disambiguation::qualify();
 ```
-17. macros_rules!
+17. [macros_rules!](macros/examples.rs)
+```rust
+    // macros have to be declared before they are used in the .rs file
+
+    // This call will expand into `println!("Hello");`
+    say_hello!();
+    
+    // ident designator: Create functions named `foo` and `bar`
+    create_function!(foo);
+    create_function!(bar);
+    foo();
+    bar();
+
+    print_result!(1u32 + 1);
+    //  expr designator: blocks are expressions too
+    print_result!({
+        let x = 1u32;
+        x * x + 2 * x - 1
+    });
+
+    test_overloading!(1i32 + 1 == 2i32; and 2i32 * 2 == 4i32);
+    test_overloading!(true; or false);
+
+    println!("{}", find_min_recursively!(1));
+    println!("{}", find_min_recursively!(1 + 2, 2));
+    println!("{}", find_min_recursively!(5, 2 * 3, 4));
+
+    // Implement `add_assign`, `mul_assign`, and `sub_assign` functions.
+    op!(add_assign, Add, +=, add);
+    op!(mul_assign, Mul, *=, mul);
+    op!(sub_assign, Sub, -=, sub);
+    use std::iter;
+    let mut x: Vec<_> = iter::repeat(1).take(10).collect();
+    let y: Vec<_> = iter::repeat(2).take(10).collect();
+    add_assign(&mut x, &y);
+    println!("add_assign:{:?}", &x);
+    mul_assign(&mut x, &y);
+    println!("mulassign:{:?}", &x);
+    sub_assign(&mut x, &y);
+    println!("sub_assign:{:?}", &x);
+
+    calculate_dsl! {
+        eval 1 + 2 // hehehe `eval` is _not_ a Rust keyword!
+    }
+    calculate_dsl! {
+        eval (1 + 2) * (3 / 4)
+    }
+    calculate_variadic! { 
+        eval 1 + 2,
+        eval 3 + 4,
+        eval (2 * 3) + 1
+    }
+```
 18. error handling
 19. [std lib types](std_lib_types/examples.rs)
 ```rust
@@ -179,7 +231,7 @@
     ref_counts::rc();
     ref_counts::arc();
 ```
-20. [std misc](std_misc/examples.rs)
+1.  [std misc](std_misc/examples.rs)
 ```rust
     threads::spawn_and_join();
     threads::map_reduce();
@@ -195,10 +247,10 @@
     args::parse_args();
     ffi::call_c();
 ```
-21. testing
-22. unsafe ops
-23. compat
-24. meta
+1.  testing
+2.  unsafe ops
+3.  compat
+4.  meta
 
 # To run:
 ```bash
