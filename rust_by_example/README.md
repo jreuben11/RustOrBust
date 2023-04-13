@@ -213,7 +213,45 @@
         eval (2 * 3) + 1
     }
 ```
-18. error handling
+18. [error handling](error_handling/examples.rs)
+    ```rust
+    dont_panic("ok");
+    dont_panic("abort");
+    // dont_panic("");
+    conditional_compile();// rustc  examples.rs -C panic=unwind 
+
+    option_unwrapping::unwrap_none_panic();
+    option_unwrapping::option_chaining(); // ?
+    option_unwrapping::map_combinators();  // map(|Option<X>| Option<Y>)
+    option_unwrapping::flatmap_combinators(); // and_then()
+    option_unwrapping::eager_chainable(); // or()
+    option_unwrapping::lazy_chainable(); // or_else()
+    option_unwrapping::eager_inplace(); // get_or_insert()
+    option_unwrapping::lazy_inplace(); // get_or_insert_with()
+
+    results::combinators(); // map(), and_then()
+    results::aliased_result_type();
+    results::early_returns();
+    results::early_returns_succint(); // ? 
+
+    result_multiple_error_types::results_from_options(); // parse::<i32>().map(|i| 2 * i).map_err(|_| DoubleError)
+    result_multiple_error_types::custom_error_types();
+    result_multiple_error_types::box_errors(); // Option<T>::into
+
+    wrapping_errors::call();
+
+    iterating_over_results::iter_map();
+    iterating_over_results::ignore_errors();
+    iterating_over_results::collect_errors();
+    iterating_over_results::result_from_iterator();
+    iterating_over_results::partition();
+    ```
+    and
+    ```rust
+    // rustc  examples.rs --cfg 'feature="foo"'
+    #[cfg(feature = "foo")]
+    fn main() -> Result<(), ParseIntError> {
+    ```
 19. [std lib types](std_lib_types/examples.rs)
 ```rust
     stack_and_heap::mem_sizes();
@@ -231,7 +269,7 @@
     ref_counts::rc();
     ref_counts::arc();
 ```
-1.  [std misc](std_misc/examples.rs)
+1.   [std misc](std_misc/examples.rs)
 ```rust
     threads::spawn_and_join();
     threads::map_reduce();
@@ -247,10 +285,10 @@
     args::parse_args();
     ffi::call_c();
 ```
-1.  testing
-2.  unsafe ops
-3.  compat
-4.  meta
+1.   testing
+2.   unsafe ops
+3.   compat
+4.   meta
 
 # To run:
 ```bash
