@@ -277,7 +277,9 @@ rustc examples.rs
     ref_counts::arc();
 ```
 20.   [std misc](std_misc/examples.rs)
+    
 ```rust
+
     threads::spawn_and_join();
     threads::map_reduce();
     threads::channels();
