@@ -1,3 +1,10 @@
+# To run:
+```bash
+cd xxx
+rustc examples.rs
+./examples
+```
+
 # TOC
 1. [hello_world](hello_world/examples.rs)
     ```rust
@@ -269,7 +276,7 @@
     ref_counts::rc();
     ref_counts::arc();
 ```
-1.   [std misc](std_misc/examples.rs)
+20.   [std misc](std_misc/examples.rs)
 ```rust
     threads::spawn_and_join();
     threads::map_reduce();
@@ -285,14 +292,33 @@
     args::parse_args();
     ffi::call_c();
 ```
-1.   testing
-2.   unsafe ops
-3.   compat
-4.   meta
+21.   [testing](testing/examples.rs)
+    to run: `cargo test`
+22.   [unsafe ops](unsafe_ops/examples.rs)
+    ```rust
+    let raw_p: *const u32 = &10;
+    unsafe {
+        assert!(*raw_p == 10);
+    }
+    slice_from_raw_parts();
 
-# To run:
-```bash
-cd xxx
-rustc examples.rs
-./examples
-```
+    // TBH: I need to revise assembly ...
+    inline_assembly::nop();
+    inline_assembly::mov();
+    inline_assembly::mov_add();
+    inline_assembly::inout_add();
+    inline_assembly::inlateout_add();
+    // inline_assembly::explicit_register();    // segmentation fault
+    inline_assembly::explicit_registers_mul();   
+    inline_assembly::clobbered_registers();      
+    inline_assembly::mul_shift_add();            
+    inline_assembly::call_foo_clobber_abi(1);
+    inline_assembly::register_template_modifier();
+    inline_assembly::load_fpu_control_word(1);
+    inline_assembly::labels();
+    inline_assembly::options();
+    ```
+23.   compat
+24.   meta
+    - see https://doc.rust-lang.org/rust-by-example/meta/doc.html 
+
