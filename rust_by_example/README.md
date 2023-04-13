@@ -298,6 +298,7 @@ rustc examples.rs
     to run: `cargo test`
 22.   [unsafe ops](unsafe_ops/examples.rs)
     ```rust
+    
     let raw_p: *const u32 = &10;
     unsafe {
         assert!(*raw_p == 10);
