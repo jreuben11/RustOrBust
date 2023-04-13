@@ -292,7 +292,7 @@ rustc examples.rs
     args::parse_args();
     ffi::call_c();
 ```
-21.   [testing](testing/examples.rs)
+21.   [testing](testing/src/lib.rs)
     to run: `cargo test`
 22.   [unsafe ops](unsafe_ops/examples.rs)
     ```rust
