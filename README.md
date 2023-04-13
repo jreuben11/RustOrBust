@@ -1,15 +1,19 @@
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
-1. [Quickstart](hello_world/README.md) - a refresher before deep diving next month !
+
+# Rust 🦀 code:
+1. [Quickstart](hello_world/README.md) - a refresher before deep diving !
 2. [the Rust Book worked examples](rust_book/README.md)
 3. [Rust by Example](rust_by_example/README.md)
 
 # Rust 🦀 study plan:
 
-
+## Beginner
 - [x] Rust book https://doc.rust-lang.org/book/ 
 - [x] Rust by example https://doc.rust-lang.org/stable/rust-by-example/ 
 - [] Rustlings course https://github.com/rust-lang/rustlings/ 
+- [] Rust Cookbook https://rust-lang-nursery.github.io/rust-cookbook/
+## Next ...
 - [] Standard lib https://doc.rust-lang.org/std/index.html 
 - [] Edition guide https://doc.rust-lang.org/edition-guide/index.html 
 - [] Cargo book https://doc.rust-lang.org/cargo/index.html 
