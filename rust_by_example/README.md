@@ -297,6 +297,7 @@ rustc examples.rs
 21.   [testing](testing/src/lib.rs)
     to run: `cargo test`
 22.   [unsafe ops](unsafe_ops/examples.rs)
+
     ```rust
     
     let raw_p: *const u32 = &10;
