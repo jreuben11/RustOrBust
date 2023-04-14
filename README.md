@@ -5,6 +5,7 @@
 1. [Quickstart](hello_world/README.md) - a refresher before deep diving !
 2. [the Rust Book worked examples](rust_book/README.md)
 3. [Rust by Example](rust_by_example/README.md)
+4. [Rust Cookbook](cookbook/README.md)
 
 # Rust 🦀 study plan:
 
