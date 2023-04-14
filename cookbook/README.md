@@ -30,4 +30,15 @@ pub fn f() {
 
     vector_sort();
     ```
-2. command line
+2. [command line](cmd_cli/src/main.rs)
+   cookbook sample broken - refer to https://docs.rs/clap/latest/clap/
+
+   ```bash
+   cargo add clap --features derive
+   cargo add ansi_term
+   cargo run -- --name xxx --count 5  
+   ```
+    ```rust
+    parse_args();
+    coloured_and_styled();
+    ```
