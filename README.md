@@ -6,6 +6,7 @@
 2. [the Rust Book worked examples](rust_book/README.md)
 3. [Rust by Example](rust_by_example/README.md)
 4. [Rust Cookbook](cookbook/README.md)
+5. [Async](async/README.md)
 
 # Rust 🦀 study plan:
 
@@ -14,6 +15,13 @@
 - [x] Rust by example https://doc.rust-lang.org/stable/rust-by-example/ 
 - [] Rustlings course https://github.com/rust-lang/rustlings/ 
 - [] Rust Cookbook https://rust-lang-nursery.github.io/rust-cookbook/
+## Intermediate
+- [] Async https://rust-lang.github.io/async-book + https://book.async.rs/introduction.html 
+- [] Rust for Rustaceans
+- [] Tokio ecosystem   https://tokio.rs/tokio/tutorial 
+- [] Commandline book https://rust-cli.github.io/book/index.html 
+- [] Webassembly book https://rustwasm.github.io/docs/book/ 
+- [] PyO3 https://pyo3.rs/  Rust bindings for Python
 ## Next ...
 - [] Standard lib https://doc.rust-lang.org/std/index.html 
 - [] Edition guide https://doc.rust-lang.org/edition-guide/index.html 
@@ -21,8 +29,6 @@
 - [] Rustdoc book https://doc.rust-lang.org/rustdoc/index.html 
 - [] RustC book https://doc.rust-lang.org/rustc/index.html 
 - [] Cxx https://cxx.rs/ Rust loves C++
-- [] Commandline book https://rust-cli.github.io/book/index.html 
-- [] Webassembly book https://rustwasm.github.io/docs/book/ 
 - [] Embedded book https://doc.rust-lang.org/embedded-book 
 - [] Rustonomicon https://doc.rust-lang.org/nomicon/index.html 
 - [] Unstable book https://doc.rust-lang.org/nightly/unstable-book/index.html 
@@ -36,7 +42,6 @@
 - How to learn modern rust https://github.com/joaocarvalhoopen/How_to_learn_modern_Rust 
 - The little book of Rust Books https://lborb.github.io/book/ 
 - blessed.rs  - An unofficial guide to the crates of the Rust ecosystem 
-- [] PyO3 https://pyo3.rs/  Rust bindings for Python
 - [] Bevy Engine https://bevyengine.org/learn/book/introduction/ 
 - [] Writing Interpreters in Rust: A Guide https://rust-hosted-langs.github.io/book/introduction.html   
 - [] Android Rust https://source.android.com/docs/setup/build/rust/building-rust-modules/overview 
