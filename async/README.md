@@ -82,4 +82,13 @@
     ```
 3. [async await / move async](async_await/src/main.rs)
 - `std::future::Future`
-4. pinning
+4. [Pinning](pinning/src/main.rs)
+   ```rust
+    use std::pin::Pin;
+    use std::marker::PhantomPinned;
+
+    naive::swap();
+    stack_pinned::swap();
+    heap_pinned::swap();
+   ```
+5. Stream Trait
