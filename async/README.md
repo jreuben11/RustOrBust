@@ -86,9 +86,11 @@
    ```rust
     use std::pin::Pin;
     use std::marker::PhantomPinned;
+    use pin_utils::pin_mut;
 
     naive::swap();
     stack_pinned::swap();
     heap_pinned::swap();
+    pass_unpinable_futures();
    ```
 5. Stream Trait
