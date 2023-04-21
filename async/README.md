@@ -93,4 +93,7 @@
     heap_pinned::swap();
     pass_unpinable_futures();
    ```
-5. Stream Trait
+5. [Stream Trait](stream_trait/src/main.rs)
+   - `futures::Stream`
+   - `futures::stream::StreamExt` -> `next().await`
+   - `futures::stream::TryStreamExt` -> `try_next().await?`, `try_for_each_concurrent(n, |x| async move`
