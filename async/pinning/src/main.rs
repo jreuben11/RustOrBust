@@ -10,6 +10,7 @@ fn main() {
     naive::swap();
     stack_pinned::swap();
     heap_pinned::swap();
+    pass_unpinable_futures();
 }
 
 mod naive {
@@ -163,4 +164,26 @@ mod heap_pinned {
         println!("a: {}, b: {}",test1.as_ref().a(), test1.as_ref().b());
         println!("a: {}, b: {}",test2.as_ref().a(), test2.as_ref().b());
     }
+}
+
+fn pass_unpinable_futures(){
+    use std::future::Future;
+    use pin_utils::pin_mut; // `pin_utils` is a handy crate available on crates.io
+
+    // A function which takes a `Future` that implements `Unpin`.
+    fn execute_unpin_future(_x: impl Future<Output = ()> + Unpin) { /* ... */ }
+
+    let _fut = async { /* ... */ };
+    // Error: `fut` does not implement `Unpin` trait
+    // execute_unpin_future(_fut); 
+
+    // Pinning with `Box`:
+    let fut = async { /* ... */ };
+    let fut = Box::pin(fut);
+    execute_unpin_future(fut); // OK
+
+    // Pinning with `pin_mut!`:
+    let fut = async { /* ... */ };
+    pin_mut!(fut);
+    execute_unpin_future(fut); // OK
 }
