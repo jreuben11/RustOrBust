@@ -13,8 +13,6 @@
 ## Beginner
 - [x] Rust book https://doc.rust-lang.org/book/ 
 - [x] Rust by example https://doc.rust-lang.org/stable/rust-by-example/ 
-- [] Rustlings course https://github.com/rust-lang/rustlings/ 
-- [] Rust Cookbook https://rust-lang-nursery.github.io/rust-cookbook/
 ## Intermediate
 - [] Async https://rust-lang.github.io/async-book + https://book.async.rs/introduction.html 
 - [] Rust for Rustaceans
