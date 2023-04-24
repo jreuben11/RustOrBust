@@ -97,3 +97,45 @@
    - `futures::Stream`
    - `futures::stream::StreamExt` -> `next().await`
    - `futures::stream::TryStreamExt` -> `try_next().await?`, `try_for_each_concurrent(n, |x| async move`
+  ```rust
+    use futures::stream::{self, Stream, StreamExt};
+    use std::pin::Pin;
+    use std::io;
+    use futures::pin_mut;
+    use futures::executor::block_on;
+
+    let s1 = stream::iter(vec![1, 2, 3]).fuse();
+    pin_mut!(s1);
+    sum_with_next(s1).await;
+    //TODO: construct an IO stream of results as input
+
+  ```
+6. [multiple asynchronous operations](multi_async_ops/main.rs)
+   ```rust
+    use futures::{ join, try_join,select, pin_mut};
+    use futures::future::{self, Fuse, FusedFuture, FutureExt, TryFutureExt };
+    use futures::stream::{self, Stream, StreamExt, FusedStream};
+    use futures::executor::block_on;
+
+    async fn async_main() {
+        serial().await;
+        parallel_join().await;
+        parallel_try_join().await.unwrap();
+        match parallel_try_join_consolidate_error_type().await {
+            Err(s) => println!("{s}"),
+            _ => println!("OK"),
+        }
+        race_tasks().await;
+        select_fused_mutable().await;
+        loop_select_count().await;
+        let s1 = stream::iter(vec![1, 2]).fuse();
+        let s2 = stream::iter(vec![1, 2]).fuse();
+        add_two_fused_streams(s1, s2).await;  
+        let s3 = stream::iter(vec![(),(),()]).fuse();   
+        timer_loop_select_next_some(s3, 10).await;
+    }
+
+    fn main() {
+        block_on(async_main());
+    }
+    ```
