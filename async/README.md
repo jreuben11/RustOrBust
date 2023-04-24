@@ -143,3 +143,27 @@
    - explicit async results
    - send approximation
    - async recursive
+9. [Concurrent Web Server](concurrent_web_server/src/main.rs)
+    ```rust
+    use async_std::net::{TcpListener, /*TcpStream*/};
+    use async_std::prelude::*;
+    use async_std::task::{self, spawn};
+    use async_std::io::{Read, Write};
+    use futures::stream::StreamExt;
+
+    #[async_std::main]
+    async fn main() { ... }
+
+    use super::*;
+    use futures::io::Error;
+    use futures::task::{Context, Poll};
+    use std::cmp::min;
+    use std::pin::Pin;
+
+    impl Read for MockTcpStream { ... }
+    impl Write for MockTcpStream { ... }
+    impl Unpin for MockTcpStream { ... }
+
+    #[async_std::test]
+    async fn test_handle_connection() { ... }
+    ```
