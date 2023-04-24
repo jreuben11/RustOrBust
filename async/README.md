@@ -110,7 +110,7 @@
     //TODO: construct an IO stream of results as input
 
   ```
-6. [multiple asynchronous operations](multi_async_ops/main.rs)
+6. [multiple asynchronous operations](multi_async_ops/src/main.rs)
    ```rust
     use futures::{ join, try_join,select, pin_mut};
     use futures::future::{self, Fuse, FusedFuture, FutureExt, TryFutureExt };
@@ -139,3 +139,7 @@
         block_on(async_main());
     }
     ```
+7. [Workarrounds](workarrounds/src/main.rs)
+   - explicit async results
+   - send approximation
+   - async recursive
