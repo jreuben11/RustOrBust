@@ -3,9 +3,11 @@ use std::pin::Pin;
 use std::io;
 use futures::pin_mut;
 use futures::executor::block_on;
-
+use futures::channel::mpsc;
+use futures::SinkExt;
 
 async fn async_main() {
+    send_recv().await;
     let s1 = stream::iter(vec![1, 2, 3]).fuse();
     pin_mut!(s1);
     let x = sum_with_next(s1).await;
@@ -17,21 +19,21 @@ fn main() {
     block_on(async_main());
 }
 
-// async fn send_recv() {
+async fn send_recv() {
 
-//     const BUFFER_SIZE: usize = 10;
-//     let (mut tx, mut rx) = mpsc::channel::<i32>(BUFFER_SIZE);  // Tokio ???
+    const BUFFER_SIZE: usize = 10;
+    let (mut tx, mut rx) = mpsc::channel::<i32>(BUFFER_SIZE);  
 
-//     tx.send(1).await.unwrap();
-//     tx.send(2).await.unwrap();
-//     drop(tx);
+    tx.send(1).await.unwrap();
+    tx.send(2).await.unwrap();
+    drop(tx);
 
-//     // `StreamExt::next` is similar to `Iterator::next`, but returns a
-//     // type that implements `Future<Output = Option<T>>`.
-//     assert_eq!(Some(1), rx.next().await);
-//     assert_eq!(Some(2), rx.next().await);
-//     assert_eq!(None, rx.next().await);
-// }
+    // `StreamExt::next` is similar to `Iterator::next`, but returns a
+    // type that implements `Future<Output = Option<T>>`.
+    assert_eq!(Some(1), rx.next().await);
+    assert_eq!(Some(2), rx.next().await);
+    assert_eq!(None, rx.next().await);
+}
 
 
 
