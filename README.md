@@ -14,7 +14,7 @@
 - [x] Rust book https://doc.rust-lang.org/book/ 
 - [x] Rust by example https://doc.rust-lang.org/stable/rust-by-example/ 
 ## Intermediate
-- [] Async https://rust-lang.github.io/async-book + https://book.async.rs/introduction.html 
+- [x] Async https://rust-lang.github.io/async-book + https://book.async.rs/introduction.html 
 - [] Rust for Rustaceans
 - [] Tokio ecosystem   https://tokio.rs/tokio/tutorial 
 - [] Commandline book https://rust-cli.github.io/book/index.html 
