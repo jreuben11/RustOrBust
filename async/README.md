@@ -1,3 +1,5 @@
+# Futures book
+- https://rust-lang.github.io/async-book
 1. [getting started](async_await_intro/src/main.rs)
    - `async fn`
    - `futures::executor::block_on`
@@ -170,3 +172,48 @@
     #[async_std::test]
     async fn test_handle_connection() { ... }
     ```
+
+# async-std book
+    - https://book.async.rs/
+[async_std chat](async_std_chat/src/main.rs)
+
+```rust
+use async_std::{
+    io::BufReader,
+    net::{TcpListener, TcpStream, ToSocketAddrs},
+    prelude::*,
+    task,
+};
+use futures::{
+    channel::mpsc,
+    sink::SinkExt;
+    select, 
+    FutureExt,
+};
+use std::{
+    collections::hash_map::{Entry, HashMap},
+    future::Future,
+    sync::Arc,
+};
+
+type Result<T> = std::result::Result<T, Box<dyn std::error::Error + Send + Sync>>;
+type Sender<T> = mpsc::UnboundedSender<T>;
+type Receiver<T> = mpsc::UnboundedReceiver<T>;
+
+enum Void {}
+
+fn main() -> Result<()> { ... }
+async fn accept_loop(addr: impl ToSocketAddrs) -> Result<()> { ... }
+async fn connection_loop(mut broker: Sender<Event>, stream: TcpStream) -> Result<()> { ... }
+async fn connection_writer_loop( messages: &mut Receiver<String>, stream: Arc<TcpStream>, shutdown: Receiver<Void>,) -> Result<()> { ... }
+
+enum Event {
+    NewPeer { name: String, stream: Arc<TcpStream>, shutdown: Receiver<Void>, },
+    Message { from: String, to: Vec<String>, msg: String, },
+}
+
+async fn broker_loop(events: Receiver<Event>) { ... }
+
+fn spawn_and_log_error<F>(fut: F) -> task::JoinHandle<()> where F: Future<Output = Result<()>> + Send + 'static, { ... }
+
+```
