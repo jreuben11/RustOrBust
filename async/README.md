@@ -103,7 +103,10 @@
     use std::io;
     use futures::pin_mut;
     use futures::executor::block_on;
+    use futures::channel::mpsc;
+    use futures::SinkExt;
 
+    send_recv().await;
     let s1 = stream::iter(vec![1, 2, 3]).fuse();
     pin_mut!(s1);
     sum_with_next(s1).await;
