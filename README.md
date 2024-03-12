@@ -7,6 +7,7 @@
 3. [Rust by Example](rust_by_example/README.md)
 4. [Rust Cookbook](cookbook/README.md)
 5. [Async](async/README.md)
+6. [Data Structures and Algorithms](data_structures_and_algorithms.md)
 
 # Rust 🦀 study plan:
 
@@ -15,7 +16,8 @@
 - [x] Rust by example https://doc.rust-lang.org/stable/rust-by-example/ 
 ## Intermediate
 - [x] Async https://rust-lang.github.io/async-book + https://book.async.rs/introduction.html 
-- [] Rust for Rustaceans
+- [x] Rust for Rustaceans (book)
+- [ ] Rust Hands on Data Structures and Algorithms
 - [] Tokio ecosystem   https://tokio.rs/tokio/tutorial 
 - [] Commandline book https://rust-cli.github.io/book/index.html 
 - [] Webassembly book https://rustwasm.github.io/docs/book/ 
