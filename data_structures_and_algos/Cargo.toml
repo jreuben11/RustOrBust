@@ -1,2 +1,3 @@
 [workspace]
-members = ["ch1_refresher", "ch2_crate_test"]
+resolver="2"
+members = ["ch1_refresher", "ch2_crate_test", "ch3_efficient_storage"]
