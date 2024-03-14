@@ -1,0 +1,2 @@
+[workspace]
+members = ["ch1_refresher", "ch2_crate_test"]
