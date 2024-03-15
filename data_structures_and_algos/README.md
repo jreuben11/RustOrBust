@@ -26,3 +26,5 @@ source: https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorith
 - [double linked list](ch4_lists/src/doubly_linked_list.rs)
   - implementing `iter` https://doc.rust-lang.org/std/iter/index.html#implementing-iterator `Iterator`, `IntoIterator`, `DoubleEndedIterator`
 - [skip list](ch4_lists/src/skip_list.rs)
+- [dynamic array](ch4_lists/src/dynamic_array.rs)
+  - `Box<[Node]>`, `vec!` `into_boxed_slice`, `clone_from_slice`
