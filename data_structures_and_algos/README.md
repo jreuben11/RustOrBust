@@ -14,7 +14,7 @@ source: https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorith
 - [single linked list](ch4_lists/src/singly_linked_list.rs)
   - `type Link = Option<Rc<RefCell<Node>>>`
   - `String.to_owned`
-  - `borrow_mut`
+  - `borrow` / `borrow_mut`
   - `Rc::try_unwrap(x)
                 .ok()
                 .expect("xxx")
@@ -25,4 +25,4 @@ source: https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorith
   - `mem::replace()` https://doc.rust-lang.org/stable/std/mem/fn.replace.html
 - [double linked list](ch4_lists/src/doubly_linked_list.rs)
   - implementing `iter` https://doc.rust-lang.org/std/iter/index.html#implementing-iterator `Iterator`, `IntoIterator`, `DoubleEndedIterator`
-  - borrow
+- [skip list](ch4_lists/src/skip_list.rs)
