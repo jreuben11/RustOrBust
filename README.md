@@ -7,7 +7,7 @@
 3. [Rust by Example](rust_by_example/README.md)
 4. [Rust Cookbook](cookbook/README.md)
 5. [Async](async/README.md)
-6. [Data Structures and Algorithms](data_structures_and_algorithms.md)
+6. [Data Structures and Algorithms](data_structures_and_algorithms/README.md)
 
 # Rust 🦀 study plan:
 
