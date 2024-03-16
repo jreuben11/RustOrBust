@@ -283,7 +283,6 @@ fn get_level(&self) -> usize {
 - [binary search tree](ch5_trees/src/binary_search_tree.rs)
   - `mem::replace`
   - pass callback and  build a vector by walking tree:
-  - walk
 ```rust
  walk(&self, callback: impl Fn(&T) -> ()) {   
     self.walk_in_order(&self.root, &callback);
@@ -323,5 +322,5 @@ tree.walk(|n|items.borrow_mut().push(n.clone()));
         // sort in descending order:
         items.sort_by(|a, b| b.numerical_id.cmp(&a.numerical_id));
         assert_eq!(v.into_inner(), items)
-
 ```
+- [red-black tree](ch5_trees/src/red_black_tree.rs)

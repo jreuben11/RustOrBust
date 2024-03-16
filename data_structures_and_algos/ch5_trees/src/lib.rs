@@ -1,4 +1,5 @@
 mod binary_search_tree;
+mod red_black_tree;
 
 #[derive(Clone, Debug)]
 pub struct IoTDevice {
@@ -44,51 +45,119 @@ mod tests {
         IoTDevice::new(id, format!("My address is {}", id), path)
     }
 
-    
-    #[test]
-    fn binary_search_tree_walk_in_order() {
-        let len = 10;
+    mod binary_search_tree_tests {
+        use super::*;
+        #[test]
+        fn binary_search_tree_walk_in_order() {
+            let len = 10;
 
-        let mut tree = binary_search_tree::DeviceRegistry::new_empty();
-        let mut items: Vec<IoTDevice> = (0..len).map(new_device_with_id).collect();
+            let mut tree = binary_search_tree::DeviceRegistry::new_empty();
+            let mut items: Vec<IoTDevice> = (0..len).map(new_device_with_id).collect();
 
-        // let mut rng = thread_rng();
-        // rng.shuffle(&mut items);
-        items.shuffle(&mut thread_rng());
+            // let mut rng = thread_rng();
+            // rng.shuffle(&mut items);
+            items.shuffle(&mut thread_rng());
 
-        for item in items.iter() {
-            tree.add(item.clone());
+            for item in items.iter() {
+                tree.add(item.clone());
+            }
+
+            assert_eq!(tree.length, len);
+            let v: RefCell<Vec<IoTDevice>> = RefCell::new(vec![]);
+            tree.walk(|n| v.borrow_mut().push(n.clone()));
+            let mut items = items;
+            // sort in descending order:
+            items.sort_by(|a, b| b.numerical_id.cmp(&a.numerical_id));
+            assert_eq!(v.into_inner(), items)
         }
 
-        assert_eq!(tree.length, len);
-        let v: RefCell<Vec<IoTDevice>> = RefCell::new(vec![]);
-        tree.walk(|n| v.borrow_mut().push(n.clone()));
-        let mut items = items;
-        // sort in descending order:
-        items.sort_by(|a, b| b.numerical_id.cmp(&a.numerical_id));
-        assert_eq!(v.into_inner(), items)
+        #[test]
+        fn binary_search_tree_find() {
+            let mut tree = binary_search_tree::DeviceRegistry::new_empty();
+
+            tree.add(new_device_with_id(4));
+            tree.add(new_device_with_id(3));
+            tree.add(new_device_with_id(2));
+            tree.add(new_device_with_id(1));
+            tree.add(new_device_with_id(5));
+            tree.add(new_device_with_id(6));
+            tree.add(new_device_with_id(7));
+            assert_eq!(tree.find(100), None);
+            assert_eq!(tree.find(4), Some(new_device_with_id(4)));
+            assert_eq!(tree.find(3), Some(new_device_with_id(3)));
+            assert_eq!(tree.find(2), Some(new_device_with_id(2)));
+            assert_eq!(tree.find(1), Some(new_device_with_id(1)));
+            assert_eq!(tree.find(5), Some(new_device_with_id(5)));
+            assert_eq!(tree.find(6), Some(new_device_with_id(6)));
+            assert_eq!(tree.find(7), Some(new_device_with_id(7)));
+            assert_eq!(tree.length, 7);
+        }
+    }
+    mod red_black_tree_tests{
+        use super::*;
+        
+        #[test]
+        fn red_black_tree_add() {
+            let mut tree = red_black_tree::BetterDeviceRegistry::new_empty();
+            tree.add(new_device_with_id(1));
+            tree.add(new_device_with_id(2));
+            tree.add(new_device_with_id(3));
+            tree.add(new_device_with_id(4));
+            tree.add(new_device_with_id(5));
+            tree.add(new_device_with_id(6));
+            tree.add(new_device_with_id(7));
+            assert_eq!(tree.length, 7);
+            assert!(tree.is_a_valid_red_black_tree());
+        }
+
+        #[test]
+        fn red_black_tree_walk_in_order() {
+            let len = 10;
+
+            let mut tree = red_black_tree::BetterDeviceRegistry::new_empty();
+            let mut items: Vec<IoTDevice> = (0..len).map(new_device_with_id).collect();
+
+            items.shuffle(&mut thread_rng());
+
+            for item in items.iter() {
+                tree.add(item.clone());
+            }
+            assert!(tree.is_a_valid_red_black_tree());
+            assert_eq!(tree.length, len);
+            let v: RefCell<Vec<IoTDevice>> = RefCell::new(vec![]);
+            tree.walk(|n| v.borrow_mut().push(n.clone()));
+            let mut items = items;
+            // sort in descending order:
+            items.sort_by(|a, b| b.numerical_id.cmp(&a.numerical_id));
+            assert_eq!(v.into_inner(), items)
+        }
+
+        #[test]
+        fn red_black_tree_find() {
+            let mut tree = red_black_tree::BetterDeviceRegistry::new_empty();
+    
+            tree.add(new_device_with_id(3));
+            tree.add(new_device_with_id(2));
+            tree.add(new_device_with_id(1));
+            tree.add(new_device_with_id(6));
+            tree.add(new_device_with_id(4));
+            tree.add(new_device_with_id(5));
+            tree.add(new_device_with_id(7));
+    
+            assert!(tree.is_a_valid_red_black_tree());
+            assert_eq!(tree.length, 7);
+    
+            assert_eq!(tree.find(100), None);
+            assert_eq!(tree.find(4), Some(new_device_with_id(4)));
+            assert_eq!(tree.find(3), Some(new_device_with_id(3)));
+            assert_eq!(tree.find(2), Some(new_device_with_id(2)));
+            assert_eq!(tree.find(1), Some(new_device_with_id(1)));
+            assert_eq!(tree.find(5), Some(new_device_with_id(5)));
+            assert_eq!(tree.find(6), Some(new_device_with_id(6)));
+            assert_eq!(tree.find(7), Some(new_device_with_id(7)));
+        }
+
     }
 
-    #[test]
-    fn binary_search_tree_find() {
-        let mut tree = binary_search_tree::DeviceRegistry::new_empty();
-
-        tree.add(new_device_with_id(4));
-        tree.add(new_device_with_id(3));
-        tree.add(new_device_with_id(2));
-        tree.add(new_device_with_id(1));
-        tree.add(new_device_with_id(5));
-        tree.add(new_device_with_id(6));
-        tree.add(new_device_with_id(7));
-        assert_eq!(tree.find(100), None);
-        assert_eq!(tree.find(4), Some(new_device_with_id(4)));
-        assert_eq!(tree.find(3), Some(new_device_with_id(3)));
-        assert_eq!(tree.find(2), Some(new_device_with_id(2)));
-        assert_eq!(tree.find(1), Some(new_device_with_id(1)));
-        assert_eq!(tree.find(5), Some(new_device_with_id(5)));
-        assert_eq!(tree.find(6), Some(new_device_with_id(6)));
-        assert_eq!(tree.find(7), Some(new_device_with_id(7)));
-        assert_eq!(tree.length, 7);
-    }
 
 }
