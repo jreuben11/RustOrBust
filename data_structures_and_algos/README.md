@@ -279,7 +279,7 @@ fn get_level(&self) -> usize {
 ```
 - [dynamic array](ch4_lists/src/dynamic_array.rs)
   - `Box<[Node]>`, `vec!` `into_boxed_slice`, `clone_from_slice`
-# Trees
+# 5. Trees
 - [binary search tree](ch5_trees/src/binary_search_tree.rs)
   - `mem::replace`
   - pass callback and  build a vector by walking tree:
@@ -324,3 +324,4 @@ tree.walk(|n|items.borrow_mut().push(n.clone()));
         assert_eq!(v.into_inner(), items)
 ```
 - [red-black tree](ch5_trees/src/red_black_tree.rs)
+- [heap](ch5_trees/src/heap.rs)
