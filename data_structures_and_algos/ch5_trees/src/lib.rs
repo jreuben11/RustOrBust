@@ -1,5 +1,6 @@
 mod binary_search_tree;
 mod red_black_tree;
+mod heap;
 
 #[derive(Clone, Debug)]
 pub struct IoTDevice {
@@ -7,7 +8,6 @@ pub struct IoTDevice {
     pub path: String,
     pub address: String,
 }
-
 impl IoTDevice {
     pub fn new(id: u64, address: impl Into<String>, path: impl Into<String>) -> IoTDevice {
         IoTDevice {
@@ -17,10 +17,30 @@ impl IoTDevice {
         }
     }
 }
-
 impl PartialEq for IoTDevice {
     fn eq(&self, other: &IoTDevice) -> bool {
         self.numerical_id == other.numerical_id && self.address == other.address
+    }
+}
+
+
+
+#[derive(Clone, Debug)]
+pub struct MessageNotification {
+    pub no_messages: u64,
+    pub device: IoTDevice,
+}
+impl MessageNotification {
+    pub fn new(device: IoTDevice, no_messages: u64) -> MessageNotification {
+        MessageNotification {
+            no_messages: no_messages,
+            device: device,
+        }
+    }
+}
+impl PartialEq for MessageNotification {
+    fn eq(&self, other: &MessageNotification) -> bool {
+        self.device.eq(&other.device) && self.no_messages == other.no_messages
     }
 }
 
@@ -43,6 +63,11 @@ mod tests {
 
     fn new_device_with_id_path(id: u64, path: impl Into<String>) -> IoTDevice {
         IoTDevice::new(id, format!("My address is {}", id), path)
+    }
+
+    fn new_notification_with_id(id: u64, no_messages: u64) -> MessageNotification {
+        let dev = new_device_with_id(id);
+        MessageNotification::new(dev, no_messages)
     }
 
     mod binary_search_tree_tests {
@@ -159,5 +184,42 @@ mod tests {
 
     }
 
+
+    mod heap_tests {
+        use super::*;
+        #[test]
+        fn binary_heap_add() {
+            let mut heap = heap::MessageChecker::new_empty();
+
+            heap.add(new_notification_with_id(1, 100));
+            heap.add(new_notification_with_id(2, 200));
+            heap.add(new_notification_with_id(3, 500));
+            heap.add(new_notification_with_id(4, 40));
+            assert_eq!(heap.length, 4);
+        }
+
+        #[test]
+        fn binary_heap_pop() {
+            let mut heap = heap::MessageChecker::new_empty();
+
+            let a = new_notification_with_id(1, 40);
+            let b = new_notification_with_id(2, 300);
+            let c = new_notification_with_id(3, 50);
+            let d = new_notification_with_id(4, 500);
+
+            heap.add(a.clone());
+            heap.add(b.clone());
+            heap.add(c.clone());
+            heap.add(d.clone());
+
+            assert_eq!(heap.length, 4);
+
+            assert_eq!(heap.pop(), Some(d));
+            assert_eq!(heap.pop(), Some(b));
+            assert_eq!(heap.pop(), Some(c));
+            assert_eq!(heap.pop(), Some(a));
+        }
+
+    }
 
 }
