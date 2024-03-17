@@ -325,3 +325,4 @@ tree.walk(|n|items.borrow_mut().push(n.clone()));
 ```
 - [red-black tree](ch5_trees/src/red_black_tree.rs)
 - [heap](ch5_trees/src/heap.rs)
+  - `Vec<T>.swap_remove()` - remove 1st element of by replacing it with last element
