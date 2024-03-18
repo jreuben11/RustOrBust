@@ -3,6 +3,7 @@ mod red_black_tree;
 mod heap;
 mod trie;
 mod btree;
+mod graph;
 
 #[derive(Clone, Debug)]
 pub struct IoTDevice {
@@ -189,6 +190,8 @@ mod tests {
 
     mod heap_tests {
         use super::*;
+
+        
         #[test]
         fn binary_heap_add() {
             let mut heap = heap::MessageChecker::new_empty();
@@ -354,6 +357,140 @@ mod tests {
             assert_eq!(tree.find(5), Some(new_device_with_id(5)));
             assert_eq!(tree.find(6), Some(new_device_with_id(6)));
             assert_eq!(tree.find(7), Some(new_device_with_id(7)));
+        }
+    }
+
+    mod graph_tests {
+        use super::*;
+
+        fn build_graph(g: graph::InternetOfThings, items: &Vec<IoTDevice>) -> graph::InternetOfThings {
+            let mut g = g;
+    
+            g.set_nodes(items.iter().map(|n| n.numerical_id.clone()).collect());
+            g.set_edges(
+                items[0].numerical_id.clone(),
+                vec![
+                    (1, items[1].numerical_id.clone()),
+                    (1, items[2].numerical_id.clone()),
+                    (1, items[3].numerical_id.clone()),
+                    (10, items[9].numerical_id.clone()),
+                ],
+            );
+    
+            g.set_edges(
+                items[1].numerical_id.clone(),
+                vec![(1, items[0].numerical_id.clone())],
+            );
+            g.set_edges(
+                items[2].numerical_id.clone(),
+                vec![(1, items[0].numerical_id.clone())],
+            );
+            g.set_edges(
+                items[3].numerical_id.clone(),
+                vec![
+                    (1, items[0].numerical_id.clone()),
+                    (1, items[4].numerical_id.clone()),
+                ],
+            );
+            g.set_edges(
+                items[4].numerical_id.clone(),
+                vec![
+                    (1, items[3].numerical_id.clone()),
+                    (1, items[5].numerical_id.clone()),
+                ],
+            );
+            g.set_edges(
+                items[5].numerical_id.clone(),
+                vec![
+                    (1, items[4].numerical_id.clone()),
+                    (1, items[6].numerical_id.clone()),
+                ],
+            );
+            g.set_edges(
+                items[6].numerical_id.clone(),
+                vec![
+                    (1, items[9].numerical_id.clone()),
+                    (1, items[5].numerical_id.clone()),
+                ],
+            );
+            g.set_edges(
+                items[7].numerical_id.clone(),
+                vec![(1, items[9].numerical_id.clone())],
+            );
+            g.set_edges(
+                items[8].numerical_id.clone(),
+                vec![(1, items[9].numerical_id.clone())],
+            );
+            g.set_edges(
+                items[9].numerical_id.clone(),
+                vec![
+                    (1, items[8].numerical_id.clone()),
+                    (1, items[7].numerical_id.clone()),
+                    (1, items[6].numerical_id.clone()),
+                    (10, items[0].numerical_id.clone()),
+                ],
+            );
+            g
+        }
+        #[test]
+        fn graph_insert_edges() {
+            let len = 10;
+            let items: Vec<IoTDevice> = (0..len).map(new_device_with_id).collect();
+
+            let g = build_graph(graph::InternetOfThings::new(), &items);
+
+            assert_eq!(g.edges(), 20);
+            assert_eq!(g.nodes(), len as usize);
+        }
+
+        #[test]
+        fn graph_find_shortest_path() {
+            let len = 10;
+            let items: Vec<IoTDevice> = (0..len).map(new_device_with_id).collect();
+
+            let g = build_graph(graph::InternetOfThings::new(), &items);
+
+            assert_eq!(g.edges(), 20);
+            assert_eq!(g.nodes(), len as usize);
+
+            assert_eq!(
+                g.shortest_path(items[0].numerical_id, items[9].numerical_id),
+                Some((
+                    5,
+                    vec![
+                        items[0].numerical_id,
+                        items[3].numerical_id,
+                        items[4].numerical_id,
+                        items[5].numerical_id,
+                        items[6].numerical_id,
+                        items[9].numerical_id
+                    ]
+                ))
+            )
+        }
+
+        #[test]
+        fn graph_neighbors() {
+            let len = 10;
+            let items: Vec<IoTDevice> = (0..len).map(new_device_with_id).collect();
+
+            let g = build_graph(graph::InternetOfThings::new(), &items);
+
+            assert_eq!(g.edges(), 20);
+            assert_eq!(g.nodes(), len as usize);
+
+            assert_eq!(
+                g.connected(items[0].numerical_id, 1),
+                Some(HashSet::from_iter(
+                    vec![
+                        items[1].numerical_id,
+                        items[2].numerical_id,
+                        items[3].numerical_id,
+                        items[9].numerical_id,
+                    ]
+                    .into_iter()
+                ))
+            )
         }
     }
 
