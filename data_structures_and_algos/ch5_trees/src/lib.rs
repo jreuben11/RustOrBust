@@ -1,6 +1,7 @@
 mod binary_search_tree;
 mod red_black_tree;
 mod heap;
+mod trie;
 
 #[derive(Clone, Debug)]
 pub struct IoTDevice {
@@ -221,5 +222,73 @@ mod tests {
         }
 
     }
+
+    mod trie_tests {
+        use super::*;
+
+        #[test]
+        fn trie_add() {
+            let mut trie = trie::BestDeviceRegistry::new_empty();
+            let len = 10;
+
+            let mut rng = thread_rng();
+
+            for i in 0..len {
+                trie.add(new_device_with_id_path(
+                    i,
+                    format!("factory{}/machineA/{}", rng.gen_range(0..len), i),
+                ));
+            }
+
+            assert_eq!(trie.length, len);
+        }
+
+        #[test]
+        fn trie_walk_in_order() {
+            let mut trie = trie::BestDeviceRegistry::new_empty();
+            let len = 10;
+
+            let mut rng = thread_rng();
+            let items: Vec<IoTDevice> = (0..len)
+                .map(|i| {
+                    new_device_with_id_path(
+                        i,
+                        format!("factory{}/machineA/{}", rng.gen_range(0..len), i),
+                    )
+                })
+                .collect();
+
+            for item in items.iter() {
+                trie.add(item.clone());
+            }
+            assert_eq!(trie.length, len);
+            let v: RefCell<Vec<IoTDevice>> = RefCell::new(vec![]);
+            trie.walk(|n| v.borrow_mut().push(n.clone()));
+            let mut items = items;
+            // sort in descending order:
+            items.sort_by(|a, b| b.numerical_id.cmp(&a.numerical_id));
+            let mut actual = v.into_inner();
+            actual.sort_by(|a, b| b.numerical_id.cmp(&a.numerical_id));
+            assert_eq!(actual, items)
+        }
+
+        #[test]
+        fn trie_find() {
+            let mut trie = trie::BestDeviceRegistry::new_empty();
+            let len = 10;
+
+            let mut rng = thread_rng();
+            let mut paths = vec![];
+            for i in 0..len {
+                let s = format!("factory{}/machineA/{}", rng.gen_range(0..len), i);
+                trie.add(new_device_with_id_path(i, s.clone()));
+                paths.push(s);
+            }
+
+            assert_eq!(trie.length, len);
+            assert_eq!(trie.find("100"), None);
+        }
+    }
+    
 
 }
