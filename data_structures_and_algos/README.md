@@ -280,6 +280,18 @@ fn get_level(&self) -> usize {
 - [dynamic array](ch4_lists/src/dynamic_array.rs)
   - `Box<[Node]>`, `vec!` `into_boxed_slice`, `clone_from_slice`
 # 5. Trees
+- [tests](ch5_trees/src/lib.rs)
+  - **binary_search_tree_walk_in_order**
+  - **binary_search_tree_find**
+  - **red_black_tree_add**
+  - **red_black_tree_walk_in_order**
+  - **red_black_tree_find**
+  - **binary_heap_add**
+  - **binary_heap_pop**
+  - **trie_add**
+  - **trie_walk_in_order**
+  - **trie_find**
+  - 
 - [binary search tree](ch5_trees/src/binary_search_tree.rs)
   - `mem::replace`
   - pass callback and  build a vector by walking tree:
@@ -326,3 +338,4 @@ tree.walk(|n|items.borrow_mut().push(n.clone()));
 - [red-black tree](ch5_trees/src/red_black_tree.rs)
 - [heap](ch5_trees/src/heap.rs)
   - `Vec<T>.swap_remove()` - remove 1st element of by replacing it with last element
+- [trie](ch5_trees/src/trie.rs)
