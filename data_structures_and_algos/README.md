@@ -292,13 +292,17 @@ fn get_level(&self) -> usize {
     - **binary_heap_add**
     - **binary_heap_pop**
   - trie
-    - **trie_add**use rand::seq::SliceRandom;
+    - **trie_add**
     - **trie_walk_in_order**
     - **trie_find**
   - btree
     - **btree_add**
     - **btree_find**
     - **btree_walk_in_order**
+  - graphs
+    - **graph_insert_edges**
+    - **graph_neighbors**
+    - **graph_find_shortest_path**
 - [binary search tree](ch5_trees/src/binary_search_tree.rs)
   - `mem::replace`
   - pass callback and  build a vector by walking tree:
@@ -379,4 +383,5 @@ for i in 0..len {
 }
 ```
 - [btree](ch5_trees/src/btree.rs) - implementation was complex :(
+- [graphs](ch5_trees/src/graph.rs) - need to revise & deep dive
 
