@@ -281,17 +281,24 @@ fn get_level(&self) -> usize {
   - `Box<[Node]>`, `vec!` `into_boxed_slice`, `clone_from_slice`
 # 5. Trees
 - [tests](ch5_trees/src/lib.rs)
-  - **binary_search_tree_walk_in_order**
-  - **binary_search_tree_find**
-  - **red_black_tree_add**
-  - **red_black_tree_walk_in_order**
-  - **red_black_tree_find**
-  - **binary_heap_add**
-  - **binary_heap_pop**
-  - **trie_add**
-  - **trie_walk_in_order**
-  - **trie_find**
-  - 
+  - binary search tree
+    - **binary_search_tree_walk_in_order**
+    - **binary_search_tree_find**
+  - red black tree
+    - **red_black_tree_add**
+    - **red_black_tree_walk_in_order**
+    - **red_black_tree_find**
+  - binary heap
+    - **binary_heap_add**
+    - **binary_heap_pop**
+  - trie
+    - **trie_add**use rand::seq::SliceRandom;
+    - **trie_walk_in_order**
+    - **trie_find**
+  - btree
+    - **btree_add**
+    - **btree_find**
+    - **btree_walk_in_order**
 - [binary search tree](ch5_trees/src/binary_search_tree.rs)
   - `mem::replace`
   - pass callback and  build a vector by walking tree:
@@ -335,7 +342,41 @@ tree.walk(|n|items.borrow_mut().push(n.clone()));
         items.sort_by(|a, b| b.numerical_id.cmp(&a.numerical_id));
         assert_eq!(v.into_inner(), items)
 ```
+  - random shuffle:
+```rust
+use rand::thread_rng;
+use rand::seq::SliceRandom;
+use rand::Rng;
+
+let mut tree = btree::DeviceDatabase::new_empty(3);
+let mut items: Vec<IoTDevice> = (0..len).map(new_device_with_id).collect();
+
+items.shuffle(&mut thread_rng());
+
+for item in items.iter() {
+    tree.add(item.clone());
+}
+```
 - [red-black tree](ch5_trees/src/red_black_tree.rs)
 - [heap](ch5_trees/src/heap.rs)
   - `Vec<T>.swap_remove()` - remove 1st element of by replacing it with last element
 - [trie](ch5_trees/src/trie.rs)
+  - random gen_range:
+```rust
+use rand::thread_rng;
+use rand::Rng;
+
+let mut trie = trie::BestDeviceRegistry::new_empty();
+let len = 10;
+
+let mut rng = thread_rng();
+
+for i in 0..len {
+    trie.add(new_device_with_id_path(
+        i,
+        format!("factory{}/machineA/{}", rng.gen_range(0..len), i),
+    ));
+}
+```
+- [btree](ch5_trees/src/btree.rs) - implementation was complex :(
+
