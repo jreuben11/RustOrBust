@@ -8,17 +8,22 @@
 4. [Rust Cookbook](cookbook/README.md)
 5. [Async](async/README.md)
 6. [Data Structures and Algorithms](data_structures_and_algos/README.md)
+7. [Bindgen Experiments](bindgen_experiments/README.md)
 
 # Rust 🦀 study plan:
 
-## Beginner
+## Beginner (2023)
 - [x] Rust book https://doc.rust-lang.org/book/ 
 - [x] Rust by example https://doc.rust-lang.org/stable/rust-by-example/ 
-## Intermediate
 - [x] Async https://rust-lang.github.io/async-book + https://book.async.rs/introduction.html 
 - [x] Rust for Rustaceans (book)
-- [ ] Rust Hands on Data Structures and Algorithms
+## Intermediate (2024)
+- [] Rust Hands on Data Structures and Algorithms
+- [] Bindgen https://rust-lang.github.io/rust-bindgen/
+- [] Rustonomicon https://doc.rust-lang.org/nomicon/index.html 
+- [] Cxx https://cxx.rs/ Rust loves C++
 - [] Tokio ecosystem   https://tokio.rs/tokio/tutorial 
+- [] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
 - [] Commandline book https://rust-cli.github.io/book/index.html 
 - [] Webassembly book https://rustwasm.github.io/docs/book/ 
 - [] PyO3 https://pyo3.rs/  Rust bindings for Python
@@ -28,9 +33,7 @@
 - [] Cargo book https://doc.rust-lang.org/cargo/index.html 
 - [] Rustdoc book https://doc.rust-lang.org/rustdoc/index.html 
 - [] RustC book https://doc.rust-lang.org/rustc/index.html 
-- [] Cxx https://cxx.rs/ Rust loves C++
 - [] Embedded book https://doc.rust-lang.org/embedded-book 
-- [] Rustonomicon https://doc.rust-lang.org/nomicon/index.html 
 - [] Unstable book https://doc.rust-lang.org/nightly/unstable-book/index.html 
 - [] Rust Design Patterns https://rust-unofficial.github.io/patterns/ 
 - [] Roadmap https://blog.rust-lang.org/inside-rust/2022/04/04/lang-roadmap-2024.html 

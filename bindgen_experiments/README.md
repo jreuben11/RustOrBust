@@ -1,0 +1,81 @@
+# Bindgen
+https://rust-lang.github.io/rust-bindgen/
+
+[Cargo.toml](Cargo.toml)
+```toml
+[build-dependencies]
+bindgen = "*"
+```
+
+[include/wrapper.h](include/wrapper.h)
+```C
+#include <bzlib.h>
+```
+
+[build.rs](build.rs)
+- **cargo:rustc-link-search**=/path/to/lib
+- 
+```rust
+let bindings = bindgen::Builder::default()
+    .header("include/wrapper.h")
+    .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
+    .generate()
+    .expect("...");
+let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
+bindings
+    .write_to_file(out_path.join("bindings.rs"))
+    .expect("...");
+```
+
+[src/lib.rs](src/lib.rs)
+```rust
+unsafe {
+    let input = include_str!("XXX.txt").as_bytes();
+    let mut compressed_output: Vec<u8> = vec![0; input.len()];
+    let mut decompressed_output: Vec<u8> = vec![0; input.len()];
+
+    // mutable C-type object to construct in C - memory is zeroed
+    let mut stream: bz_stream = mem::zeroed();
+    // instantiate
+    let result = BZ2_bzCompressInit(&mut stream as *mut _, ...); 
+    // match error codes 
+    match result {
+        r if r == (BZ_CONFIG_ERROR as _) => panic!("BZ_CONFIG_ERROR"),
+        ...
+        r if r == (BZ_OK as _) => {},
+        r => panic!("Unknown return value = {}", r),
+    }
+
+    // populate input ref `as_ptr` + its len, output `as_mut_ptr` + its len
+    stream.next_in = input.as_ptr() as *mut _;
+    stream.avail_in = input.len() as _;
+    stream.next_out = compressed_output.as_mut_ptr() as *mut _;
+    stream.avail_out = compressed_output.len() as _;
+
+    // Compress `input` into `compressed_output`.
+    let result = BZ2_bzCompress(&mut stream as *mut _, BZ_FINISH as _);
+    match result { ...
+    }
+
+    // Finish the compression stream.
+    let result = BZ2_bzCompressEnd(&mut stream as *mut _);
+    ...
+
+    // Construct a decompression stream - shadowed
+    let mut stream: bz_stream = mem::zeroed(); 
+    let result = BZ2_bzDecompressInit(&mut stream as *mut _, ...); 
+    ...
+
+    // Decompress `compressed_output` into `decompressed_output`.
+    ...
+    let result = BZ2_bzDecompress(&mut stream as *mut _);
+    ...
+
+    // Close the decompression stream.
+    let result = BZ2_bzDecompressEnd(&mut stream as *mut _);
+    ...
+
+    assert_eq!(input, &decompressed_output[..]);
+}
+
+```
