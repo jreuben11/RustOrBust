@@ -19,7 +19,7 @@
 - [x] Rust for Rustaceans (book)
 ## Intermediate (2024)
 - [] Rust Hands on Data Structures and Algorithms
-- [] Bindgen https://rust-lang.github.io/rust-bindgen/
+- [x] Bindgen https://rust-lang.github.io/rust-bindgen/
 - [] Rustonomicon https://doc.rust-lang.org/nomicon/index.html 
 - [] Cxx https://cxx.rs/ Rust loves C++
 - [] Tokio ecosystem   https://tokio.rs/tokio/tutorial 
