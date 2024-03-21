@@ -85,7 +85,38 @@ unsafe {
 
 ## Bindings for non-system libs
 [build.rs](build.rs) - `build_static_lib`
-`std::process::Command::new("...").arg("...")...output().expect("...").status.success()`:
-- Run `clang` to compile the `hello.c` file into a `hello.o` object file
-- Run `ar` to generate the `libhello.a` file from the `hello.o` file. 
-`bindgen::CargoCallbacks::new()`
+- `std::process::Command::new("...").arg("...")...output().expect("...").status.success()`:
+  - Run `clang` to compile the `hello.c` file into a `hello.o` object file
+  - Run `ar` to generate the `libhello.a` file from the `hello.o` file. 
+- `.parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))`
+
+## generate bindings from the commandline
+```bash
+cargo install bindgen-cli
+ll ~/.cargo/bin
+bindgen include/input.h -o src/bindings.rs
+```
+```C
+typedef struct CoolStruct {
+    int x;
+    int y;
+} CoolStruct;
+```
+-->
+```rust
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct CoolStruct {
+    pub x: ::std::os::raw::c_int,
+    pub y: ::std::os::raw::c_int,
+}
+```
+```C
+void cool_function(int i, char c, CoolStruct* cs);
+```
+-->
+```rust
+extern "C" {
+    pub fn cool_function(i: ::std::os::raw::c_int, c: ::std::os::raw::c_char, cs: *mut CoolStruct);
+}
+```
