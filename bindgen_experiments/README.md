@@ -1,6 +1,8 @@
 # Bindgen
 https://rust-lang.github.io/rust-bindgen/
 
+## Library Usage with build.rs
+
 [Cargo.toml](Cargo.toml)
 ```toml
 [build-dependencies]
@@ -12,9 +14,10 @@ bindgen = "*"
 #include <bzlib.h>
 ```
 
-[build.rs](build.rs)
-- **cargo:rustc-link-search**=/path/to/lib
-- 
+[build.rs](build.rs) - `build_shared_lib`
+- **cargo:rustc-link-search** - absolute path to look for shared libraries
+- **cargo:rustc-link-lib** - link to lib: if `X`, then links to `libX.a`
+- **cargo:rerun-if-changed** - rerun build if header file changed
 ```rust
 let bindings = bindgen::Builder::default()
     .header("include/wrapper.h")
@@ -79,3 +82,10 @@ unsafe {
 }
 
 ```
+
+## Bindings for non-system libs
+[build.rs](build.rs) - `build_static_lib`
+`std::process::Command::new("...").arg("...")...output().expect("...").status.success()`:
+- Run `clang` to compile the `hello.c` file into a `hello.o` object file
+- Run `ar` to generate the `libhello.a` file from the `hello.o` file. 
+`bindgen::CargoCallbacks::new()`
