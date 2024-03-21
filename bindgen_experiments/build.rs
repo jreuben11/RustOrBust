@@ -1,6 +1,8 @@
 use std::env;
 use std::path::PathBuf;
 
+static SHARED_LIB_BINDINGS: &str = "shared_lib_bindings.rs";
+static STATIC_LIB_BINDINGS: &str = "static_lib_bindings.rs";
 
 fn build_shared_lib() {
     // Tell cargo to look for shared libraries in the specified directory
@@ -28,11 +30,11 @@ fn build_shared_lib() {
     // Write the bindings to the $OUT_DIR/bindings.rs file.
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
     bindings
-        .write_to_file(out_path.join("bindings.rs"))
+        .write_to_file(out_path.join(SHARED_LIB_BINDINGS))
         .expect("Couldn't write bindings!");
 }
 
-fn build_static_lib(){
+fn build_static_lib() {
     // This is the directory where the `c` library is located.
     let libdir_path = PathBuf::from("hello")
         // Canonicalize the path as `rustc-link-search` requires an absolute
@@ -106,7 +108,7 @@ fn build_static_lib(){
         .expect("Unable to generate bindings");
 
     // Write the bindings to the $OUT_DIR/bindings.rs file.
-    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap()).join("bindings.rs");
+    let out_path = PathBuf::from(env::var("OUT_DIR").unwrap()).join(STATIC_LIB_BINDINGS);
     bindings
         .write_to_file(out_path)
         .expect("Couldn't write bindings!");
