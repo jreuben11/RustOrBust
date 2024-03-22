@@ -5,10 +5,11 @@
 1. [Quickstart](hello_world/README.md) - a refresher before deep diving !
 2. [the Rust Book worked examples](rust_book/README.md)
 3. [Rust by Example](rust_by_example/README.md)
-4. [Rust Cookbook](cookbook/README.md)
+4. [Rust Cookbook](cookbook/README.md) (abandonded - come back to this later)
 5. [Async](async/README.md)
-6. [Data Structures and Algorithms](data_structures_and_algos/README.md)
+6. [Data Structures and Algorithms](data_structures_and_algos/README.md) (in progress)
 7. [Bindgen Experiments](bindgen_experiments/README.md)
+8. [Rustonomicon](rustonomicon/README.md) (in progress)
 
 # Rust 🦀 study plan:
 
@@ -16,11 +17,11 @@
 - [x] Rust book https://doc.rust-lang.org/book/ 
 - [x] Rust by example https://doc.rust-lang.org/stable/rust-by-example/ 
 - [x] Async https://rust-lang.github.io/async-book + https://book.async.rs/introduction.html 
-- [x] Rust for Rustaceans (book)
+- [x] Rust for Rustaceans (book) https://rust-for-rustaceans.com/
 ## Intermediate (2024)
-- [] Rust Hands on Data Structures and Algorithms
-- [] Bindgen https://rust-lang.github.io/rust-bindgen/
-- [] Rustonomicon https://doc.rust-lang.org/nomicon/index.html 
+- [] Rust Hands on Data Structures and Algorithms (book) https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorithms-with-Rust (in progress)
+- [x] Bindgen https://rust-lang.github.io/rust-bindgen/
+- [] Rustonomicon https://doc.rust-lang.org/nomicon/index.html (in progress)
 - [] Cxx https://cxx.rs/ Rust loves C++
 - [] Tokio ecosystem   https://tokio.rs/tokio/tutorial 
 - [] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
