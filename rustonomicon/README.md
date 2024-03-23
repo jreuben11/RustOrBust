@@ -62,4 +62,5 @@ assert_eq!(16, size_of::<MyReprOption<&u16>>());
     unbounded_lifetimes::demo();
     higher_rank_trait_bounds::demo();
     subtyping_and_variance::demo();
+    drop_check::demo();
 ```

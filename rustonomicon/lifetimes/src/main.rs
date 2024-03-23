@@ -146,7 +146,7 @@ mod subtyping_and_variance {
     }
 
     use std::cell::Cell;
-    #[warn(dead_code)]
+
     struct MyType<'a, 'b, A: 'a, B: 'b, C, D, E, F, G, H, In, Out, Mixed> {
         a: &'a A,     // covariant over 'a and A
         b: &'b mut B, // covariant over 'b and invariant over B
@@ -196,6 +196,54 @@ mod subtyping_and_variance {
     }
 }
 
+mod drop_check {
+    #![feature(dropck_eyepatch)]
+    #![allow(unused_attributes)]
+    struct Inspector<'a>(&'a u8, &'static str);
+    
+    // NIGhTLY ONLY: #[may_dangle]
+    // unsafe impl<#[may_dangle] 'a> Drop for Inspector<'a> {
+    //     fn drop(&mut self) {
+    //         println!("Inspector(_, {}) knows when *not* to inspect.", self.1);
+    //     }
+    // }
+    
+    struct World<'a> {
+        days: Box<u8>,
+        inspector: Option<Inspector<'a>>,
+    }
+    
+    pub fn demo() {
+        let mut world = World {
+            inspector: None,
+            days: Box::new(1),
+        };
+        world.inspector = Some(Inspector(&world.days, "gadget"));
+    }
+
+}
+
+mod phantom_data {
+    use std::marker;
+
+    struct Iter<'a, T: 'a> {
+        ptr: *const T,
+        end: *const T,
+        _marker: marker::PhantomData<&'a T>,
+    }
+
+    struct MyVec<T> {
+        data: *const T, // `*const` for variance 
+        len: usize,
+        cap: usize,
+    }
+    
+    impl<T> Drop for MyVec<T> { 
+        fn drop(&mut self) {}
+    }
+}
+
+
 fn main() {
     aliasing::demo();
     lifetimes::demo();
@@ -203,5 +251,5 @@ fn main() {
     unbounded_lifetimes::demo();
     higher_rank_trait_bounds::demo();
     subtyping_and_variance::demo();
-
+    drop_check::demo();
 }
