@@ -23,3 +23,33 @@ unsafe {
     ...
 }
 ```
+## [data layout](data_layout/src/main.rs)
+- `repr(Rust)`
+- Dynamically Sized Types (DSTs)
+- Zero Sized Types (ZSTs)
+- Empty Types
+- Alternative representations
+```rust
+#![allow(dead_code)]
+use std::mem::size_of;
+...
+
+println!("sizes - A:{}, APadded:{}", size_of::<A>(), size_of::<APadded>());
+
+const DST_SIZE: usize = 8;
+let static_sized: MySuperSliceable<[u8; DST_SIZE]> = MySuperSliceable {
+    info: 17,
+    data: [0; DST_SIZE],
+};
+let dynamic_sized: &MySuperSliceable<[u8]> = &static_sized;
+println!("{} {:?}", dynamic_sized.info, &dynamic_sized.data); // prints: "17 [0, 0, 0, 0, 0, 0, 0, 0]"
+
+assert_eq!(0, size_of::<LotsOfNothing>());
+
+let res: Result<u32, Void> = Ok(0);
+// Err doesn't exist anymore, so Ok is actually irrefutable.
+let Ok(_num) = res else { todo!() };
+
+assert_eq!(8, size_of::<MyOption<&u16>>());
+assert_eq!(16, size_of::<MyReprOption<&u16>>());
+```
