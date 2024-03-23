@@ -53,3 +53,13 @@ let Ok(_num) = res else { todo!() };
 assert_eq!(8, size_of::<MyOption<&u16>>());
 assert_eq!(16, size_of::<MyReprOption<&u16>>());
 ```
+
+## [lifetimes](lifetimes/src/main.rs)
+```rust
+    aliasing::demo();
+    lifetimes::demo();
+    lifetime_limits::demo();
+    unbounded_lifetimes::demo();
+    higher_rank_trait_bounds::demo();
+    subtyping_and_variance::demo();
+```
