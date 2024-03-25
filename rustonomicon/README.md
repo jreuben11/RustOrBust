@@ -254,3 +254,36 @@ fn clone_containers_b<T>(foo: &ContainerB<i32>, bar: &ContainerB<T>) {
 - casts
 - transmutes
   - `mem::transmute<T, U>` / `mem::transmute_copy<T, U>`
+
+## [unitialized memory](unitialized_memory/src/main.rs)
+```rust
+use std::mem::{self, MaybeUninit};
+use std::ptr;
+
+fn main() {
+    check_unitialized_memory();
+    drop_flags();
+    unchecked_uninitialized_memory();
+}
+```
+- `MaybeUninit`
+- `ptr::write(ptr, val)` - takes a val and moves it into the address pointed to by ptr.
+- ptr::copy(src, dest, count) - copies the bits that count T items would occupy from src to dest. (equivalent to C's `memmove`)
+- `ptr::copy_nonoverlapping(src, dest, count)` does what copy does, but a little faster on the assumption that the two ranges of memory don't overlap. (equivalent to C's `memcpy`)
+```rust
+    let x = {
+        let mut x: [MaybeUninit<Box<u32>>; SIZE] = unsafe {
+            MaybeUninit::uninit().assume_init()
+        };
+        for i in 0..SIZE {
+            x[i] = MaybeUninit::new(Box::new(i as u32));
+        }
+        unsafe { mem::transmute::<_, [Box<u32>; SIZE]>(x) }
+    };
+    dbg!(x);
+
+    let mut uninit = MaybeUninit::<Demo>::uninit();
+    let f1_ptr = unsafe { ptr::addr_of_mut!((*uninit.as_mut_ptr()).field) };
+    unsafe { f1_ptr.write(true); }
+    let _init = unsafe { uninit.assume_init() };
+```
