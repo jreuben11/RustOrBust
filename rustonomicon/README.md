@@ -228,3 +228,29 @@ unsafe impl<#[may_dangle] 'a> Drop for Inspector<'a> {
 ### Splitting Borrows
 - mutable slices expose a `split_at_mut` function that consumes the slice and returns two mutable slices.
 - linked list, binary tree
+
+## [type_conversions](type_conversions/src/main.rs)
+- coercions
+- dot operator
+```rust
+#[derive(Clone)]
+struct ContainerA<T>(Arc<T>);
+#[allow(noop_method_call)]
+fn clone_containers_a<T>(foo: &ContainerA<i32>, bar: &ContainerA<T>) {
+    let _foo_cloned: ContainerA<i32> = foo.clone();
+    let _bar_cloned: &ContainerA<T> = bar.clone(); // autoref
+}
+struct ContainerB<T>(Arc<T>);
+impl<T> Clone for ContainerB<T> /* where T: Clone */ {
+    fn clone(&self) -> Self {
+        Self(Arc::clone(&self.0))
+    }
+}
+fn clone_containers_b<T>(foo: &ContainerB<i32>, bar: &ContainerB<T>) {
+    let _foo_cloned: ContainerB<i32> = foo.clone();
+    let _bar_cloned: ContainerB<T> = bar.clone();
+}
+```
+- casts
+- transmutes
+  - `mem::transmute<T, U>` / `mem::transmute_copy<T, U>`
