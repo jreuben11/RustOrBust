@@ -255,7 +255,7 @@ fn clone_containers_b<T>(foo: &ContainerB<i32>, bar: &ContainerB<T>) {
 - transmutes
   - `mem::transmute<T, U>` / `mem::transmute_copy<T, U>`
 
-## [unitialized memory](unitialized_memory/src/main.rs)
+## [unitialized memory](uninitialized_memory/src/main.rs)
 ```rust
 use std::mem::{self, MaybeUninit};
 use std::ptr;
@@ -286,4 +286,125 @@ fn main() {
     let f1_ptr = unsafe { ptr::addr_of_mut!((*uninit.as_mut_ptr()).field) };
     unsafe { f1_ptr.write(true); }
     let _init = unsafe { uninit.assume_init() };
+```
+
+## [OBRM](orbm/src/lib.rs) Ownership Based Resource Management 
+- switch rust versions for feature flags
+```bash
+rustup default nightly
+rustup update
+rustup default stable
+```
+- ctors
+- dtors
+```rust
+#![allow(dead_code)]
+#![allow(internal_features)]
+#![feature(ptr_internals, allocator_api)]
+
+use std::alloc::{Allocator, Global, Layout};
+use std::mem;
+use std::ptr::{drop_in_place, NonNull, Unique};
+...
+    unsafe {
+        let my_box = self.my_box.take().unwrap();
+        let c: NonNull<T> = my_box.ptr.into();
+        Global.deallocate(c.cast(), Layout::new::<T>());
+        mem::forget(my_box);
+    }
+```
+- how to instantiate a `Unique<T>` ???
+- Leaking (psuedocode)
+  - `vec::Drain` ?
+## unwinding (no code)
+- Exception Safety
+  - `Vec::push_all`
+  - `BinaryHeap::sift_up`
+  - `struct Hole<'a, T: 'a>`
+- Poisoning
+
+## [concurrency and parallelism](concurrency_and_parallelism/src/main.rs)
+### data race
+```rust
+    #![feature(negative_impls)]
+
+    struct X(u8);
+    impl !Send for X {}
+    impl !Sync for X {}
+```
+### send and sync
+  - `cargo add libc` - posix_memalign, free
+```rust
+    use std::{
+        mem::{align_of, size_of},
+        ptr,
+    };
+    use std::ops::{Deref, DerefMut};
+    
+    pub struct Carton<T>(ptr::NonNull<T>);
+    impl<T> Carton<T> {
+        pub fn new(value: T) -> Self {
+            assert_ne!(size_of::<T>(), 0, "Zero-sized types are out of the scope of this example");
+            let mut memptr: *mut T = ptr::null_mut();
+            unsafe {
+                let ret = libc::posix_memalign(
+                    (&mut memptr).cast(),
+                    align_of::<T>(),
+                    size_of::<T>()
+                );
+                assert_eq!(ret, 0, "Failed to allocate or invalid alignment");
+            };
+            let ptr = {
+                ptr::NonNull::new(memptr)
+                    .expect("Guaranteed non-null if posix_memalign returns 0")
+            };
+            unsafe {
+                ptr.as_ptr().write(value);
+            } 
+            Self(ptr)
+        }
+    }
+
+    impl<T> Deref for Carton<T> {
+        type Target = T;
+        fn deref(&self) -> &Self::Target {
+            unsafe {
+                self.0.as_ref()
+            }
+        }
+    }
+    
+    impl<T> DerefMut for Carton<T> {
+        fn deref_mut(&mut self) -> &mut Self::Target {
+            unsafe {
+                self.0.as_mut()
+            }
+        }
+    }
+
+    impl<T> Drop for Carton<T> {
+        fn drop(&mut self) {
+            unsafe {
+                libc::free(self.0.as_ptr().cast());
+            }
+        }
+    }
+
+    unsafe impl<T> Send for Carton<T> where T: Send {}
+    unsafe impl<T> Sync for Carton<T> where T: Sync {}
+```
+### atomic spin_locking
+```rust
+    use std::sync::Arc;
+    use std::sync::atomic::{AtomicBool, Ordering};
+    // use std::thread;
+    
+        let lock = Arc::new(AtomicBool::new(false)); // value answers "am I locked?"
+        // ... distribute lock to threads somehow ...
+        // Try to acquire the lock by setting it to true
+        while !lock.compare_exchange(false, true, Ordering::Acquire, Ordering::Acquire).is_err(){}
+        // broke out of the loop, so we successfully acquired the lock!
+        // ... scary data accesses ...
+        // ok we're done, release the lock
+        lock.store(false, Ordering::Release);
 ```
