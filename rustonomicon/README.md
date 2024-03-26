@@ -255,7 +255,7 @@ fn clone_containers_b<T>(foo: &ContainerB<i32>, bar: &ContainerB<T>) {
 - transmutes
   - `mem::transmute<T, U>` / `mem::transmute_copy<T, U>`
 
-## [unitialized memory](unitialized_memory/src/main.rs)
+## [unitialized memory](uninitialized_memory/src/main.rs)
 ```rust
 use std::mem::{self, MaybeUninit};
 use std::ptr;
@@ -287,3 +287,32 @@ fn main() {
     unsafe { f1_ptr.write(true); }
     let _init = unsafe { uninit.assume_init() };
 ```
+
+## [OBRM](orbm/src/main.rs) Ownership Based Resource Management 
+- switch rust versions for feature flags
+```bash
+rustup default nightly
+rustup update
+rustup default stable
+```
+- ctors
+- dtors
+```rust
+#![allow(dead_code)]
+#![allow(internal_features)]
+#![feature(ptr_internals, allocator_api)]
+
+use std::alloc::{Allocator, Global, Layout};
+use std::mem;
+use std::ptr::{drop_in_place, NonNull, Unique};
+...
+    unsafe {
+        let my_box = self.my_box.take().unwrap();
+        let c: NonNull<T> = my_box.ptr.into();
+        Global.deallocate(c.cast(), Layout::new::<T>());
+        mem::forget(my_box);
+    }
+```
+- how to instantiate a `Unique<T>` ???
+- Leaking (psuedocode)
+  - `vec::Drain` ?
