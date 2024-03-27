@@ -408,3 +408,139 @@ use std::ptr::{drop_in_place, NonNull, Unique};
         // ok we're done, release the lock
         lock.store(false, Ordering::Release);
 ```
+
+## [My Vec](my_vec/src/lib.rs)
+- structure:
+```rust
+// RawVec
+struct RawVec<T> {
+    ptr: NonNull<T>,
+    cap: usize,
+}
+impl<T> RawVec<T> {
+    fn new() -> Self {...}
+    fn grow(&mut self) {...}
+}
+
+// Vec
+pub struct Vec<T> {
+    buf: RawVec<T>,
+    len: usize,
+}
+impl<T> Drop for Vec<T> {
+    fn drop(&mut self) {...}
+}
+impl<T> Deref for Vec<T> {
+    type Target = [T];
+    fn deref(&self) -> &[T] {...}
+}
+impl<T> DerefMut for Vec<T> {
+    fn deref_mut(&mut self) -> &mut [T] {...}
+}
+impl<T> IntoIterator for Vec<T> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+    fn into_iter(self) -> IntoIter<T> {...}
+}
+
+// RawValIter
+struct RawValIter<T> {
+    start: *const T,
+    end: *const T,
+}
+impl<T> RawValIter<T> {
+    unsafe fn new(slice: &[T]) -> Self {...}
+}
+impl<T> Iterator for RawValIter<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<T> {...}
+    fn size_hint(&self) -> (usize, Option<usize>) {...}
+}
+impl<T> DoubleEndedIterator for RawValIter<T> {
+    fn next_back(&mut self) -> Option<T> {...}
+}
+
+// IntoIter
+pub struct IntoIter<T> {
+    _buf: RawVec<T>, // we don't actually care about this. Just need it to live.
+    iter: RawValIter<T>,
+}
+impl<T> Iterator for IntoIter<T> {
+    type Item = T;
+    fn next(&mut self) -> Option<T> {...}
+    fn size_hint(&self) -> (usize, Option<usize>) {...}
+}
+impl<T> DoubleEndedIterator for IntoIter<T> {
+    fn next_back(&mut self) -> Option<T> {...}
+}
+impl<T> Drop for IntoIter<T> {
+    fn drop(&mut self) {...}
+}
+
+// Drain
+pub struct Drain<'a, T: 'a> {
+    vec: PhantomData<&'a mut Vec<T>>,
+    iter: RawValIter<T>,
+}
+impl<'a, T> Iterator for Drain<'a, T> {
+    type Item = T;
+    fn next(&mut self) -> Option<T> {...}
+    fn size_hint(&self) -> (usize, Option<usize>) {...}
+}
+impl<'a, T> DoubleEndedIterator for Drain<'a, T> {
+    fn next_back(&mut self) -> Option<T> {...}
+}
+impl<'a, T> Drop for Drain<'a, T> {
+    fn drop(&mut self) {..}
+}
+
+```
+- imports:
+```rust
+use std::alloc::{self, Layout};
+use std::marker::PhantomData;
+use std::mem;
+use std::ops::{Deref, DerefMut};
+use std::ptr::{self, NonNull};
+```
+- mechanisms:
+- `mem::size_of::<T>()` - `!0` is `usize::MAX`.
+- `NonNull::dangling()` doubles as "unallocated" and "zero-sized allocation"
+- `Layout::array::<T>`
+- `PhantomData<&'a mut Vec<T>>`
+- `mem::forget(self);` - used in `IntoIterator`
+```rust
+let mut cap: usize = if mem::size_of::<T>() == 0 { !0 } else { 0 };
+let mut ptr: NonNull<T> = NonNull::dangling();
+let val: Option<T> = Some(ptr::read(ptr.as_ptr()));
+```
+```rust
+let new_ptr = if self.cap == 0 {
+    unsafe { alloc::alloc(new_layout) }
+} else {
+    let old_layout = Layout::array::<T>(self.cap).unwrap();
+    let old_ptr = self.ptr.as_ptr() as *mut u8;
+    unsafe { alloc::realloc(old_ptr, old_layout, new_layout.size()) }
+};
+
+// If allocation fails, `new_ptr` will be null, in which case we abort.
+self.ptr = match NonNull::new(new_ptr as *mut T) {
+    Some(p) => p,
+    None => alloc::handle_alloc_error(new_layout),
+};
+```
+```rust
+unsafe {
+    alloc::dealloc(
+        self.ptr.as_ptr() as *mut u8,
+        Layout::array::<T>(self.cap).unwrap(),
+    );
+}
+```
+```rust
+let (iter, buf) = unsafe {
+    (RawValIter::new(&self), ptr::read(&self.buf))
+};
+mem::forget(self);
+```
+
