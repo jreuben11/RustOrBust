@@ -544,3 +544,50 @@ let (iter, buf) = unsafe {
 mem::forget(self);
 ```
 
+## [My Arc](my_arc/src/lib.rs)
+- `std::sync::Arc`
+- structure:
+```rust
+pub struct Arc<T> {
+    ptr: NonNull<ArcInner<T>>,
+    phantom: PhantomData<ArcInner<T>>,
+}
+pub struct ArcInner<T> {
+    rc: AtomicUsize,
+    data: T,
+}
+
+impl<T> Arc<T> {
+    pub fn new(data: T) -> Arc<T> {...}
+}
+
+unsafe impl<T: Sync + Send> Send for Arc<T> {}
+unsafe impl<T: Sync + Send> Sync for Arc<T> {}
+
+impl<T> Deref for Arc<T> {
+    type Target = T;
+    fn deref(&self) -> &T {...}
+}
+impl<T> Clone for Arc<T> {
+    fn clone(&self) -> Arc<T> {...}
+}
+impl<T> Drop for Arc<T> {
+    fn drop(&mut self) {...}
+}
+```
+- imports:
+```rust
+use std::marker::PhantomData;
+use std::ops::Deref;
+use std::ptr::NonNull;
+use std::sync::atomic::{self, AtomicUsize, Ordering};
+```
+- `let rc: atomic::AtomicUsize = AtomicUsize::new(1)` - the reference count
+  - `rc.fetch_add(1, Ordering::Relaxed)`
+  - `rc.fetch_sub(1, Ordering::Release)`
+- `ptr: NonNull<ArcInner<T>>`
+  - `unsafe { ptr.as_ref() }`
+- `let phantom: PhantomData<ArcInner<T>> = NonNull::new(Box::into_raw(boxed)).unwrap()`
+- `T: Sync + Send`
+- `std::process::abort()`
+- `atomic::fence(Ordering::Acquire)`
