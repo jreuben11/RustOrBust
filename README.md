@@ -9,7 +9,8 @@
 5. [Async](async/README.md)
 6. [Data Structures and Algorithms](data_structures_and_algos/README.md) (in progress)
 7. [Bindgen Experiments](bindgen_experiments/README.md)
-8. [Rustonomicon](rustonomicon/README.md) (in progress)
+8. [Rustonomicon](rustonomicon/README.md)
+9. [CLIs and TUIs](clis_and_tuis/README.md) (in progress)
 
 # Rust 🦀 study plan:
 
@@ -21,13 +22,13 @@
 ## Intermediate (2024)
 - [] Rust Hands on Data Structures and Algorithms (book) https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorithms-with-Rust (in progress)
 - [x] Bindgen https://rust-lang.github.io/rust-bindgen/
-- [] Rustonomicon https://doc.rust-lang.org/nomicon/index.html (in progress)
-- [] Cxx https://cxx.rs/ Rust loves C++
-- [] Tokio ecosystem   https://tokio.rs/tokio/tutorial 
-- [] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
-- [] Commandline book https://rust-cli.github.io/book/index.html 
-- [] Webassembly book https://rustwasm.github.io/docs/book/ 
-- [] PyO3 https://pyo3.rs/  Rust bindings for Python
+- [x] Rustonomicon https://doc.rust-lang.org/nomicon/index.html
+- [ ] Commandline book https://rust-cli.github.io/book/index.html + Clap https://docs.rs/clap/latest/clap/ + RataTUI https://ratatui.rs/introduction/ (in progress)
+- [ ] Cxx https://cxx.rs/ Rust loves C++
+- [ ] Tokio ecosystem   https://tokio.rs/tokio/tutorial 
+- [ ] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
+- [ ] Webassembly book https://rustwasm.github.io/docs/book/ 
+- [ ] PyO3 https://pyo3.rs/  Rust bindings for Python
 ## Next ...
 - [] Standard lib https://doc.rust-lang.org/std/index.html 
 - [] Edition guide https://doc.rust-lang.org/edition-guide/index.html 
@@ -42,7 +43,6 @@
 - [] Vulkano https://vulkano.rs/guide/introduction 
 - [] Rustup https://rust-lang.github.io/rustup/ 
 - [] Clippy https://doc.rust-lang.org/clippy/ 
-- [] Linked lists in rust https://rust-unofficial.github.io/too-many-lists/ 
 - How to learn modern rust https://github.com/joaocarvalhoopen/How_to_learn_modern_Rust 
 - The little book of Rust Books https://lborb.github.io/book/ 
 - blessed.rs  - An unofficial guide to the crates of the Rust ecosystem 
