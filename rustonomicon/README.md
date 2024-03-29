@@ -591,3 +591,55 @@ use std::sync::atomic::{self, AtomicUsize, Ordering};
 - `T: Sync + Send`
 - `std::process::abort()`
 - `atomic::fence(Ordering::Acquire)`
+
+## FFI
+- [](ffi/Cargo.toml)
+- [](ffi/build.rs) 
+- [](ffi/src/lib.rs)
+- [](ffi/call_rust.c)
+### call C from rust
+```rust
+use libc::{c_int, size_t};
+
+#[link(name = "snappy")]
+extern {
+  fn snappy_compress(input: *const u8,
+                  input_length: size_t,
+                  compressed: *mut u8,
+                  compressed_length: *mut size_t) -> c_int;
+}
+
+pub fn compress(src: &[u8]) -> Vec<u8> {
+    unsafe {
+        let srclen = src.len() as size_t;
+        let psrc = src.as_ptr();
+
+        let mut dstlen = snappy_max_compressed_length(srclen);
+        let mut dst = Vec::with_capacity(dstlen as usize);
+        let pdst = dst.as_mut_ptr(); // mut pointer to Vec data
+        snappy_compress(psrc, srclen, pdst, &mut dstlen);
+        dst.set_len(dstlen as usize);
+        dst
+    }
+}
+```
+
+### call from from C
+```rust
+#[no_mangle]
+pub extern "C" fn hello_from_rust() {
+    println!("Hello from Rust!");
+}
+```
+```C
+extern void hello_from_rust();
+
+int main(void) {
+    hello_from_rust();
+    return 0;
+}
+```
+```bash
+gcc call_rust.c -o call_rust -lffi -L./target/debug
+LD_LIBRARY_PATH=./target/debug ./call_rust
+```

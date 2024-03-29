@@ -1,0 +1,16 @@
+[package]
+name = "ffi"
+version = "0.1.0"
+edition = "2021"
+
+build = "build.rs"
+links = "snappy"
+
+[lib]
+crate-type = ["cdylib"] # for C calling Rust
+
+[dependencies]
+libc = "0.2.153"
+
+[build-dependencies]
+cmake = "0.1.50"
