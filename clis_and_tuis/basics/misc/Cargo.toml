@@ -1,0 +1,16 @@
+[package]
+name = "misc"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0.81"
+clap = { version = "4.5.4", features = ["derive"] }
+config = "0.14.0"
+crossbeam-channel = "0.5.12"
+ctrlc = "3.4.4"
+lazy_static = "1.4.0"
+serde = {version="1.0.197", features = ["derive"]}
+serde_derive = "1.0.197"
+serde_json = "1.0.115"
+signal-hook = "0.3.17"
