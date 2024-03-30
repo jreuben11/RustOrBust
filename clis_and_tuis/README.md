@@ -168,3 +168,38 @@ loop {
     }
 }
 ```
+# clap
+## [quickstart](clap/quickstart/src/main.rs)
+```bash
+cargo run -- --help
+cargo run -- --name=bob --count=3
+cargo run -- -n=bob -c=3
+```
+```rust
+use clap::Parser;
+
+/// Simple program to greet a person
+#[derive(Parser, Debug)]
+#[command(version, about, long_about = None)]
+struct Args {
+    /// Name of the person to greet
+    #[arg(short, long)]
+    name: String,
+
+    /// Number of times to greet
+    #[arg(short, long, default_value_t = 1)]
+    count: u8,
+}
+
+fn main() {
+    let args = Args::parse();
+
+    for _ in 0..args.count {
+        println!("Hello {}!", args.name)
+    }
+}
+```
+## [derive](clap/derive/src/main.rs)
+- `cargo run -- test --list` - subcommands
+## [builder](clap/builder/src/main.rs)
+- `cargo run -- test --list` - subcommands
