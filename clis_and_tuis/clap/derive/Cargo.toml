@@ -1,0 +1,8 @@
+[package]
+name = "derive"
+version = "0.1.0"
+edition = "2021"
+description = "blah" # read from clap Command
+
+[dependencies]
+clap = { version = "4.5.4", features = ["derive"] }
