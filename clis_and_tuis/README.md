@@ -264,3 +264,40 @@ fn main() -> Result<()> {
     Ok(())
 }
 ```
+## counter app
+- **ALOT TO ABSORB !!!**
+- [Cargo.toml](ratatui/ratatui-counter-app/Cargo.toml)
+```toml
+[dependencies]
+color-eyre = "0.6.3"
+crossterm = "0.27.0"
+ratatui = "0.26.1"
+```
+- [main.rs](ratatui/ratatui-counter-app/src/main.rs)
+```rust
+// use std::io;
+use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
+use ratatui::{
+    prelude::*,
+    symbols::border,
+    widgets::{block::*, *},
+};
+use color_eyre::{
+    eyre::{bail, WrapErr},
+};
+mod errors;
+mod tui;
+```
+- [tui.rs](ratatui/ratatui-counter-app/src/tui.rs)
+```rust
+use std::io::{self, stdout, Stdout};
+use crossterm::{execute, terminal::*};
+use ratatui::prelude::*;
+```
+- [errors.rs](ratatui/ratatui-counter-app/src/errors.rs)
+```rust
+use std::panic;
+use color_eyre::{config::HookBuilder, eyre};
+use crate::tui;
+```
+  
