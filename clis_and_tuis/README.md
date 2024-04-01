@@ -264,6 +264,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 ```
+
 ## counter app
 - **ALOT TO ABSORB !!!**
 - [Cargo.toml](ratatui/ratatui-counter-app/Cargo.toml)
@@ -300,4 +301,123 @@ use std::panic;
 use color_eyre::{config::HookBuilder, eyre};
 use crate::tui;
 ```
-  
+
+## json editor
+### [Cargo.toml](ratatui/ratatui-json-editor/Cargo.toml)
+### [main.rs](ratatui/ratatui-json-editor/src/main.rs)
+- dependencies:
+```rust
+use std::{error::Error, io};
+
+use crossterm::{
+    event::{
+        self, DisableMouseCapture, EnableMouseCapture, Event, KeyCode,
+        KeyEventKind,
+    },
+    execute,
+    terminal::{
+        disable_raw_mode, enable_raw_mode, EnterAlternateScreen,
+        LeaveAlternateScreen,
+    },
+};
+use ratatui::{
+    backend::{Backend, CrosstermBackend},
+    Terminal,
+};
+
+mod app;
+mod ui;
+use crate::{
+    app::{App, CurrentScreen, CurrentlyEditing},
+    ui::ui,
+};
+```
+main:
+```rust
+fn main() -> Result<(), Box<dyn Error>> {
+    // setup terminal
+    enable_raw_mode()?;
+    let mut stderr = io::stderr(); // This is a special case. Normally using stdout is fine
+    execute!(stderr, EnterAlternateScreen, EnableMouseCapture)?;
+    let backend = CrosstermBackend::new(stderr);
+    let mut terminal = Terminal::new(backend)?;
+
+    // create app and run it
+    let mut app = App::new();
+    let res = run_app(&mut terminal, &mut app); // app loop: draw and set state
+
+
+    // restore terminal
+    disable_raw_mode()?;
+    execute!(
+        terminal.backend_mut(),
+        LeaveAlternateScreen,
+        DisableMouseCapture
+    )?;
+    terminal.show_cursor()?;
+
+    if let Ok(do_print) = res {
+        if do_print {
+            app.print_json()?;
+        }
+    } else if let Err(err) = res {
+        println!("{err:?}");
+    }
+
+    Ok(())
+}
+```
+```rust
+fn run_app<B: Backend>(
+    terminal: &mut Terminal<B>,
+    app: &mut App,
+) -> io::Result<bool> {
+    loop {
+        terminal.draw(|f| ui(f, app))?;
+
+        if let Event::Key(key) = event::read()? {
+            if key.kind == event::KeyEventKind::Release {
+                // Skip events that are not KeyEventKind::Press
+                continue;
+            }
+            match // app states and KeyCode::xxx ...
+```
+### [app.rs](ratatui/ratatui-json-editor/src/app.rs)
+- state:
+```rust
+pub enum CurrentScreen {
+    Main,
+    Editing,
+    Exiting,
+}
+
+pub enum CurrentlyEditing {
+    Key,
+    Value,
+}
+
+pub struct App {
+    pub key_input: String, // the currently being edited json key.
+    pub value_input: String, // the currently being edited json value.
+    pub pairs: HashMap<String, String>, // The representation of our key and value pairs with serde Serialize support
+    pub current_screen: CurrentScreen, // the current screen the user is looking at, and will later determine what is rendered.
+    pub currently_editing: Option<CurrentlyEditing>, // the optional state containing which of the key or value pair the user is editing. It is an option, because when the user is not directly editing a key-value pair, this will be set to `None`.
+}
+```
+### [ui.rs](ratatui/ratatui-json-editor/src/ui.rs)
+- the magic !
+```rust
+use ratatui::{
+    layout::{Constraint, Direction, Layout, Rect},
+    style::{Color, Style},
+    text::{Line, Span, Text},
+    widgets::{Block, Borders, Clear, List, ListItem, Paragraph, Wrap},
+    Frame,
+};
+
+use crate::app::{App, CurrentScreen, CurrentlyEditing};
+
+pub fn ui(f: &mut Frame, app: &App) {
+    ...
+}
+```
