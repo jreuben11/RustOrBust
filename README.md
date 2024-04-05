@@ -7,10 +7,11 @@
 3. [Rust by Example](rust_by_example/README.md)
 4. [Rust Cookbook](cookbook/README.md) (abandonded - come back to this later)
 5. [Async](async/README.md)
-6. [Data Structures and Algorithms](data_structures_and_algos/README.md) (in progress)
+6. [Data Structures and Algorithms](data_structures_and_algos/README.md) (**in progress**)
 7. [Bindgen Experiments](bindgen_experiments/README.md)
 8. [Rustonomicon](rustonomicon/README.md)
-9. [CLIs and TUIs](clis_and_tuis/README.md) (in progress)
+9. [CLIs and TUIs](clis_and_tuis/README.md)
+10. [Tokio](tokio/README.md) (**in progress**)
 
 # Rust 🦀 study plan:
 
@@ -20,16 +21,16 @@
 - [x] Async https://rust-lang.github.io/async-book + https://book.async.rs/introduction.html 
 - [x] Rust for Rustaceans (book) https://rust-for-rustaceans.com/
 ## Intermediate (2024)
-- [] Rust Hands on Data Structures and Algorithms (book) https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorithms-with-Rust (in progress)
 - [x] Bindgen https://rust-lang.github.io/rust-bindgen/
 - [x] Rustonomicon https://doc.rust-lang.org/nomicon/index.html
-- [ ] Commandline book https://rust-cli.github.io/book/index.html + Clap https://docs.rs/clap/latest/clap/ + RataTUI https://ratatui.rs/introduction/ (in progress)
-- [ ] Cxx https://cxx.rs/ Rust loves C++
-- [ ] Tokio ecosystem   https://tokio.rs/tokio/tutorial 
-- [ ] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
+- [x] Commandline book https://rust-cli.github.io/book/index.html + Clap https://docs.rs/clap/latest/clap/ + RataTUI https://ratatui.rs/introduction/
+- [ ] Rust Hands on Data Structures and Algorithms (book) https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorithms-with-Rust (in progress)
+- [ ] Tokio ecosystem https://tokio.rs/tokio/tutorial (in progress)
 - [ ] Webassembly book https://rustwasm.github.io/docs/book/ 
 - [ ] PyO3 https://pyo3.rs/  Rust bindings for Python
 ## Next ...
+- [ ] Cxx https://cxx.rs/ Rust loves C++
+- [ ] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
 - [] Standard lib https://doc.rust-lang.org/std/index.html 
 - [] Edition guide https://doc.rust-lang.org/edition-guide/index.html 
 - [] Cargo book https://doc.rust-lang.org/cargo/index.html 
@@ -54,4 +55,4 @@
 - [] Polars https://pola-rs.github.io/polars-book/user-guide/   DataFrame library for Rust and Python
 - [] MacroKata https://tfpk.github.io/macrokata/  a set of exercises to learn macros in Rust.
 
-> 2023: Rust or Bust, baby ! ;)
+> 2023-2024: Rust or Bust, baby ! ;)
