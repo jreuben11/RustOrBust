@@ -9,4 +9,6 @@ cargo new my-redis
 cd my-redis
 cargo add tokio --features full
 cargo add mini-redis
+...
+cargo run --example hello-redis
 ```
