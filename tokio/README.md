@@ -1,4 +1,4 @@
-# mini-redis
+# Tokio mini-redis
 ```bash
 cargo install mini-redis
 sudo systemctl status redis-server
@@ -11,4 +11,13 @@ cargo add tokio --features full
 cargo add mini-redis
 ...
 cargo run --example hello-redis
+cargo run --bin my-redis
 ```
+## Hello Tokio
+## Spawning
+## Shared State
+## Channels
+- [main.rs](my-redis/src/main.rs)
+## I/O
+## Framing
+## Async in Depth

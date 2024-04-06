@@ -1,61 +1,91 @@
-use tokio::net::{TcpListener, TcpStream};
 use bytes::Bytes;
-use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
+use mini_redis::client;
+use tokio::sync::{mpsc, oneshot};
 
-type Db = Arc<Mutex<HashMap<String, Bytes>>>;
+/// Multiple different commands are multiplexed over a single channel.
+#[derive(Debug)]
+enum Command {
+    Get {
+        key: String,
+        resp: Responder<Option<Bytes>>,
+    },
+    Set {
+        key: String,
+        val: Bytes,
+        resp: Responder<()>,
+    },
+}
+
+/// Provided by the requester and used by the manager task to send the command
+/// response back to the requester.
+type Responder<T> = oneshot::Sender<mini_redis::Result<T>>;
 
 #[tokio::main]
 async fn main() {
-    // Bind the listener to the address
-    let listener = TcpListener::bind("127.0.0.1:6379").await.unwrap();
-    println!("Listening");
-    let db = Arc::new(Mutex::new(HashMap::new()));
+    let (tx, mut rx) = mpsc::channel(32);
+    // Clone a `tx` handle for the second f
+    let tx2 = tx.clone();
 
-    loop {
-        // The second item contains the IP and port of the new connection.
-        let (socket, _) = listener.accept().await.unwrap();
+    let manager = tokio::spawn(async move {
+        // Open a connection to the mini-redis address.
+        let mut client = client::connect("127.0.0.1:6379").await.unwrap();
 
-        // Clone the handle to the hash map.
-        let db = db.clone();
-
-        // process(socket).await;
-        tokio::spawn(async move {
-            process(socket, db).await;
-        });
-    }
-}
-
-async fn process(socket: TcpStream, db:Db) {
-    use mini_redis::{Connection, Frame};
-    use mini_redis::Command::{self, Get, Set};    
-
-    // Connection, provided by `mini-redis`, handles parsing frames from the socket
-    let mut connection = Connection::new(socket);
-
-    // Use `read_frame` to receive a command from the connection.
-    while let Some(frame) = connection.read_frame().await.unwrap() {
-        let response = match Command::from_frame(frame).unwrap() {
-            Set(cmd) => {
-                // db.insert(cmd.key().to_string(), cmd.value().to_vec()); // The value is no longer stored as `Vec<u8>`
-                let mut db = db.lock().unwrap();
-                db.insert(cmd.key().to_string(), cmd.value().clone());
-                Frame::Simple("OK".to_string())
-            }
-            Get(cmd) => {
-                let db = db.lock().unwrap();
-                if let Some(value) = db.get(cmd.key()) {
-                    // `Frame::Bulk` expects data to be of type `Bytes`. 
-                    Frame::Bulk(value.clone())
-                    // Frame::Bulk(value.clone().into()) // `&Vec<u8>` no longer converted to `Bytes` using `into()`.
-                } else {
-                    Frame::Null
+        while let Some(cmd) = rx.recv().await {
+            match cmd {
+                Command::Get { key, resp } => {
+                    let res = client.get(&key).await;
+                    // Ignore errors
+                    let _ = resp.send(res);
+                }
+                Command::Set { key, val, resp } => {
+                    let res = client.set(&key, val).await;
+                    // Ignore errors
+                    let _ = resp.send(res);
                 }
             }
-            cmd => panic!("unimplemented {:?}", cmd),
+        }
+    });
+
+    // Spawn two tasks, one setting a value and other querying for key that was
+    // set.
+    let t1 = tokio::spawn(async move {
+        let (resp_tx, resp_rx) = oneshot::channel();
+        let cmd = Command::Get {
+            key: "foo".to_string(),
+            resp: resp_tx,
         };
 
-        // Write the response to the client
-        connection.write_frame(&response).await.unwrap();
-    }
+        // Send the GET request
+        if tx.send(cmd).await.is_err() {
+            eprintln!("connection task shutdown");
+            return;
+        }
+
+        // Await the response
+        let res = resp_rx.await;
+        println!("GOT (Get) = {:?}", res);
+    });
+
+    let t2 = tokio::spawn(async move {
+        let (resp_tx, resp_rx) = oneshot::channel();
+        let cmd = Command::Set {
+            key: "foo".to_string(),
+            val: "bar".into(),
+            resp: resp_tx,
+        };
+
+        // Send the SET request
+        if tx2.send(cmd).await.is_err() {
+            eprintln!("connection task shutdown");
+            return;
+        }
+
+        // Await the response
+        let res = resp_rx.await;
+        println!("GOT (Set) = {:?}", res);
+    });
+
+    t1.await.unwrap();
+    t2.await.unwrap();
+    manager.await.unwrap();
 }
