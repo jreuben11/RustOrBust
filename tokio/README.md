@@ -9,15 +9,15 @@ cargo new my-redis
 cd my-redis
 cargo add tokio --features full
 cargo add mini-redis
-...
-cargo run --example hello-redis
-cargo run --bin my-redis
+cargo add bytes
 ```
 ## Hello Tokio
+- cargo run --example hello-redis
 ## Spawning
 ## Shared State
-## Channels
-- [main.rs](my-redis/src/main.rs)
-## I/O
+## [Channels](my-redis/src/main.rs)
+- cargo run --bin my-redis
+## [I/O](my-redis/src/bin/echo-server-copy.rs)
+- cargo run --bin echo-server-copy
 ## Framing
 ## Async in Depth
