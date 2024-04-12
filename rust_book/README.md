@@ -1,4 +1,4 @@
-Worked examples from the [Rust Book](https://doc.rust-lang.org/book/)
+# Worked examples from the [Rust Book](https://doc.rust-lang.org/book/)
 
 1. [hello_cargo](hello_cargo/README.md) - CH1
 2. [guessing_game project](guessing_game/src/main.rs) - CH2 (STDIO, random)
@@ -23,4 +23,27 @@ Worked examples from the [Rust Book](https://doc.rust-lang.org/book/)
 6. [workspaces](add_workspace/Cargo.toml) - CH14
 7. [macros](macros/hello_macro/hello_macro_derive/src/lib.rs) - CH19
 8. [web_server multithreading project](web_server/src/lib.rs) - CH20
+
+# from 2nd pass of book:
+```bash
+cargo check
+cargo build --release
+cargo doc
+```
+```rust
+gen_range(1..=100)                                               // loop over range
+let x = loop { break 5; }                                        // assign value from loop break
+{:?}, {:#?}, dbg!   // debug                                     // pretty-print for dbg macro
+src/garden/vegetables.rs  ->   use crate::garden::vegetables::asparagus; // module absolute paths
+let x: Option<&i32> = v.get(2);                                 // safe Vector access
+for i in &mut v { *i += 1; }                                    // mutate derefed vector items
+Option<T>.unwrap_or_else(fnOnce)                                 // unwrap an Option, using a closure for None case fallback
+iter.map(|x| x+1).filter(|x| x > 0).collect()                   // fluent FP with clousres
+let echo = |x| x;                                                // simplest clousre
+HashMap<K,V>.sort_by_key(|x| x.y)                              // sort structs in a dictionary
+mut args: impl Iterator<Item = String>                           // pass a collection iterator as an arg
+sent_messages: RefCell<Vec<String>> = RefCell::new(vec![]);    // interior mutability pattern - runtime borrow checking (use case: trees)
+sent_messages.borrow_mut().push(String::from(message));
+sent_messages.borrow().len();
+```
 
