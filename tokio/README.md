@@ -365,6 +365,8 @@ stream.flush().await;
 ```toml
 [dependencies]
 axum = "0.7.5"
+base64 = "0.22.0"
+http = "1.1.0"
 hyper = { version = "1.3.1", features = ["full"] }
 serde = { version = "1.0.198", features = ["derive"] }
 serde_json = "1.0.116"
