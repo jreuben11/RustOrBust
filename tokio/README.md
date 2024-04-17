@@ -594,3 +594,26 @@ async fn main() -> Result<()> {
     Ok(())
 }
 ```
+
+# tonic-grpc
+- [Cargo.toml](tonic-grpc/Cargo.toml)
+```toml
+[dependencies]
+async-stream = "0.3.5"
+prost = "0.12.4"
+rand = "0.8.5"
+serde = { version = "1.0.198", features = ["derive"] }
+serde_json = "1.0.116"
+tokio = {version="1.37.0", features = ["rt-multi-thread", "macros", "sync", "time"] }
+tokio-stream = "0.1.15"
+tonic = "0.11.0"
+
+[build-dependencies]
+tonic-build = "0.11.0"
+```
+- [.proto file](tonic-grpc/proto/route_guide.proto)
+- [build.rs](tonic-grpc/build.rs)
+```rust
+    tonic_build::compile_protos("proto/route_guide.proto")
+        .unwrap_or_else(|e| panic!("Failed to compile protos {:?}", e));
+```
