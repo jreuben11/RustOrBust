@@ -594,3 +594,143 @@ async fn main() -> Result<()> {
     Ok(())
 }
 ```
+
+# tonic-grpc
+- to execute:
+```bash
+cargo run --bin routeguide-server
+cargo run --bin routeguide-client
+```
+## [Cargo.toml](tonic-grpc/Cargo.toml)
+```toml
+[[bin]]
+name = "routeguide-server"
+path = "src/server.rs"
+
+[[bin]]
+name = "routeguide-client"
+path = "src/client.rs"
+
+[dependencies]
+async-stream = "0.3.5"
+prost = "0.12.4"
+rand = "0.8.5"
+serde = { version = "1.0.198", features = ["derive"] }
+serde_json = "1.0.116"
+tokio = {version="1.37.0", features = ["rt-multi-thread", "macros", "sync", "time"] }
+tokio-stream = "0.1.15"
+tonic = "0.11.0"
+
+[build-dependencies]
+tonic-build = "0.11.0"
+```
+## [.proto file](tonic-grpc/proto/route_guide.proto)
+## [build.rs](tonic-grpc/build.rs)
+```rust
+    tonic_build::compile_protos("proto/route_guide.proto")
+        .unwrap_or_else(|e| panic!("Failed to compile protos {:?}", e));
+```
+## [server.rs](tonic-grpc/src/server.rs)
+```rust
+pub mod routeguide {
+    tonic::include_proto!("routeguide");
+}
+
+use routeguide::route_guide_server::{RouteGuide, RouteGuideServer};
+use routeguide::{Feature, Point, Rectangle, RouteNote, RouteSummary};
+
+#[derive(Debug)]
+struct RouteGuideService;
+
+use std::pin::Pin;
+use std::sync::Arc;
+use tokio::sync::mpsc;
+use tonic::{Request, Response, Status};
+use tokio_stream::{wrappers::ReceiverStream, Stream};
+
+#[tonic::async_trait]
+impl RouteGuide for RouteGuideService {
+    // request -> response
+    async fn get_feature(&self, _request: Request<Point>) -> Result<Response<Feature>, Status> {
+        unimplemented!()
+    }
+
+    type ListFeaturesStream = ReceiverStream<Result<Feature, Status>>;
+    // request -> stream response
+    async fn list_features(
+        &self,
+        _request: Request<Rectangle>,
+    ) -> Result<Response<Self::ListFeaturesStream>, Status> {
+        unimplemented!()
+    }
+
+    // stream request -> response
+    async fn record_route(
+        &self,
+        _request: Request<tonic::Streaming<Point>>,
+    ) -> Result<Response<RouteSummary>, Status> {
+        unimplemented!()
+    }
+
+    type RouteChatStream = Pin<Box<dyn Stream<Item = Result<RouteNote, Status>> + Send  + 'static>>;
+    // stream request -> stream response
+    async fn route_chat(
+        &self,
+        _request: Request<tonic::Streaming<RouteNote>>,
+    ) -> Result<Response<Self::RouteChatStream>, Status> {
+        unimplemented!()
+    }
+}
+
+use tonic::transport::Server;
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let addr = "[::1]:10000".parse().unwrap();
+    let route_guide = RouteGuideService {};
+    let svc = RouteGuideServer::new(route_guide);
+    Server::builder().add_service(svc).serve(addr).await?;
+    Ok(())
+}
+```
+## [client](tonic-grpc/src/client.rs)
+```rust
+use std::error::Error;
+use std::time::Duration;
+use rand::rngs::ThreadRng;
+use rand::Rng;
+use tokio::time;
+use tonic::Request;
+use tonic::transport::Channel;
+pub mod routeguide {
+    tonic::include_proto!("routeguide");
+}
+
+use routeguide::route_guide_client::RouteGuideClient;
+use routeguide::{Point, Rectangle, RouteNote};
+
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut client = RouteGuideClient::connect("http://[::1]:10000").await?;
+
+
+    let response = client
+        .get_feature(Request::new(Point {
+            latitude: 409146138,
+            longitude: -746188906,
+        }))
+        .await?;
+    println!("RESPONSE = {:?}", response);
+
+    println!("\n*** SERVER STREAMING ***");
+    print_features(&mut client).await?;
+
+    println!("\n*** CLIENT STREAMING ***");
+    run_record_route(&mut client).await?;
+
+    println!("\n*** BIDIRECTIONAL STREAMING ***");
+    run_route_chat(&mut client).await?;
+
+     Ok(())
+}
+```
