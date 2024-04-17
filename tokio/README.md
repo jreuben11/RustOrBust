@@ -617,3 +617,65 @@ tonic-build = "0.11.0"
     tonic_build::compile_protos("proto/route_guide.proto")
         .unwrap_or_else(|e| panic!("Failed to compile protos {:?}", e));
 ```
+- [server.rs](tonic-grpc/src/server.rs)
+```rust
+pub mod routeguide {
+    tonic::include_proto!("routeguide");
+}
+
+use routeguide::route_guide_server::{RouteGuide, RouteGuideServer};
+use routeguide::{Feature, Point, Rectangle, RouteNote, RouteSummary};
+
+#[derive(Debug)]
+struct RouteGuideService;
+
+use std::pin::Pin;
+use std::sync::Arc;
+use tokio::sync::mpsc;
+use tonic::{Request, Response, Status};
+use tokio_stream::{wrappers::ReceiverStream, Stream};
+
+#[tonic::async_trait]
+impl RouteGuide for RouteGuideService {
+    // request -> response
+    async fn get_feature(&self, _request: Request<Point>) -> Result<Response<Feature>, Status> {
+        unimplemented!()
+    }
+
+    type ListFeaturesStream = ReceiverStream<Result<Feature, Status>>;
+    // request -> stream response
+    async fn list_features(
+        &self,
+        _request: Request<Rectangle>,
+    ) -> Result<Response<Self::ListFeaturesStream>, Status> {
+        unimplemented!()
+    }
+
+    // stream request -> response
+    async fn record_route(
+        &self,
+        _request: Request<tonic::Streaming<Point>>,
+    ) -> Result<Response<RouteSummary>, Status> {
+        unimplemented!()
+    }
+
+    type RouteChatStream = Pin<Box<dyn Stream<Item = Result<RouteNote, Status>> + Send  + 'static>>;
+    // stream request -> stream response
+    async fn route_chat(
+        &self,
+        _request: Request<tonic::Streaming<RouteNote>>,
+    ) -> Result<Response<Self::RouteChatStream>, Status> {
+        unimplemented!()
+    }
+}
+
+use tonic::transport::Server;
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let addr = "[::1]:10000".parse().unwrap();
+    let route_guide = RouteGuideService {};
+    let svc = RouteGuideServer::new(route_guide);
+    Server::builder().add_service(svc).serve(addr).await?;
+    Ok(())
+}
+```
