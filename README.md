@@ -11,7 +11,8 @@
 7. [Bindgen Experiments](bindgen_experiments/README.md)
 8. [Rustonomicon](rustonomicon/README.md)
 9. [CLIs and TUIs](clis_and_tuis/README.md)
-10. [Tokio](tokio/README.md) (**in progress**)
+10. [Tokio](tokio/README.md)
+11. Py03 (**in progress**)
 
 # Rust 🦀 study plan:
 
@@ -25,9 +26,12 @@
 - [x] Rustonomicon https://doc.rust-lang.org/nomicon/index.html
 - [x] Commandline book https://rust-cli.github.io/book/index.html + Clap https://docs.rs/clap/latest/clap/ + RataTUI https://ratatui.rs/introduction/
 - [ ] Rust Hands on Data Structures and Algorithms (book) https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorithms-with-Rust (in progress)
-- [ ] Tokio ecosystem https://tokio.rs/tokio/tutorial (in progress)
-- [ ] Webassembly book https://rustwasm.github.io/docs/book/ 
+- [x] Tokio ecosystem
+      - tokio guide https://tokio.rs/tokio/tutorial
+      - tonic tutorial https://github.com/hyperium/tonic/blob/master/examples/routeguide-tutorial.md
+      - axum demo https://github.com/joelparkerhenderson/demo-rust-axum/
 - [ ] PyO3 https://pyo3.rs/  Rust bindings for Python
+- [ ] Webassembly book https://rustwasm.github.io/docs/book/ 
 ## Next ...
 - [ ] Cxx https://cxx.rs/ Rust loves C++
 - [ ] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
