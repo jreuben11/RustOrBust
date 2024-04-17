@@ -8,9 +8,20 @@ mod data;
 use crate::book::Book;
 use crate::data::DATA;
 
+/// Use tracing crates for application-level tracing output.
+use tracing_subscriber::{
+    layer::SubscriberExt,
+    util::SubscriberInitExt,
+};
+use std::net::SocketAddr;
 
 #[tokio::main]
 pub async fn main() {
+    // Start tracing. DOESNT SHOW ANYTHING !!!!
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
     print_data().await;
      // Build our application by creating our router.
     let app = axum::Router::new()
@@ -49,7 +60,11 @@ pub async fn main() {
         ;
 
     // Run our application as a hyper server on http://localhost:3000.
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let host = [127, 0, 0, 1];
+    let port = 3000;
+    let addr = SocketAddr::from((host, port));
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    // let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }
 

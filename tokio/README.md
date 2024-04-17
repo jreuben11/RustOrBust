@@ -408,6 +408,8 @@ serde = { version = "1.0.198", features = ["derive"] }
 serde_json = "1.0.116"
 tokio = { version = "1.37.0", features = ["full"] }
 tower = "0.4.13"
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 ```
 ## Axum
 ```rust
