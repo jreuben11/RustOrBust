@@ -1,4 +1,6 @@
+use std::collections::HashMap;
 use axum::routing::get;
+use serde_json::{json, Value};
 
 #[tokio::main]
 pub async fn main() {
@@ -17,7 +19,14 @@ pub async fn main() {
             .patch(patch_foo)
             .post(post_foo)
             .delete(delete_foo),
-        );
+        )
+        .route("/items/:id", get(get_items_id))
+        .route("/items", get(get_items))
+        .route("/demo.json",
+            get(get_demo_json)
+            .put(put_demo_json)
+        )
+        ;
 
     // Run our application as a hyper server on http://localhost:3000.
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
@@ -101,3 +110,31 @@ pub async fn get_foo() -> String {
  pub async fn delete_foo() -> String {
     "DELETE foo".to_string()
  }
+
+ /// axum handler for "GET /items/:id" which uses `axum::extract::Path`.
+/// This extracts a path parameter then deserializes it as needed.
+pub async fn get_items_id(axum::extract::Path(id):axum::extract::Path<String>) -> String {
+    format!("Get items with path id: {:?}", id)
+}
+
+/// axum handler for "GET /items" which uses `axum::extract::Query`.
+/// This extracts query parameters and creates a key-value pair map.
+pub async fn get_items(axum::extract::Query(params):axum::extract::Query<HashMap<String, String>>) -> String {
+    format!("Get items with query params: {:?}", params)
+}
+
+/// axum handler for "GET /demo.json" which uses `axum::extract::Json`.
+/// This buffers the request body then deserializes it bu using serde.
+/// The `Json` type supports types that implement `serde::Deserialize`.
+pub async fn get_demo_json() -> axum::extract::Json<Value> {
+    json!({"a":"b"}).into()
+}
+
+/// axum handler for "PUT /demo.json" which uses `axum::extract::Json`.
+/// This buffers the request body then deserializes it using serde.
+/// The `Json` type supports types that implement `serde::Deserialize`.
+pub async fn put_demo_json(
+    axum::extract::Json(data): axum::extract::Json<serde_json::Value>
+) -> String{
+    format!("Put demo JSON data: {:?}", data)
+}

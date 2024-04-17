@@ -361,6 +361,23 @@ stream.flush().await;
 
 # Axum on Tokio
 - Browse http://localhost:3000
+- tester:
+```bash
+curl --request GET 'http://localhost:3000/foo'
+curl --request PUT 'http://localhost:3000/foo'
+curl --request PATCH 'http://localhost:3000/foo'
+curl --request POST 'http://localhost:3000/foo'
+curl --request DELETE 'http://localhost:3000/foo'
+curl 'http://localhost:3000/items/1'
+curl 'http://localhost:3000/items?a=b'
+curl \
+--header "Accept: application/json" \
+--request GET 'http://localhost:3000/demo.json'
+curl \
+--request PUT 'http://localhost:3000/demo.json' \
+--header "Content-Type: application/json" \
+--data '{"a":"b"}'
+```
 - [Cargo.toml](axum-tokio/Cargo.toml)
 ```toml
 [dependencies]
