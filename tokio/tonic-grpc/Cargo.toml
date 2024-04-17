@@ -7,6 +7,10 @@ edition = "2021"
 name = "routeguide-server"
 path = "src/server.rs"
 
+[[bin]]
+name = "routeguide-client"
+path = "src/client.rs"
+
 
 [dependencies]
 async-stream = "0.3.5"

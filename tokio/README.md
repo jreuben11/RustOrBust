@@ -596,8 +596,21 @@ async fn main() -> Result<()> {
 ```
 
 # tonic-grpc
-- [Cargo.toml](tonic-grpc/Cargo.toml)
+- to execute:
+```bash
+cargo run --bin routeguide-server
+cargo run --bin routeguide-client
+```
+## [Cargo.toml](tonic-grpc/Cargo.toml)
 ```toml
+[[bin]]
+name = "routeguide-server"
+path = "src/server.rs"
+
+[[bin]]
+name = "routeguide-client"
+path = "src/client.rs"
+
 [dependencies]
 async-stream = "0.3.5"
 prost = "0.12.4"
@@ -611,13 +624,13 @@ tonic = "0.11.0"
 [build-dependencies]
 tonic-build = "0.11.0"
 ```
-- [.proto file](tonic-grpc/proto/route_guide.proto)
-- [build.rs](tonic-grpc/build.rs)
+## [.proto file](tonic-grpc/proto/route_guide.proto)
+## [build.rs](tonic-grpc/build.rs)
 ```rust
     tonic_build::compile_protos("proto/route_guide.proto")
         .unwrap_or_else(|e| panic!("Failed to compile protos {:?}", e));
 ```
-- [server.rs](tonic-grpc/src/server.rs)
+## [server.rs](tonic-grpc/src/server.rs)
 ```rust
 pub mod routeguide {
     tonic::include_proto!("routeguide");

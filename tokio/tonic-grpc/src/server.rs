@@ -138,14 +138,14 @@ impl RouteGuide for RouteGuideService {
     }
 }
 
-// mod data;
-
+mod data;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let addr = "[::1]:10000".parse().unwrap();
 
     let route_guide = RouteGuideService {
-        features: Arc::new(vec![]),
+        // features: Arc::new(vec![]),
+        features: Arc::new(data::load()),
     };
 
     let svc = RouteGuideServer::new(route_guide);
