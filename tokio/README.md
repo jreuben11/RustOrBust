@@ -1,4 +1,5 @@
 # Tokio mini-redis
+https://github.com/tokio-rs/mini-redis
 ```bash
 cargo install mini-redis
 sudo systemctl status redis-server
@@ -357,3 +358,239 @@ stream.write_all(b"\r\n").await?;
 stream.flush().await;
 ```
 ## Async in Depth
+
+# Axum on Tokio
+## [main.rs](axum-tokio/src/main.rs)
+-- dependencies:
+```rust
+use std::collections::HashMap;
+use axum::routing::get;
+use serde_json::{json, Value};
+use std::thread;
+
+mod book;
+mod data;
+use crate::book::Book;
+use crate::data::DATA;
+
+/// Use tracing crates for application-level tracing output.
+use tracing_subscriber::{
+    layer::SubscriberExt,
+    util::SubscriberInitExt,
+};
+use std::net::SocketAddr;
+```
+- server:
+```rust
+#[tokio::main]
+pub async fn main() {
+    // Start tracing. DOESNT SHOW ANYTHING !!!!
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
+    print_data().await;
+     // Build our application by creating our router.
+    let app = axum::Router::new()
+        .fallback(fallback)
+        .route("/",  axum::routing::get(|| async { "default!" }))
+        .route("/hello", get(hello))
+        .route("/demo.html", get(get_demo_html))
+        .route("/demo-status", get(demo_status))
+        .route("/demo-uri", get(demo_uri))
+        .route("/demo.png", get(get_demo_png))
+        .route("/foo",
+            get(get_foo)
+            .put(put_foo)
+            .patch(patch_foo)
+            .post(post_foo)
+            .delete(delete_foo),
+        )
+        .route("/items/:id", get(get_items_id))
+        .route("/items", get(get_items))
+        .route("/demo.json",
+            get(get_demo_json)
+            .put(put_demo_json)
+        )
+        .route("/books",
+            get(get_books)
+            .put(put_books)
+        )
+        .route("/books/:id",
+            get(get_books_id)
+            .delete(delete_books_id)
+        )
+        .route("/books/:id/form",
+            get(get_books_id_form)
+            .post(post_books_id_form)
+        )
+        ;
+
+    // Run our application as a hyper server on http://localhost:3000.
+    let host = [127, 0, 0, 1];
+    let port = 3000;
+    let addr = SocketAddr::from((host, port));
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    // let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
+}
+```
+## testing
+- Browse http://localhost:3000
+- tester:
+```bash
+curl --request GET 'http://localhost:3000/foo'
+curl --request PUT 'http://localhost:3000/foo'
+curl --request PATCH 'http://localhost:3000/foo'
+curl --request POST 'http://localhost:3000/foo'
+curl --request DELETE 'http://localhost:3000/foo'
+curl 'http://localhost:3000/items/1'
+curl 'http://localhost:3000/items?a=b'
+curl \
+--header "Accept: application/json" \
+--request GET 'http://localhost:3000/demo.json'
+curl \
+--request PUT 'http://localhost:3000/demo.json' \
+--header "Content-Type: application/json" \
+--data '{"a":"b"}'
+curl 'http://localhost:3000/books'
+curl 'http://localhost:3000/books/1'
+curl 'http://localhost:3000/books/0'
+curl \
+--request PUT 'http://localhost:3000/books' \
+--header "Content-Type: application/json" \
+--data '{"id":4,"title":"Decameron","author":"Giovanni Boccaccio"}'
+curl 'http://localhost:3000/books'
+curl 'http://localhost:3000/books/1/form'
+curl \
+--request POST 'localhost:3000/books/1/form' \
+--header "Content-Type: application/x-www-form-urlencoded" \
+--data "id=1"  \
+--data "title=Another Title" \
+--data "author=Someone Else"
+curl 'http://localhost:3000/books'
+curl --request DELETE 'http://localhost:3000/books/1'
+curl 'http://localhost:3000/books'
+```
+## [Cargo.toml](axum-tokio/Cargo.toml)
+```toml
+[dependencies]
+axum = "0.7.5"
+base64 = "0.22.0"
+http = "1.1.0"
+hyper = { version = "1.3.1", features = ["full"] }
+once_cell = "1.19.0"
+serde = { version = "1.0.198", features = ["derive"] }
+serde_json = "1.0.116"
+tokio = { version = "1.37.0", features = ["full"] }
+tower = "0.4.13"
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+```
+## [data.rs](axum-tokio/src/data.rs)
+```rust
+use std::collections::HashMap;
+use crate::book::Book;
+/// Use once_cell for creating a global variable e.g. our DATA data.
+use once_cell::sync::Lazy;
+use std::sync::Mutex;
+
+/// Create a data store as a global variable with `Lazy` and `Mutex`.
+/// This demo implementation uses a `HashMap` for ease and speed.
+/// The map key is a primary key for lookup; the map value is a Book.
+pub static DATA: Lazy<Mutex<HashMap<u32, Book>>> = Lazy::new(|| Mutex::new(HashMap::from([ ... ])));
+```
+## Axum
+```rust
+#[tokio::main]
+async fn main() {
+    // Build our application with a single route.
+    let app = axum::Router::new().route("/",
+        axum::routing::get(|| async { "Hello, World!" }));
+
+    // Run our application as a hyper server on http://localhost:3000.
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
+}
+```
+## Tower
+```rust
+pub trait Service<Request> {
+    type Response;
+    type Error;
+    type Future: Future<Output = Result<Self::Response, Self::Error>>;
+
+    fn poll_ready(
+        &mut self,
+        cx: &mut Context<'_>,
+    ) -> Poll<Result<(), Self::Error>>;
+
+    fn call(&mut self, req: Request) -> Self::Future;
+}
+---
+use tower::{
+    Service,
+    ServiceExt,
+};
+let response = service
+    // wait for the service to have capacity
+    .ready().await?
+    // send the request
+    .call(request).await?;
+```
+## Hyper
+```rust
+use std::convert::Infallible;
+
+async fn handle(
+    _: hyper::Request<Body>
+) -> Result<hyper::Response<hyper::Body>, Infallible> {
+    Ok(hyper::Response::new("Hello, World!".into()))
+}
+
+#[tokio::main]
+async fn main() {
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+
+    let make_svc = hyper::service::make_service_fn(|_conn| async {
+        Ok::<_, Infallible>(hyper::service::service_fn(handle))
+    });
+
+    let server = hyper::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+        .serve(make_svc);
+
+    if let Err(e) = server.await {
+        eprintln!("server error: {}", e);
+    }
+}
+```
+## Tokio
+```rust
+// Demo tokio server
+#[tokio::main]
+async fn main() {
+    let listener = tokio::net::TcpListener::bind("localhost:3000")
+        .await
+        .unwrap();
+    loop {
+        let (socket, _address) = listener.accept().await.unwrap();
+        tokio::spawn(async move {
+            process(socket).await;
+        });
+    }
+}
+
+async fn process(socket: tokio::net::TcpStream) {
+    println!("process socket");
+}
+
+...
+
+// Demo tokio client
+#[tokio::main]
+async fn main() -> Result<()> {
+    let mut client = client::connect("localhost:3000").await?;
+    println!("connected);
+    Ok(())
+}
+```
