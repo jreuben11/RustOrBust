@@ -360,6 +360,82 @@ stream.flush().await;
 ## Async in Depth
 
 # Axum on Tokio
+## [main.rs](axum-tokio/src/main.rs)
+-- dependencies:
+```rust
+use std::collections::HashMap;
+use axum::routing::get;
+use serde_json::{json, Value};
+use std::thread;
+
+mod book;
+mod data;
+use crate::book::Book;
+use crate::data::DATA;
+
+/// Use tracing crates for application-level tracing output.
+use tracing_subscriber::{
+    layer::SubscriberExt,
+    util::SubscriberInitExt,
+};
+use std::net::SocketAddr;
+```
+- server:
+```rust
+#[tokio::main]
+pub async fn main() {
+    // Start tracing. DOESNT SHOW ANYTHING !!!!
+    tracing_subscriber::registry()
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
+    print_data().await;
+     // Build our application by creating our router.
+    let app = axum::Router::new()
+        .fallback(fallback)
+        .route("/",  axum::routing::get(|| async { "default!" }))
+        .route("/hello", get(hello))
+        .route("/demo.html", get(get_demo_html))
+        .route("/demo-status", get(demo_status))
+        .route("/demo-uri", get(demo_uri))
+        .route("/demo.png", get(get_demo_png))
+        .route("/foo",
+            get(get_foo)
+            .put(put_foo)
+            .patch(patch_foo)
+            .post(post_foo)
+            .delete(delete_foo),
+        )
+        .route("/items/:id", get(get_items_id))
+        .route("/items", get(get_items))
+        .route("/demo.json",
+            get(get_demo_json)
+            .put(put_demo_json)
+        )
+        .route("/books",
+            get(get_books)
+            .put(put_books)
+        )
+        .route("/books/:id",
+            get(get_books_id)
+            .delete(delete_books_id)
+        )
+        .route("/books/:id/form",
+            get(get_books_id_form)
+            .post(post_books_id_form)
+        )
+        ;
+
+    // Run our application as a hyper server on http://localhost:3000.
+    let host = [127, 0, 0, 1];
+    let port = 3000;
+    let addr = SocketAddr::from((host, port));
+    let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
+    // let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
+}
+```
+## testing
 - Browse http://localhost:3000
 - tester:
 ```bash
@@ -396,7 +472,7 @@ curl 'http://localhost:3000/books'
 curl --request DELETE 'http://localhost:3000/books/1'
 curl 'http://localhost:3000/books'
 ```
-- [Cargo.toml](axum-tokio/Cargo.toml)
+## [Cargo.toml](axum-tokio/Cargo.toml)
 ```toml
 [dependencies]
 axum = "0.7.5"
@@ -410,6 +486,19 @@ tokio = { version = "1.37.0", features = ["full"] }
 tower = "0.4.13"
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+```
+## [data.rs](axum-tokio/src/data.rs)
+```rust
+use std::collections::HashMap;
+use crate::book::Book;
+/// Use once_cell for creating a global variable e.g. our DATA data.
+use once_cell::sync::Lazy;
+use std::sync::Mutex;
+
+/// Create a data store as a global variable with `Lazy` and `Mutex`.
+/// This demo implementation uses a `HashMap` for ease and speed.
+/// The map key is a primary key for lookup; the map value is a Book.
+pub static DATA: Lazy<Mutex<HashMap<u32, Book>>> = Lazy::new(|| Mutex::new(HashMap::from([ ... ])));
 ```
 ## Axum
 ```rust
