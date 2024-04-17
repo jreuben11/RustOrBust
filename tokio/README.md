@@ -377,6 +377,24 @@ curl \
 --request PUT 'http://localhost:3000/demo.json' \
 --header "Content-Type: application/json" \
 --data '{"a":"b"}'
+curl 'http://localhost:3000/books'
+curl 'http://localhost:3000/books/1'
+curl 'http://localhost:3000/books/0'
+curl \
+--request PUT 'http://localhost:3000/books' \
+--header "Content-Type: application/json" \
+--data '{"id":4,"title":"Decameron","author":"Giovanni Boccaccio"}'
+curl 'http://localhost:3000/books'
+curl 'http://localhost:3000/books/1/form'
+curl \
+--request POST 'localhost:3000/books/1/form' \
+--header "Content-Type: application/x-www-form-urlencoded" \
+--data "id=1"  \
+--data "title=Another Title" \
+--data "author=Someone Else"
+curl 'http://localhost:3000/books'
+curl --request DELETE 'http://localhost:3000/books/1'
+curl 'http://localhost:3000/books'
 ```
 - [Cargo.toml](axum-tokio/Cargo.toml)
 ```toml
@@ -385,6 +403,7 @@ axum = "0.7.5"
 base64 = "0.22.0"
 http = "1.1.0"
 hyper = { version = "1.3.1", features = ["full"] }
+once_cell = "1.19.0"
 serde = { version = "1.0.198", features = ["derive"] }
 serde_json = "1.0.116"
 tokio = { version = "1.37.0", features = ["full"] }
