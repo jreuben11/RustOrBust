@@ -47,3 +47,34 @@ import quickstart_r2p
 sum = quickstart_r2p.sum_as_string(5, 20)
 print(f"sum: {sum}")
 ```
+
+# quickstart_p2r
+- bug: see https://github.com/PyO3/pyo3/issues/2803
+- workaround: `export LD_LIBRARY_PATH=${HOME}/.pyenv/versions/3.11.7/lib:$LD_LIBRARY_PATH`
+## [Cargo.toml](quickstart_p2r/Cargo.toml)
+```toml
+[dependencies]
+pyo3 = { version = "0.21.2", features = ["auto-initialize"] }
+
+[workspace]
+```
+## [main.rs](quickstart_p2r/src/main.rs)
+```rust
+use pyo3::prelude::*;
+use pyo3::types::IntoPyDict;
+
+fn main() -> PyResult<()> {
+    Python::with_gil(|py| {
+        let sys = py.import_bound("sys")?;
+        let version: String = sys.getattr("version")?.extract()?;
+
+        let locals = [("os", py.import_bound("os")?)].into_py_dict_bound(py);
+        let code = "os.getenv('USER') or os.getenv('USERNAME') or 'Unknown'";
+        let user: String = py.eval_bound(code, None, Some(&locals))?.extract()?;
+
+        println!("Hello {}, I'm Python {}", user, version);
+        Ok(())
+    })
+}
+```
+

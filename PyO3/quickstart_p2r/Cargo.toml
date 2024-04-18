@@ -1,0 +1,9 @@
+[package]
+name = "quickstart_p2r"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+pyo3 = { version = "0.21.2", features = ["auto-initialize"] }
+
+[workspace]
