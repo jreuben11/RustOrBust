@@ -12,7 +12,7 @@
 8. [Rustonomicon](rustonomicon/README.md)
 9. [CLIs and TUIs](clis_and_tuis/README.md)
 10. [Tokio](tokio/README.md)
-11. Py03 (**in progress**)
+11. [PyO3](PyO3/README.md) (**in progress**)
 
 # Rust 🦀 study plan:
 
