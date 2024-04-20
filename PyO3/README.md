@@ -89,17 +89,18 @@ struct Number(i32);
 #[pymethods]
 impl Number {
     #[new]
-    fn new(value: i32) -> Self {
-        Self(value)
-    }
+    fn new(value: i32) -> Self { ... }
+    fn __repr__(slf: &Bound<'_, Self>) -> PyResult<String> { ... }
+    fn __str__(&self) -> String { ... }
+    fn __hash__(&self) -> u64 { ... }
+    fn __richcmp__(&self, other: &Self, op: CompareOp) -> PyResult<bool> { ... }
+    __bool__(&self) -> bool { ... }
 }
-
 
 #[pymodule]
 fn py_number(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Number>()?;
     Ok(())
 }
-
 ```
 
