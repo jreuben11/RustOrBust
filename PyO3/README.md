@@ -86,15 +86,18 @@ use pyo3::prelude::*;
 #[pyclass]
 struct Number(i32);
 
+fn wrap(obj: &Bound<'_, PyAny>) -> PyResult<i32> { ... }
+
 #[pymethods]
 impl Number {
     #[new]
-    fn new(value: i32) -> Self { ... }
+    fn new(#[pyo3(from_py_with = "wrap")] value: i32) -> Self { ... }
     fn __repr__(slf: &Bound<'_, Self>) -> PyResult<String> { ... }
     fn __str__(&self) -> String { ... }
     fn __hash__(&self) -> u64 { ... }
     fn __richcmp__(&self, other: &Self, op: CompareOp) -> PyResult<bool> { ... }
-    __bool__(&self) -> bool { ... }
+    fn __bool__(&self) -> bool { ... }
+    fn __add__(&self, other: &Self) -> Self { ... }
 }
 
 #[pymodule]
