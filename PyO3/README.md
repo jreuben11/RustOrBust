@@ -78,3 +78,51 @@ fn main() -> PyResult<()> {
 }
 ```
 
+# py_number
+- [lib.rs](py_number/src/lib.rs)
+```rust
+use pyo3::prelude::*;
+
+#[pyclass]
+struct Number(i32);
+
+fn wrap(obj: &Bound<'_, PyAny>) -> PyResult<i32> { ... }
+
+#[pymethods]
+impl Number {
+    #[new]
+    fn new(#[pyo3(from_py_with = "wrap")] value: i32) -> Self { ... }
+    fn __repr__(slf: &Bound<'_, Self>) -> PyResult<String> { ... }
+    fn __str__(&self) -> String { ... }
+    fn __hash__(&self) -> u64 { ... }
+    fn __richcmp__(&self, other: &Self, op: CompareOp) -> PyResult<bool> { ... }
+    fn __bool__(&self) -> bool { ... }
+    fn __add__(&self, other: &Self) -> Self { ... }
+}
+
+#[pyclass(name = "Counter")]
+pub struct PyCounterWrapper {
+    count: Cell<u64>,
+    wraps: Py<PyAny>,
+}
+
+#[pymethods]
+impl PyCounterWrapper {
+    #[new]
+    fn __new__(wraps: Py<PyAny>) -> Self { ... }
+    #[getter]
+    fn count(&self) -> u64 { ... }
+    #[pyo3(signature = (*args, **kwargs))]
+    fn __call__(&self, py: Python<'_>, args: &Bound<'_, PyTuple>, kwargs: Option<&Bound<'_, PyDict>>,) -> PyResult<Py<PyAny>> { ... }
+}
+
+#[pymodule]
+fn py_number(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<Number>()?;
+    m.add_class::<PyCounterWrapper>()?;
+    Ok(())
+}
+
+```
+- [pytester](py_number/src/tester.py)
+
