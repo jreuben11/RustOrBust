@@ -20,3 +20,19 @@ def hash_djb2(s: str):
     return n
 
 assert hash_djb2('l50_50') == Number(-1152549421)
+
+
+from py_number import Counter
+
+
+@Counter
+def say_hello():
+    print("hello")
+
+
+say_hello()
+say_hello()
+say_hello()
+say_hello()
+
+assert say_hello.count == 4

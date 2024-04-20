@@ -100,10 +100,29 @@ impl Number {
     fn __add__(&self, other: &Self) -> Self { ... }
 }
 
+#[pyclass(name = "Counter")]
+pub struct PyCounterWrapper {
+    count: Cell<u64>,
+    wraps: Py<PyAny>,
+}
+
+#[pymethods]
+impl PyCounterWrapper {
+    #[new]
+    fn __new__(wraps: Py<PyAny>) -> Self { ... }
+    #[getter]
+    fn count(&self) -> u64 { ... }
+    #[pyo3(signature = (*args, **kwargs))]
+    fn __call__(&self, py: Python<'_>, args: &Bound<'_, PyTuple>, kwargs: Option<&Bound<'_, PyDict>>,) -> PyResult<Py<PyAny>> { ... }
+}
+
 #[pymodule]
 fn py_number(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<Number>()?;
+    m.add_class::<PyCounterWrapper>()?;
     Ok(())
 }
+
 ```
+- [pytester](py_number/src/tester.py)
 
