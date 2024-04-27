@@ -1,5 +1,7 @@
 [workspace]
+resolver = "2"
 
 members = [ 
     "hello_world",
+    "rust_book/basics"
 ]

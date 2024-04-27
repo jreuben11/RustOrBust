@@ -1,4 +1,5 @@
-
+#![allow(dead_code)]
+#![allow(unused_variables)]
 // cargo fix --lib -p basics     
 // cargo fix --bin "basics"  
 
@@ -526,7 +527,7 @@ mod error_handling { //CH09
         fn read_username_from_file2() -> Result<String, io::Error> {
             fs::read_to_string("hello.txt")
         }
-        read_username_from_file();
+        let _ = read_username_from_file();
 
         use std::net::IpAddr;
         let home: IpAddr = "127.0.0.1"
