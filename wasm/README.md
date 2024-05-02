@@ -34,3 +34,7 @@ wasm-pack build --target web # creates pkg folder
 npm install
 cargo add wee-alloc
 ```
+## move to TS
+```bash
+npm install --save typescript ts-loader
+```
