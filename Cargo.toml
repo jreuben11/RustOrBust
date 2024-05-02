@@ -3,5 +3,5 @@ resolver = "2"
 
 members = [ 
     "hello_world",
-    "rust_book/basics"
+    "rust_book/basics", 
 ]

@@ -22,9 +22,15 @@ cd wwww
 npm init -y
 npm install --save webpack webpack-cli copy-webpack-plugin
 npm install --save-dev webpack-dev-server
-
-
-
 npm run dev # http://localhost:8080/  , http://localhost:8080/webpack-dev-server
 nmp run build
+```
+## cargo
+```bash
+cargo add wasm-bindgen
+cargo install wasm-pack
+wasm-pack build --target web # creates pkg folder
+# add to package.json dependencies: "snake_game": "file:../pkg" 
+npm install
+cargo add wee-alloc
 ```
