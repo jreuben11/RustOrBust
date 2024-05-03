@@ -12,7 +12,8 @@
 8. [Rustonomicon](rustonomicon/README.md)
 9. [CLIs and TUIs](clis_and_tuis/README.md)
 10. [Tokio](tokio/README.md)
-11. [PyO3](PyO3/README.md) (**in progress**)
+11. [PyO3](PyO3/README.md) 
+12. [WASM](wasm/README.md) (**in progress**)
 
 # Rust 🦀 study plan:
 
@@ -30,9 +31,19 @@
  - tokio guide https://tokio.rs/tokio/tutorial
  - tonic tutorial https://github.com/hyperium/tonic/blob/master/examples/routeguide-tutorial.md
  - axum demo https://github.com/joelparkerhenderson/demo-rust-axum/
-- [ ] PyO3 https://pyo3.rs/  Rust bindings for Python
-- [ ] Webassembly book https://rustwasm.github.io/docs/book/ 
+- [X] PyO3 https://pyo3.rs/  Rust bindings for Python
+- [ ] Webassembly 
+  - snakegame 
+  - book https://rustwasm.github.io/docs/book/ 
+- [ ] Leptos https://book.leptos.dev/
+- [ ] Rust Zero to Production https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60
+- [ ] Macros 
+  - https://danielkeep.github.io/tlborm/book/index.html 
+
 ## Next ...
+- [ ] WebGPU https://wgpu.rs/
+- [ ] Solana https://solana.com/docs/programs/lang-rust
+- [ ] Bevy https://bevyengine.org/learn/
 - [ ] Cxx https://cxx.rs/ Rust loves C++
 - [ ] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
 - [ ] Standard lib https://doc.rust-lang.org/std/index.html 
@@ -44,7 +55,6 @@
 - [ ] Unstable book https://doc.rust-lang.org/nightly/unstable-book/index.html 
 - [ ] Rust Design Patterns https://rust-unofficial.github.io/patterns/ 
 - [ ] Roadmap https://blog.rust-lang.org/inside-rust/2022/04/04/lang-roadmap-2024.html 
-- [ ] Macros https://danielkeep.github.io/tlborm/book/index.html 
 - [ ] Vulkano https://vulkano.rs/guide/introduction 
 - [ ] Rustup https://rust-lang.github.io/rustup/ 
 - [ ] Clippy https://doc.rust-lang.org/clippy/ 
