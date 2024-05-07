@@ -8,6 +8,7 @@ cargo install cargo-generate
 # cargo generate --git https://github.com/leptos-community/start-csr
 trunk serve --port 3000 --open 
 ```
+
 - [Cargo.toml](leptos-tutorial/Cargo.toml)
 - [main.rs](leptos-tutorial/src/main.rs)
 
@@ -282,6 +283,91 @@ fn ErrorHandling() -> impl IntoView {
                 </p>
             </ErrorBoundary>
         </label>
+    }
+}
+```
+
+## parent-child communication
+```rust
+#[derive(Copy, Clone)]
+struct SmallcapsContext(WriteSignal<bool>);
+
+#[component]
+pub fn ParentChildComms() -> impl IntoView {
+    let (red, set_red) = create_signal(false);
+    let (right, set_right) = create_signal(false);
+    let (italics, set_italics) = create_signal(false);
+    let (smallcaps, set_smallcaps) = create_signal(false);
+
+    provide_context(SmallcapsContext(set_smallcaps));
+
+    view! {
+        <main>
+            <p
+                class:red=red
+                class:right=right
+                class:italics=italics
+                class:smallcaps=smallcaps
+            >
+                "Lorem ipsum sit dolor amet."
+            </p>
+            // Button A: pass the signal setter
+            <ButtonA setter=set_red/>
+            // Button B: pass a closure
+            <ButtonB on_click=move |_| set_right.update(|value| *value = !*value)/>
+            // Button C: use a regular event listener - applies it to each of the top-level elements the component returns
+            <ButtonC on:click=move |_| set_italics.update(|value| *value = !*value)/>
+            // Button D gets its setter from context rather than props
+            <ButtonD/>
+        </main>
+    }
+}
+
+#[component]
+pub fn ButtonA(
+    setter: WriteSignal<bool>,
+) -> impl IntoView {
+    view! {
+        <button
+            on:click=move |_| setter.update(|value| *value = !*value)
+        >
+            "Toggle Red"
+        </button>
+    }
+}
+
+#[component]
+pub fn ButtonB<F>( on_click: F,) -> impl IntoView
+where
+    F: Fn(MouseEvent) + 'static,
+{
+    view! {
+        <button
+            on:click=on_click
+        >
+            "Toggle Right"
+        </button>
+    }
+}
+
+#[component]
+pub fn ButtonC() -> impl IntoView {
+    view! {
+        <button>
+            "Toggle Italics"
+        </button>
+    }
+}
+
+#[component]
+pub fn ButtonD() -> impl IntoView {
+    let setter = use_context::<SmallcapsContext>().unwrap().0;
+    view! {
+        <button
+            on:click=move |_| setter.update(|value| *value = !*value)
+        >
+            "Toggle Small Caps"
+        </button>
     }
 }
 ```
