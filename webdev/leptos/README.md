@@ -10,7 +10,13 @@ trunk serve --port 3000 --open
 ```
 
 - [Cargo.toml](leptos-tutorial/Cargo.toml)
+```toml
+[dependencies]
+console_error_panic_hook = "0.1.7"
+leptos = { version = "0.6.11", features = ["csr", "nightly"] }
+```
 - [main.rs](leptos-tutorial/src/main.rs)
+- [components.rs](leptos-tutorial/src/components.rs)
 
 ## Basic Component
 ```rust
@@ -51,7 +57,7 @@ fn App() -> impl IntoView {
 }
 ```
 
-## components and props
+## [components and props](leptos-tutorial/src/components/progressbar.rs)
 ```rust
 let double_count = move || count() * 2;
 <ProgressBar max=50 progress=count/>
@@ -72,7 +78,7 @@ fn ProgressBar(
 }
 ```
 
-## Static Iteration
+## [Static Iteration](leptos-tutorial/src/components/lists.rs)
 ```rust
 <StaticList length=5/>
 
@@ -99,7 +105,7 @@ fn StaticList( length: usize) -> impl IntoView {
 }
 ```
 
-## Dynamic Iteration
+## [Dynamic Iteration](leptos-tutorial/src/components/lists.rs)
 ```rust
 <DynamicList initial_length=5/>
 
@@ -154,7 +160,7 @@ fn DynamicList(initial_length: usize,) -> impl IntoView {
 }
 ```
 
-## controlled component
+## [controlled component](leptos-tutorial/src/components/control.rs)
 ```rust
 #[component]
 fn ControlledComponent() -> impl IntoView {
@@ -171,7 +177,7 @@ fn ControlledComponent() -> impl IntoView {
 }
 ```
 
-## uncontrolled component
+## [uncontrolled component](leptos-tutorial/src/components/control.rs)
 ```rust
 use leptos::{ev::SubmitEvent, *};
 
@@ -198,7 +204,7 @@ fn UncontrolledComponent() -> impl IntoView {
 }
 ```
 
-## conditionals
+## [conditionals](leptos-tutorial/src/components/conditionals.rs)
 ```rust
 #[component]
 fn Conditionals() -> impl IntoView {
@@ -252,7 +258,7 @@ fn Conditionals() -> impl IntoView {
 }
 ```
 
-## error handling
+## [error handling](leptos-tutorial/src/components/errorhandling.rs)
 ```rust
 #[component]
 fn ErrorHandling() -> impl IntoView {
@@ -287,7 +293,7 @@ fn ErrorHandling() -> impl IntoView {
 }
 ```
 
-## parent-child communication
+## [parent-child communication](leptos-tutorial/src/components/parent_child_comms.rs)
 ```rust
 #[derive(Copy, Clone)]
 struct SmallcapsContext(WriteSignal<bool>);
@@ -371,7 +377,7 @@ pub fn ButtonD() -> impl IntoView {
     }
 }
 ```
-## Child Components
+## [Child Components](leptos-tutorial/src/components/child_components.rs)
 ```rust
 #[component]
 pub fn ComponentChildren() -> impl IntoView {
