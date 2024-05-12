@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - uses: actions/checkout@v4
     
     - name: Install nightly Rust
       uses: dtolnay/rust-toolchain@nightly
@@ -27,8 +28,6 @@ jobs:
 
     - name: lint
       run: cargo clippy & cargo fmt
-      
-    - uses: actions/checkout@v4
     
     - name: Build
       run: cargo build --verbose
