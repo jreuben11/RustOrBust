@@ -210,6 +210,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "declerative"
+version = "0.1.0"
+
+[[package]]
 name = "derive-where"
 version = "1.2.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
