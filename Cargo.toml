@@ -2,7 +2,7 @@
 resolver = "2"
 
 members = [ 
-    "hello_world", "macros/declerative",
+    "hello_world", "macros/declerative", "macros/procedural-basic",
     "rust_book/basics", 
     "webdev/leptos/leptos-tutorial"
 ]

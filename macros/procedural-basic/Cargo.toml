@@ -1,0 +1,7 @@
+[package]
+name = "procedural-basic"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+procedural-basic-macro = { path = "./procedural-basic-macro" }
