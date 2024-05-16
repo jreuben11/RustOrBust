@@ -13,7 +13,8 @@
 9. [CLIs and TUIs](clis_and_tuis/README.md)
 10. [Tokio](tokio/README.md)
 11. [PyO3](PyO3/README.md) 
-12. [WASM](wasm/README.md) (**in progress**)
+12. [WASM](wasm/README.md) 
+13. [Leptos](webdev/leptos/README.md)(**in progress**)
 
 # Rust 🦀 study plan:
 
@@ -32,7 +33,7 @@
  - tonic tutorial https://github.com/hyperium/tonic/blob/master/examples/routeguide-tutorial.md
  - axum demo https://github.com/joelparkerhenderson/demo-rust-axum/
 - [X] PyO3 https://pyo3.rs/  Rust bindings for Python
-- [ ] Webassembly 
+- [X] Webassembly 
   - snakegame 
   - book https://rustwasm.github.io/docs/book/ 
 - [ ] Leptos https://book.leptos.dev/
