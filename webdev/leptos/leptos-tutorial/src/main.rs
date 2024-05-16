@@ -7,6 +7,7 @@ use components::conditionals::Conditionals;
 use components::errorhandling::ErrorHandling;
 use components::parent_child_comms::ParentChildComms;
 use components::child_components::ComponentChildren;
+use components::use_effect::UseEffect;
 
 // `main` function just mounts component to the <body> - defined it as `fn App`, use it in a template as <App/>
 fn main() {
@@ -89,6 +90,7 @@ fn App() -> impl IntoView {
 
         <ParentChildComms />
         <ComponentChildren />
+        <UseEffect />
 
     }
 }

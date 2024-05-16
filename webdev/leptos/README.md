@@ -438,3 +438,4 @@ pub fn WrapsChildren(children: Children) -> impl IntoView {
 }
 
 ```
+## [Use Effect](leptos-tutorial/src/components/use_effect.rs)
