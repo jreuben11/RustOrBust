@@ -41,12 +41,11 @@
 - [ ] Rust Zero to Production (book)  https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60 (**in progress**)
 - [ ] Macros (**in progress**)
   - https://danielkeep.github.io/tlborm/book/index.html
-- [ ] Bevy 
+- [ ] Bevy https://bevyengine.org/learn/
 
 ## Next ...
 - [ ] WebGPU https://wgpu.rs/
 - [ ] Solana https://solana.com/docs/programs/lang-rust
-- [ ] Bevy https://bevyengine.org/learn/
 - [ ] Cxx https://cxx.rs/ Rust loves C++
 - [ ] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
 - [ ] Standard lib https://doc.rust-lang.org/std/index.html 
@@ -64,7 +63,6 @@
 - How to learn modern rust https://github.com/joaocarvalhoopen/How_to_learn_modern_Rust 
 - The little book of Rust Books https://lborb.github.io/book/ 
 - blessed.rs  - An unofficial guide to the crates of the Rust ecosystem 
-- [ ] Bevy Engine https://bevyengine.org/learn/book/introduction/ 
 - [ ] Writing Interpreters in Rust: A Guide https://rust-hosted-langs.github.io/book/introduction.html   
 - [ ] Android Rust https://source.android.com/docs/setup/build/rust/building-rust-modules/overview 
 - Awesome rust https://github.com/rust-unofficial/awesome-rust 
