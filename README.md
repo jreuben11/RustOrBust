@@ -14,7 +14,8 @@
 10. [Tokio](tokio/README.md)
 11. [PyO3](PyO3/README.md) 
 12. [WASM](wasm/README.md) 
-13. [Leptos](webdev/leptos/README.md)(**in progress**)
+13. [Leptos](webdev/leptos/README.md)
+14. [macros](macros/README.md) (**in progress**)
 
 # Rust 🦀 study plan:
 
@@ -27,7 +28,7 @@
 - [x] Bindgen https://rust-lang.github.io/rust-bindgen/
 - [x] Rustonomicon https://doc.rust-lang.org/nomicon/index.html
 - [x] Commandline book https://rust-cli.github.io/book/index.html + Clap https://docs.rs/clap/latest/clap/ + RataTUI https://ratatui.rs/introduction/
-- [ ] Rust Hands on Data Structures and Algorithms (book) https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorithms-with-Rust (in progress)
+- [ ] Rust Hands on Data Structures and Algorithms (book) https://github.com/PacktPublishing/Hands-On-Data-Structures-and-Algorithms-with-Rust (**in progress**)
 - [x] Tokio ecosystem
  - tokio guide https://tokio.rs/tokio/tutorial
  - tonic tutorial https://github.com/hyperium/tonic/blob/master/examples/routeguide-tutorial.md
@@ -36,10 +37,11 @@
 - [X] Webassembly 
   - snakegame 
   - book https://rustwasm.github.io/docs/book/ 
-- [ ] Leptos https://book.leptos.dev/
-- [ ] Rust Zero to Production https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60
-- [ ] Macros 
-  - https://danielkeep.github.io/tlborm/book/index.html 
+- [X] Leptos https://book.leptos.dev/
+- [ ] Rust Zero to Production (book)  https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60 (**in progress**)
+- [ ] Macros (**in progress**)
+  - https://danielkeep.github.io/tlborm/book/index.html
+- [ ] Bevy 
 
 ## Next ...
 - [ ] WebGPU https://wgpu.rs/
