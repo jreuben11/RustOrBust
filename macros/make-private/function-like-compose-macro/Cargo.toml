@@ -1,0 +1,13 @@
+[package]
+name = "function-like-compose-macro"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+proc-macro2 = "1.0.82"
+quote = "1.0.36"
+syn = { version = "2.0.63", features =["full", "extra-traits"] } 
+
+
+[lib]
+proc-macro = true

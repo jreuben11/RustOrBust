@@ -134,4 +134,56 @@ eprintln!("{:#?}", &ast);
 ```
 
 # procedural function macros
-- [lib.rs](make-private/make-private-macro/src/lib.rs)
+- [main.rs](make-private/src/main.rs)
+- [Cargo.toml](make-private/Cargo.toml)
+```toml
+[dependencies]
+make-private-macro = { path = "./make-private-macro" }
+function-like-compose-macro = { path = "./function-like-compose-macro"}
+```
+- [make-private-macro lib.rs](make-private/make-private-macro/src/lib.rs)
+```rust
+use proc_macro::TokenStream;
+use quote::quote;
+use syn::Data::Struct;
+use syn::Fields::Named;
+use syn::__private::{Span, TokenStream2};
+use syn::{parse_macro_input, DeriveInput, Type};
+use syn::{DataStruct, FieldsNamed, Ident};
+
+fn get_field_info(ast: &DeriveInput) -> Vec<(&Ident, &Type)> { ... }
+fn generated_methods(fields: &Vec<(&Ident, &Type)>) -> Vec<TokenStream2> { ... }
+fn generate_private_fields(fields: &Vec<(&Ident, &Type)>) -> Vec<TokenStream2> { ... }
+
+#[proc_macro]
+pub fn private(item: TokenStream) -> TokenStream { ... }
+```
+- [function-like-compose-macro lib.rs](make-private/function-like-compose-macro/src/lib.rs)
+```rust
+use proc_macro::TokenStream;
+use quote::{quote, ToTokens};
+use syn::parse::{Parse, ParseStream};
+use syn::punctuated::Punctuated;
+use syn::{Ident, parse_macro_input, Token};
+
+struct ComposeInput {
+    expressions: Punctuated<Ident, Token!(.)>,
+}
+impl Parse for ComposeInput {
+    fn parse(input: ParseStream) -> Result<Self, syn::Error> { ... }
+}
+impl ToTokens for ComposeInput {
+    fn to_tokens(&self, tokens: &mut proc_macro2::TokenStream) { ... }
+}
+
+#[proc_macro]
+pub fn compose(item: TokenStream) -> TokenStream {
+    let ci: ComposeInput = parse_macro_input!(item);
+    quote!(
+      {
+        ...
+        #ci
+      }
+    ).into()
+}
+```
