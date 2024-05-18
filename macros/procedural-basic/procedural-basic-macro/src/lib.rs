@@ -9,7 +9,7 @@ pub fn hello(item: TokenStream) -> TokenStream {
     let add_hello_world = quote! {
         impl #name {
             fn hello_world(&self) {
-                println!("Hello world")
+                println!("Hello {}", stringify!(#name))
             }
         }
     };

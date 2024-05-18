@@ -11,7 +11,7 @@ use crate::greeting::base_greeting_fn;
 #[macro_use]
 mod generate_get_value;
 
-use crate::account_dsl::Account;
+use crate::account_dsl::{Account, Currency};
 #[macro_use]
 mod account_dsl;
 
@@ -19,12 +19,16 @@ mod account_dsl;
 mod recursive_compose;
 use crate::recursive_compose::compose_two;
 
+#[macro_use]
+mod hello_world;
+
 fn main() {
     custom_vec();
     variadic_greeting();
     recursive_newtype::create();
     use_account_dsl();
     compose_vector_of_fn();
+    add_impl();
 }
 
 fn custom_vec() {
@@ -54,16 +58,20 @@ mod recursive_newtype {
     struct Name {
         value: String,
     }
-    generate_get_value!(Name);
-    generate_get_value!(Age, i32);
+    generate_newtypes_methods!(Name);
+    generate_get_value_string!(Age, i32);
+    generate_from!(Age, i32);
 
     pub fn create() {
         let age = Age { value: 1 };
         let name = Name {
             value: "blah".to_string(),
         };
+        
 
         println!("{}, {}", age.get_value(), name.get_value());
+        let _x: i32 = age.into();
+        let _y: String = name.into();
     }
 }
 
@@ -72,6 +80,9 @@ fn use_account_dsl() {
     let mut the_rich = Account { money: 200 };
     exchange!(Give 0 to the_poor);
     exchange!(Give 20 to the_poor);
+    exchange!(Give 1 "euros" to the_poor);
+    exchange!(Give 1 "euro" to the_poor);
+    exchange!(Give 1 "dollar" to the_poor);
     exchange!(Take 10 from the_rich);
     exchange!(Give 30 from the_rich to the_poor);
     println!("Poor: {:?}, rich: {:?}", the_poor, the_rich);
@@ -94,4 +105,11 @@ fn compose_vector_of_fn() {
       add_one => stringify => prefix_with("Result: ")
     );
     println!("{}", composed2(5));
+}
+
+struct Example {}
+hello_world!(Example); 
+fn add_impl(){
+    let e = Example {}; 
+    e.hello_world();
 }
