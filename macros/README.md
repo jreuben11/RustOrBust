@@ -1,3 +1,9 @@
+# 4 ways to create macros in rust
+1. `macro_rules!`
+2. `#[proc_macro_derive(Name)]`
+3. `#[proc_macro_attribute]`
+4. `#[proc_macro]`
+
 # Declerative Macros
 - [main.rs](declerative/src/main.rs)
 ```rust
@@ -90,14 +96,15 @@ pub fn hello(item: TokenStream) -> TokenStream {
     let add_hello_world = quote! {
         impl #name {
             fn hello_world(&self) {
-                println!("Hello world")
+                println!("Hello", stringify!(#name))
             }
         }
     };
     add_hello_world.into()
 }
 ```
-# Attribute Procedural Macros
+# Procedural Attribute Macros
+- [lib.rs](make-public/make-public-macro/src/lib.rs)
 ```rust
 extern crate core;
 use proc_macro::TokenStream;
@@ -120,8 +127,11 @@ impl ToTokens for StructField {
 }
 
 #[proc_macro_attribute]
-pub fn xxx(_attr: TokenStream, item: TokenStream) -> TokenStream { ... }
+pub fn xxx(attr: TokenStream, item: TokenStream) -> TokenStream { ... }
 
 let ast = parse_macro_input!(item as DeriveInput);
 eprintln!("{:#?}", &ast);
 ```
+
+# procedural function macros
+- [lib.rs](make-private/make-private-macro/src/lib.rs)

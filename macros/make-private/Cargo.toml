@@ -1,0 +1,7 @@
+[package]
+name = "make-private"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+make-private-macro = { path = "./make-private-macro" }

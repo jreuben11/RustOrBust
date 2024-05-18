@@ -1,11 +1,12 @@
 [workspace]
 resolver = "2"
 
-members = [ 
-    "hello_world", 
-    "macros/declerative", 
+members = [
+    "hello_world",
+    "rust_book/basics",
+    "webdev/leptos/leptos-tutorial",
+    "macros/declerative",
     "macros/procedural-basic",
     "macros/make-public",
-    "rust_book/basics", 
-    "webdev/leptos/leptos-tutorial"
+    "macros/make-private",
 ]

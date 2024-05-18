@@ -13,6 +13,29 @@ impl Account {
     }
 }
 
+pub enum Currency {
+    Euro,
+    Dollar,
+}
+impl From<&str> for Currency {
+    fn from(value: &str) -> Self {
+        if value.contains("euro") {
+            Currency::Euro
+        } else {
+            // simple fallback to dollars
+            Currency::Dollar
+        }
+    }
+}
+impl Currency {
+    pub fn calculate(&self, amount: u32) -> u32 {
+        match self {
+            Currency::Euro => amount,
+            Currency::Dollar => amount * 2,
+        }
+    }
+}
+
 macro_rules! exchange {
     (Give 0 to $name:ident) => {
         println!("Cheapskate");
@@ -27,4 +50,8 @@ macro_rules! exchange {
         $giver.subtract($amount);
         $receiver.add($amount)
     };
+    (Give $amount:literal $currency:literal to $name:ident) => {
+        let curr: Currency = $currency.into(); // From does not need to be public (and in fact cannot be)
+        $name.add(curr.calculate($amount))
+    }
 }
