@@ -133,7 +133,7 @@ let ast = parse_macro_input!(item as DeriveInput);
 eprintln!("{:#?}", &ast);
 ```
 
-# procedural function macros
+# Procedural Function Macros
 - [main.rs](make-private/src/main.rs)
 - [Cargo.toml](make-private/Cargo.toml)
 ```toml
@@ -185,5 +185,132 @@ pub fn compose(item: TokenStream) -> TokenStream {
         #ci
       }
     ).into()
+}
+```
+
+# Builder pattern + Testing
+- [workspace](builder/Cargo.toml)
+```toml
+[workspace]
+resolver = "2"
+members = [
+"builder-macro", 
+"builder-code", 
+"builder-usage" 
+]
+```
+## builder-usage
+- [Cargo.toml](builder/builder-usage/Cargo.toml)
+```toml
+[dependencies]
+builder-macro = { path = "../builder-macro" }
+[dev-dependencies]
+trybuild = "1.0.96"
+```
+- [main.rs](builder/builder-usage/src/main.rs)
+```rust
+use builder_macro::Builder;
+
+fn main() {}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn should_generate_builder_for_struct_with_no_properties() { ... }
+    #[test]
+    fn should_generate_builder_for_struct_with_one_property() { ... }
+    #[test]
+    fn should_generate_builder_for_struct_with_two_properties() { ... }
+    #[test]
+    fn should_generate_builder_for_struct_with_multiple_properties() { ... }
+    #[test]
+    #[should_panic]
+    fn should_panic_when_field_is_missing() { ... }
+}
+```
+- [compilation_tests.rs](builder/builder-usage/tests/compilation_tests.rs)
+```rust
+#[test]
+fn should_not_compile() {
+    let t = trybuild::TestCases::new();
+    t.compile_fail("tests/fails/*.rs");
+}
+```
+## builder-macro
+- [Cargo.toml](builder/builder-macro/Cargo.toml)
+```toml
+[dependencies]
+builder-code = { path = "../builder-code" }
+
+[lib]
+proc-macro = true
+```
+- [lib.rs](builder/builder-macro/src/lib.rs)
+```rust
+use builder_code::create_builder;
+use proc_macro::TokenStream;
+
+#[proc_macro_derive(Builder)]
+pub fn builder(item: TokenStream) -> TokenStream {
+    create_builder(item.into()).into()
+}
+
+```
+
+## builder-code
+- [Cargo.toml](builder/builder-code/Cargo.toml)
+```toml
+[dependencies]
+proc-macro2 = "1.0.82"
+quote = "1.0.36"
+syn = { version = "2.0.64", features = ["extra-traits"] }
+```
+- [fields.rs](builder/builder-code/src/fields.rs)
+```rust
+use quote::quote;
+use syn::__private::TokenStream2;
+use syn::punctuated::Punctuated;
+use syn::token::Comma;
+use syn::{Field, Ident, Type};
+
+fn get_name_and_type<'a>(f: &'a Field) -> (&'a Option<Ident>, &'a Type) { ... }
+pub fn builder_field_definitions(fields: &Punctuated<Field, Comma>,) -> impl Iterator<Item = TokenStream2> + '_ { ... }
+pub fn original_struct_setters(fields: &Punctuated<Field, Comma>,) -> impl Iterator<Item = TokenStream2> + '_ { ... }
+pub fn builder_methods(fields: &Punctuated<Field, Comma>,) -> impl Iterator<Item = TokenStream2> + '_ { ... }
+pub fn builder_init_values(fields: &Punctuated<Field, Comma>,) -> impl Iterator<Item = TokenStream2> + '_ { ... }
+
+#[cfg(test)]
+mod tests {
+    use proc_macro2::Span;
+    use syn::{FieldMutability, Path, PathSegment, TypePath, Visibility};
+    use super::*;
+    #[test]
+    fn get_name_and_type_give_back_name() { ... }
+}
+```
+- [lib.rs](builder/builder-code/src/lib.rs)
+```rust
+use proc_macro2::TokenStream;
+use quote::{format_ident, quote};
+use syn::Data::Struct;
+use syn::DeriveInput;
+use syn::Fields::Named;
+use syn::{DataStruct, FieldsNamed, Ident};
+
+mod fields;
+use fields::{
+    builder_field_definitions, builder_init_values, builder_methods, original_struct_setters,
+};
+
+pub fn create_builder(item: TokenStream) -> TokenStream { ... }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn builder_struct_name_should_be_present_in_output() { ... }
+    #[test]
+    fn builder_struct_with_expected_methods_should_be_present_in_output() { ... }
 }
 ```
