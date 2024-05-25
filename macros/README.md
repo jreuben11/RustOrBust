@@ -314,3 +314,41 @@ mod tests {
     fn builder_struct_with_expected_methods_should_be_present_in_output() { ... }
 }
 ```
+
+# function signature modification - replace panic with results
+- `cargo add syn --features "full extra-traits"`
+
+## [Cargo.toml](panic-to-result/panic-to-result-macro/Cargo.toml)
+```toml
+[dependencies]
+proc-macro-error = "1.0.4"
+proc-macro2 = "1.0.83"
+quote = "1.0.36"
+syn = { version = "2.0.66", features = ["full", "extra-traits"] }
+[lib]
+proc-macro = true
+```
+
+## [main.lib](panic-to-result/panic-to-result-macro/src/lib.rs)
+```rust
+use proc_macro::TokenStream;
+use quote::{quote, ToTokens};
+use syn::{token::Semi, Expr, ItemFn, ReturnType, Stmt, StmtMacro, Visibility};
+use syn::spanned::Spanned; 
+use proc_macro_error::proc_macro_error;
+use proc_macro_error::emit_error;
+
+fn signature_output_as_result(ast: &ItemFn) -> ReturnType { ... }
+fn last_statement_as_result(last_statement: Option<Stmt>) -> Stmt { ... }
+fn extract_panic_content(expr_macro: &StmtMacro) -> Option<proc_macro2::TokenStream> { ... }
+fn handle_expression(expression: Expr, token: Option<Semi>) -> Stmt { ... } // tricky refactors - change to Result, then change back ...
+
+#[proc_macro_error] 
+#[proc_macro_attribute]
+pub fn panic_to_result(_attr: TokenStream, item: TokenStream) -> TokenStream { ... }
+```
+# [compilation tests](panic-to-result/panic-to-result-usage/tests/compilation_tests.rs)
+- unfortunately, my error messages were not exact matches ... :(
+- `create_person_two_issues.rs`  + `create_person_two_issues.stderr`  
+- `create_person_with_empty_panic.rs`  + `create_person_with_empty_panic.stderr`  
+- `create_person_with_result.rs` + `create_person_with_result.stderr`
