@@ -1,0 +1,12 @@
+[package]
+name = "panic-to-result-macro"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+proc-macro-error = "1.0.4"
+proc-macro2 = "1.0.83"
+quote = "1.0.36"
+syn = { version = "2.0.66", features = ["full", "extra-traits"] }
+[lib]
+proc-macro = true
