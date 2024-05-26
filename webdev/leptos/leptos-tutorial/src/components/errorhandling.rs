@@ -1,5 +1,6 @@
 use leptos::*;
 
+
 #[component]
 pub fn ErrorHandling() -> impl IntoView {
     let (value, set_value) = create_signal(Ok(0));

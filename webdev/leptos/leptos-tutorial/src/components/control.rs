@@ -18,7 +18,7 @@ pub fn ControlledComponent() -> impl IntoView {
             //
             // IMPORTANT: `value` *attribute* only sets the initial value, until you have made a change.
             // The `value` *property* sets the current value.
-            // This is a quirk of the DOM;
+            // This is a quirk of the DOM; 
             // tl;dr: use prop:value for form inputs
             prop:value=name
         />
@@ -65,3 +65,4 @@ pub fn UncontrolledComponent() -> impl IntoView {
         <p>"Name is: " {name}</p>
     }
 }
+

@@ -1,17 +1,17 @@
 #[macro_use]
-extern crate procedural_basic_macro;
+extern crate procedural_basic_macro; 
 
 #[derive(Hello)]
-struct Example;
+struct Example; 
 
 #[derive(Hello)]
 enum Pet {
-    Cat,
+    Cat, 
 }
 
 fn main() {
-    let e = Example {};
-    e.hello_world();
+    let e = Example {}; 
+    e.hello_world(); 
     let c = Pet::Cat;
     c.hello_world();
 }

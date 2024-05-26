@@ -43,7 +43,7 @@ pub fn Conditionals() -> impl IntoView {
         <p class:hidden=is_odd>"Appears if even."</p>
 
         // c. The <Show/> component
-        //    only renders the fallback and the child once, lazily, and toggles between them when needed.
+        //    only renders the fallback and the child once, lazily, and toggles between them when needed. 
         //    more efficient than a {move || if ...} block
         <Show when=is_odd
             fallback=|| view! { <p>"Even steven"</p> }

@@ -1,12 +1,13 @@
 #![allow(dead_code)]
 #![allow(unused_variables)]
-// cargo fix --lib -p basics
-// cargo fix --bin "basics"
+// cargo fix --lib -p basics     
+// cargo fix --bin "basics"  
 
-pub mod module1; // looks for file as not inline
+pub mod module1; // looks for file as not inline 
+
 
 fn main() {
-    crate::modules::f();
+    crate::modules::f(); 
 
     foundation::variables_and_mutability();
     foundation::data_types();
@@ -32,21 +33,19 @@ fn main() {
     generics::lifetimes();
 }
 
-mod modules {
-    // CH07
+mod modules { // CH07
     use crate::module1::submodule1::Dummy;
     use basics::customer; // prefix with package name as it is in lib.rs
 
     pub fn f() {
-        let d = Dummy {};
+        let d = Dummy{};
         println!("Hello, {:?}!", d);
 
         customer::eat_at_restaurant();
     }
 }
 
-mod foundation {
-    //CH03
+mod foundation { //CH03
     pub fn variables_and_mutability() {
         let mut x = 5;
         println!("The value of x is: {x}");
@@ -55,7 +54,7 @@ mod foundation {
 
         const THREE_HOURS_IN_SECONDS: u32 = 60 * 60 * 3;
         let z = THREE_HOURS_IN_SECONDS;
-        println!("{}", z);
+        println!("{}",z);
 
         //shadowing:
         let y = 5;
@@ -84,15 +83,16 @@ mod foundation {
         io::stdin()
             .read_line(&mut index)
             .expect("Failed to read line");
-
+    
         let index: usize = index
             .trim()
             .parse()
             .expect("Index entered was not a number");
-
+    
         let element = a[index]; //UNSAFE
+    
+        println!("The value of the element at index {index} is: {element}"); 
 
-        println!("The value of the element at index {index} is: {element}");
     }
 
     pub fn expressions_and_functions() {
@@ -115,7 +115,7 @@ mod foundation {
         'counting_up: loop {
             println!("count = {count}");
             let mut remaining = 10;
-
+    
             loop {
                 println!("remaining = {remaining}");
                 if remaining == 9 {
@@ -126,7 +126,7 @@ mod foundation {
                 }
                 remaining -= 1;
             }
-
+    
             count += 1;
         }
         println!("End count = {count}");
@@ -138,17 +138,16 @@ mod foundation {
     }
 }
 
-mod ownership {
-    //CH04
+mod ownership { //CH04
 
-    pub fn ownership_examples() {
+    pub fn ownership_examples () {
         // string - goes on heap
         let mut s1 = String::from("hello");
-        s1.push_str(", bob!");
+        s1.push_str(", bob!"); 
         let s2 = s1; // take ownership of heap value
         let _s3 = s2.clone();
         doesnt_take_ownership(&s2);
-        println!("{}", s2);
+        println!("{}", s2); 
         takes_ownership(s2);
 
         // i32 - goes on stack
@@ -163,29 +162,30 @@ mod ownership {
 
         let (s4, len) = calculate_length(s3); // takes ownership of s3
         println!("The length of '{}' is {}.", s4, len);
+
     }
-    fn takes_ownership(some_string: String) {
+    fn takes_ownership(some_string: String) { 
         println!("{}", some_string);
     }
-    fn doesnt_take_ownership(some_string: &str) {
+    fn doesnt_take_ownership(some_string: &str) { 
         println!("{}", some_string);
     }
-    fn makes_copy(some_integer: i32) {
+    fn makes_copy(some_integer: i32) { 
         println!("{}", some_integer);
+    } 
+    fn gives_ownership() -> String {            
+        let some_string = String::from("yours"); 
+        some_string                            
     }
-    fn gives_ownership() -> String {
-        let some_string = String::from("yours");
-        some_string
-    }
-    fn takes_and_gives_back(a_string: String) -> String {
+    fn takes_and_gives_back(a_string: String) -> String { 
         a_string
     }
     fn calculate_length(s: String) -> (String, usize) {
-        let length = s.len();
+        let length = s.len(); 
         (s, length)
     }
 
-    pub fn borrowing() {
+    pub fn borrowing(){
         let mut s = String::from("hello");
         let len = calculate_length2(&s); //refers to s1 but does not own it
 
@@ -208,7 +208,7 @@ mod ownership {
         some_string.push_str(", world");
     }
 
-    pub fn slices() {
+    pub fn slices(){
         let mut s = String::from("hello world");
         let _word = first_word_size(&s); // word will get the value 5
 
@@ -229,6 +229,7 @@ mod ownership {
         let a = [1, 2, 3, 4, 5];
         let slice2 = &a[1..3]; // i32 array slice
         assert_eq!(slice2, &[2, 3]);
+
     }
     fn first_word_size(s: &String) -> usize {
         let bytes = s.as_bytes();
@@ -239,8 +240,7 @@ mod ownership {
         }
         s.len()
     }
-    fn first_word(s: &str) -> &str {
-        // param deref coercion: can pass a slice of the String or a reference to the String
+    fn first_word(s: &str) -> &str { // param deref coercion: can pass a slice of the String or a reference to the String
         let bytes = s.as_bytes();
         for (i, &item) in bytes.iter().enumerate() {
             if item == b' ' {
@@ -251,8 +251,7 @@ mod ownership {
     }
 }
 
-mod structs {
-    //CH05
+mod structs { //CH05
 
     #[derive(Debug)]
     struct User {
@@ -276,8 +275,7 @@ mod structs {
         fn can_hold(&self, other: &Rectangle) -> bool {
             self.width > other.width && self.height > other.height
         }
-        fn square(size: u32) -> Self {
-            // associated function
+        fn square(size: u32) -> Self { // associated function
             Self {
                 width: size,
                 height: size,
@@ -285,7 +283,7 @@ mod structs {
         }
     }
 
-    pub fn use_structs() {
+    pub fn use_structs(){
         let mut user1 = User {
             active: true,
             username: String::from("someusername123"),
@@ -299,10 +297,7 @@ mod structs {
             email: String::from("another@example.com"),
             ..user2 // struct update syntax
         };
-        println!(
-            "{}-{}-{}",
-            user3.active, user3.username, user3.sign_in_count
-        );
+        println!("{}-{}-{}", user3.active, user3.username, user3.sign_in_count);
 
         let _origin = Point(0, 0, 0);
         let _subject = AlwaysEqual;
@@ -326,6 +321,7 @@ mod structs {
         println!("Can rect1 hold rect2? {}", rect1.can_hold(&rect2));
 
         let _square = Rectangle::square(10);
+
     }
     fn build_user(email: String, username: String) -> User {
         User {
@@ -335,10 +331,10 @@ mod structs {
             sign_in_count: 1,
         }
     }
+    
 }
 
-mod pattern_matching {
-    //CH06
+mod pattern_matching { //CH06
     enum Message {
         Quit,
         Move { x: i32, y: i32 },
@@ -351,7 +347,7 @@ mod pattern_matching {
         }
     }
 
-    pub fn usage() {
+    pub fn usage(){
         let m = Message::Write(String::from("hello"));
         m.call();
 
@@ -393,7 +389,7 @@ mod pattern_matching {
         Dime,
         Quarter(UsState),
     }
-
+    
     fn value_in_cents(coin: Coin) -> u8 {
         match coin {
             Coin::Penny => 1,
@@ -412,11 +408,11 @@ mod pattern_matching {
             Some(i) => Some(i + 1),
         }
     }
+    
 }
 
-mod common_collections {
-    //CH08
-    pub fn vectors() {
+mod common_collections { //CH08
+    pub fn vectors(){
         let mut v: Vec<i32> = Vec::new();
         let v2 = vec![1, 2, 3];
         v.push(5);
@@ -451,9 +447,10 @@ mod common_collections {
             SpreadsheetCell::Text(String::from("blue")),
             SpreadsheetCell::Float(10.12),
         ];
+
     }
 
-    pub fn strings() {
+    pub fn strings(){
         let mut s = String::new();
         s.push_str("bar");
         let s = "initial contents".to_string();
@@ -471,7 +468,7 @@ mod common_collections {
         }
     }
 
-    pub fn hashmaps() {
+    pub fn hashmaps(){
         use std::collections::HashMap;
 
         let mut scores = HashMap::new();
@@ -499,17 +496,17 @@ mod common_collections {
             *count += 1;
         }
         println!("{:?}", word_count);
+
     }
 }
 
-mod error_handling {
-    //CH09
-    pub fn dont_panic() {
+mod error_handling { //CH09
+    pub fn dont_panic(){
         // panic!("crash and burn");
         // let v = vec![1, 2, 3];
         // v[99];
 
-        use std::fs::{self, File, OpenOptions};
+        use std::fs::{self,File,OpenOptions};
         use std::io::{self, Read};
 
         let file_name = "hello.txt";
@@ -519,9 +516,9 @@ mod error_handling {
             Err(error) => panic!("Problem opening the file: {:?}", error),
         };
 
-        let greeting_file =
-            File::open(file_name).expect("hello.txt should be included in this project");
-
+        let greeting_file = File::open(file_name)
+            .expect("hello.txt should be included in this project");
+        
         fn read_username_from_file() -> Result<String, io::Error> {
             let mut username = String::new();
             File::open("hello.txt")?.read_to_string(&mut username)?;
@@ -539,14 +536,13 @@ mod error_handling {
     }
 }
 
-mod generics {
-    //CH10
+mod generics { //CH10
 
-    pub fn data_types() {
+    pub fn data_types(){
         let number_list = vec![34, 50, 25, 100, 65];
         let result = largest(&number_list);
         println!("The largest number is {}", result);
-
+    
         let char_list = vec!['y', 'm', 'a', 'q'];
         let result = largest(&char_list);
         println!("The largest char is {}", result);
@@ -579,7 +575,7 @@ mod generics {
         println!("p.x = {}", integer.x());
         println!("p.distance_from_origin = {}", float.distance_from_origin());
     }
-    pub fn traits() {
+    pub fn traits(){
         pub trait Summary {
             fn summarize(&self) -> String;
             fn summarize2(&self) -> String {
@@ -592,20 +588,20 @@ mod generics {
             pub author: String,
             pub content: String,
         }
-
+        
         impl Summary for NewsArticle {
             fn summarize(&self) -> String {
                 format!("{}, by {} ({})", self.headline, self.author, self.location)
             }
         }
-
+        
         pub struct Tweet {
             pub username: String,
             pub content: String,
             pub reply: bool,
             pub retweet: bool,
         }
-
+        
         impl Summary for Tweet {
             fn summarize(&self) -> String {
                 format!("{}: {}", self.username, self.content)
@@ -614,11 +610,13 @@ mod generics {
 
         let tweet = Tweet {
             username: String::from("horse_ebooks"),
-            content: String::from("of course, as you probably already know, people"),
+            content: String::from(
+                "of course, as you probably already know, people",
+            ),
             reply: false,
             retweet: false,
         };
-
+    
         println!("1 new tweet: {}", tweet.summarize());
         println!("blah {}", tweet.summarize2());
 
@@ -629,7 +627,9 @@ mod generics {
         fn returns_summarizable() -> impl Summary {
             Tweet {
                 username: String::from("horse_ebooks"),
-                content: String::from("of course, as you probably already know, people"),
+                content: String::from(
+                    "of course, as you probably already know, people",
+                ),
                 reply: false,
                 retweet: false,
             }
@@ -641,7 +641,7 @@ mod generics {
     pub fn lifetimes() {
         let string1 = String::from("abcd");
         let string2 = "xyz";
-
+    
         let result = longest(string1.as_str(), string2);
         println!("The longest string is {}", result);
 
@@ -673,7 +673,11 @@ mod generics {
 
         use std::fmt::Display;
 
-        fn longest_with_an_announcement<'a, T>(x: &'a str, y: &'a str, ann: T) -> &'a str
+        fn longest_with_an_announcement<'a, T>(
+            x: &'a str,
+            y: &'a str,
+            ann: T,
+        ) -> &'a str
         where
             T: Display,
         {
@@ -685,10 +689,10 @@ mod generics {
             }
         }
     }
+    
 }
 
-mod testables {
-    // for unit testing:
+mod testables { // for unit testing:
     #[derive(Debug)]
     pub struct Rectangle {
         pub width: u32,
@@ -702,7 +706,7 @@ mod testables {
     pub fn greeting(name: &str) -> String {
         format!("Hello {}!", name)
     }
-    pub fn dont_panic() {
+    pub fn dont_panic(){
         panic!("AAAAGH!");
     }
     pub struct Guess {
@@ -721,15 +725,14 @@ mod testables {
                     value
                 );
             }
-
+    
             Guess { value }
         }
     }
 }
 
 #[cfg(test)]
-mod tests {
-    //CH11
+mod tests { //CH11
     #[test]
     fn it_works() {
         let result = 2 + 2;
@@ -764,16 +767,14 @@ mod tests {
     #[test]
     fn greeting_contains_name() {
         let result = greeting("Carol");
-        assert!(
-            result.contains("Carol"),
-            "Greeting did not contain name, value was `{}`",
-            result
-        );
+        assert!(result.contains("Carol"),
+        "Greeting did not contain name, value was `{}`",
+        result);
     }
 
     #[test]
     #[should_panic]
-    fn should_panic() {
+    fn should_panic(){
         dont_panic();
     }
 

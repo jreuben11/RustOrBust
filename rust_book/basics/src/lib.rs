@@ -4,7 +4,7 @@ mod front_of_house {
     pub mod hosting {
         pub fn add_to_waitlist() {}
 
-        // fn seat_at_table() {}
+       // fn seat_at_table() {}
     }
 
     // mod serving {
@@ -16,9 +16,11 @@ mod front_of_house {
     // }
 }
 
+
+
 pub mod customer {
-    use crate::back_of_house;
     use crate::front_of_house;
+    use crate::back_of_house;
     use crate::front_of_house::hosting::add_to_waitlist;
     pub fn eat_at_restaurant() {
         // Absolute path
@@ -35,7 +37,7 @@ pub mod customer {
         meal.toast = String::from("Wheat");
         println!("I'd like {} toast please", meal.toast);
         let _fruit = meal.seasonal_fruit();
-
+        
         // The next line won't compile if we uncomment it; we're not allowed
         // to see or modify the seasonal fruit that comes with the meal
         // meal.seasonal_fruit = String::from("blueberries");
@@ -43,6 +45,7 @@ pub mod customer {
         let _order1 = back_of_house::Appetizer::Soup;
         let _order2 = back_of_house::Appetizer::Salad;
         back_of_house::fix_incorrect_order();
+        
     }
 }
 
@@ -69,8 +72,7 @@ mod back_of_house {
             }
         }
 
-        pub fn seasonal_fruit(self: &Breakfast) -> &str {
-            //getter
+        pub fn seasonal_fruit(self: &Breakfast) -> &str { //getter
             &self.seasonal_fruit
         }
     }

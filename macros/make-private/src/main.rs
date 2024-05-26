@@ -21,6 +21,6 @@ fn main() {
     e.get_string_value();
     e.get_number_value();
 
-    let composed = compose!(add_one.add_one.stringify);
+    let composed = compose!(add_one . add_one . stringify);
     println!("{:?}", composed(5));
 }

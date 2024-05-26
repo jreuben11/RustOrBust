@@ -1,5 +1,6 @@
 use leptos::*;
 
+
 /// without ability to add or remove items.
 #[component]
 pub fn StaticList(
@@ -37,7 +38,7 @@ pub fn DynamicList(
     /// The number of counters to begin with.
     initial_length: usize,
 ) -> impl IntoView {
-    // <For/> is a keyed list. - each row has a defined key. If the key does not change, row will not be re-rendered.
+    // <For/> is a keyed list. - each row has a defined key. If the key does not change, row will not be re-rendered. 
     // When list changes, only minimum number of changes will be made to the DOM.
 
     // `next_counter_id` -> generate unique IDs  by simply incrementing  each time we create a counter
