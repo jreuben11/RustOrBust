@@ -1,10 +1,10 @@
-use make_public_macro::public_struct; 
-use make_public_macro::public; 
+use make_public_macro::public;
+use make_public_macro::public_struct;
 
 #[public_struct]
 struct Example1 {
-    first: String, 
-    pub second: u32, 
+    first: String,
+    pub second: u32,
 }
 
 #[derive(Debug)]
@@ -23,7 +23,6 @@ enum AnEnumExample {
     First,
     Second,
 }
-
 
 #[public]
 struct EmptyStruct {}

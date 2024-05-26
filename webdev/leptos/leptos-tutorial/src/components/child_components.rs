@@ -1,6 +1,5 @@
 use leptos::*;
 
-
 // Often, you want to pass some kind of child view to another
 // component. There are two basic patterns for doing this:
 // - "render props": creating a component prop that takes a function

@@ -1,7 +1,5 @@
 use leptos::{ev::MouseEvent, *};
 
-
-
 #[derive(Copy, Clone)]
 struct SmallcapsContext(WriteSignal<bool>);
 

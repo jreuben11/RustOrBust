@@ -3,7 +3,7 @@ use quote::{quote, ToTokens};
 
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::{Ident, parse_macro_input, Token};
+use syn::{parse_macro_input, Ident, Token};
 
 struct ComposeInput {
     expressions: Punctuated<Ident, Token!(.)>,

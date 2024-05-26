@@ -67,7 +67,6 @@ mod recursive_newtype {
         let name = Name {
             value: "blah".to_string(),
         };
-        
 
         println!("{}, {}", age.get_value(), name.get_value());
         let _x: i32 = age.into();
@@ -108,8 +107,8 @@ fn compose_vector_of_fn() {
 }
 
 struct Example {}
-hello_world!(Example); 
-fn add_impl(){
-    let e = Example {}; 
+hello_world!(Example);
+fn add_impl() {
+    let e = Example {};
     e.hello_world();
 }

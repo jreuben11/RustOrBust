@@ -1,12 +1,12 @@
 use leptos::*;
 mod components;
-use components::progressbar::ProgressBar;
-use components::lists::{StaticList, DynamicList};
-use components::control::{ControlledComponent, UncontrolledComponent};
-use components::conditionals::Conditionals;
-use components::errorhandling::ErrorHandling;
-use components::parent_child_comms::ParentChildComms;
 use components::child_components::ComponentChildren;
+use components::conditionals::Conditionals;
+use components::control::{ControlledComponent, UncontrolledComponent};
+use components::errorhandling::ErrorHandling;
+use components::lists::{DynamicList, StaticList};
+use components::parent_child_comms::ParentChildComms;
+use components::progressbar::ProgressBar;
 
 // `main` function just mounts component to the <body> - defined it as `fn App`, use it in a template as <App/>
 fn main() {
@@ -14,7 +14,6 @@ fn main() {
     // mount_to_body(|| view! { <p>"Hello, world!"</p> })
     leptos::mount_to_body(|| view! { <App/> })
 }
-
 
 // #[component] macro marks a function as a reusable component
 #[component]
@@ -38,7 +37,7 @@ fn App() -> impl IntoView {
             // text nodes in RSX should be wrapped in quotes,like a normal Rust string
             "Click me"
         </button>
-        
+
         <p>
             <strong>"Reactive: "</strong>
             // insert Rust expressions as values in the DOM by wrapping them in curly braces
@@ -58,7 +57,7 @@ fn App() -> impl IntoView {
 
         // NOTE: self-closing tags like <br> need an explicit /
         <br/>
-       
+
         <ProgressBar max=50 progress=count/>
         // use the default max value is 100
         <ProgressBar progress=count/>

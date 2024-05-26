@@ -6,10 +6,11 @@ use quote::{__private, quote, ToTokens};
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::{Iter, Punctuated};
 use syn::token::{Colon, Comma};
-use syn::Data::{Struct, Enum};
+use syn::Data::{Enum, Struct};
 use syn::Fields::{Named, Unnamed};
 use syn::{
-    parse_macro_input, DataEnum, DataStruct, DeriveInput, Field, FieldsNamed, FieldsUnnamed, Ident, Type, Variant, Visibility
+    parse_macro_input, DataEnum, DataStruct, DeriveInput, Field, FieldsNamed, FieldsUnnamed, Ident,
+    Type, Variant, Visibility,
 };
 
 struct StructField {
@@ -99,7 +100,10 @@ fn generate_unnamed_output<'a>(
     )
 }
 
-fn generate_enum_output(enum_name: Ident, variants: &Punctuated<Variant, Comma>) -> quote::__private::TokenStream {
+fn generate_enum_output(
+    enum_name: Ident,
+    variants: &Punctuated<Variant, Comma>,
+) -> quote::__private::TokenStream {
     let as_iter = variants.into_iter();
 
     quote!(
@@ -114,7 +118,7 @@ pub fn public_struct(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(item as DeriveInput);
     eprintln!("{:#?}", &ast);
     let name = ast.ident;
-    
+
     let fields = match ast.data {
         Struct(DataStruct {
             fields: Named(FieldsNamed { ref named, .. }),
@@ -145,7 +149,6 @@ pub fn public_struct(_attr: TokenStream, item: TokenStream) -> TokenStream {
     public_version.into()
 }
 
-
 #[proc_macro_attribute]
 pub fn public(_attr: TokenStream, item: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(item as DeriveInput);
@@ -167,14 +170,13 @@ pub fn public(_attr: TokenStream, item: TokenStream) -> TokenStream {
             let f = unnamed_fields_public(unnamed);
             generate_unnamed_output(name, f)
         }
-        Enum(DataEnum { ref variants, .. }) => {
-            generate_enum_output(name, variants)
-        },
+        Enum(DataEnum { ref variants, .. }) => generate_enum_output(name, variants),
         _ => unimplemented!("only works for structs and enums"),
     };
-    
+
     quote!(
         #(#attributes)*
         #basic_output
-    ).into()
+    )
+    .into()
 }
