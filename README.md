@@ -1,5 +1,13 @@
 
 <!-- @import "[TOC]" {cmd="toc" depthFrom=1 depthTo=6 orderedList=false} -->
+# Why Rust
+1. ergonomics -> dev joy -> retention
+2. compiler fidelity -> auto-train devs to be better 
+3. forced quality -> massively lowers regressions, increases velocity 
+4. attract top talent
+5. hygenic macros with TokenStream -> TokenStream as 1st class citizen ❤️
+6. performance
+7. lower cloud costs (much less memory leaks)
 
 # Rust 🦀 code:
 1. [Quickstart](hello_world/README.md) - a refresher before deep diving !
