@@ -3,7 +3,7 @@
 # Why Rust
 1. ergonomics -> dev joy -> retention
 2. compiler fidelity -> auto-train devs to be better 
-3. forced quality -> massively lowers regressions, increases velocity 
+3. forced quality: make invalid states unrepresentable -> massively lowers regressions, increases velocity 
 4. attract top talent
 5. hygenic macros with TokenStream -> TokenStream as 1st class citizen ❤️
 6. performance
