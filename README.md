@@ -49,7 +49,7 @@
 - [X] Leptos https://book.leptos.dev/
 - [X] Rust Zero to Production (book)  https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60 (**in progress**)
 - [ ] Macros (**in progress**)
-  - https://www.manning.com/books/write-powerful-rust-macros ![macro book](https://images.app.goo.gl/ptQrAzYqbAzSzZTH8 blorp)
+  - https://www.manning.com/books/write-powerful-rust-macros 
 - [ ] Bevy https://bevyengine.org/learn/
 
 ## Next ...
