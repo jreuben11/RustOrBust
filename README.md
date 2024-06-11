@@ -49,12 +49,16 @@
 - [X] Leptos https://book.leptos.dev/
 - [X] Rust Zero to Production (book)  https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60 (**in progress**)
 - [ ] Macros (**in progress**)
-  - https://www.manning.com/books/write-powerful-rust-macros 
+  - https://www.manning.com/books/write-powerful-rust-macros
+- [X] Rust Design Patterns https://rust-unofficial.github.io/patterns/ (**meh**)
 - [ ] Bevy https://bevyengine.org/learn/
 
 ## Next ...
 - [ ] WebGPU https://wgpu.rs/
 - [ ] Solana https://solana.com/docs/programs/lang-rust
+- [ ] Aya eBPF https://aya-rs.dev/book/
+- [ ] Polars https://pola-rs.github.io/polars-book/user-guide/   DataFrame library for Rust and Python
+- [ ] DataFusion https://datafusion.apache.org/
 - [ ] Cxx https://cxx.rs/ Rust loves C++
 - [ ] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
 - [ ] Standard lib https://doc.rust-lang.org/std/index.html 
@@ -64,11 +68,13 @@
 - [ ] RustC book https://doc.rust-lang.org/rustc/index.html 
 - [ ] Embedded book https://doc.rust-lang.org/embedded-book 
 - [ ] Unstable book https://doc.rust-lang.org/nightly/unstable-book/index.html 
-- [ ] Rust Design Patterns https://rust-unofficial.github.io/patterns/ 
 - [ ] Roadmap https://blog.rust-lang.org/inside-rust/2022/04/04/lang-roadmap-2024.html 
 - [ ] Vulkano https://vulkano.rs/guide/introduction 
 - [ ] Rustup https://rust-lang.github.io/rustup/ 
-- [ ] Clippy https://doc.rust-lang.org/clippy/ 
+- [ ] Clippy https://doc.rust-lang.org/clippy/
+- [ ] Rayon
+- [ ] Serde
+- [ ] API guidelines
 - How to learn modern rust https://github.com/joaocarvalhoopen/How_to_learn_modern_Rust 
 - The little book of Rust Books https://lborb.github.io/book/ 
 - blessed.rs  - An unofficial guide to the crates of the Rust ecosystem 
@@ -76,7 +82,6 @@
 - [ ] Android Rust https://source.android.com/docs/setup/build/rust/building-rust-modules/overview 
 - Awesome rust https://github.com/rust-unofficial/awesome-rust 
 - [ ] Comprehensive Rust course from Android https://google.github.io/comprehensive-rust/ 
-- [ ] Polars https://pola-rs.github.io/polars-book/user-guide/   DataFrame library for Rust and Python
 - [ ] MacroKata https://tfpk.github.io/macrokata/  a set of exercises to learn macros in Rust.
 
 > 2023-2024: Rust or Bust, baby ! ;)
