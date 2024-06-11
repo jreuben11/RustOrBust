@@ -11,5 +11,6 @@ members = [
     "macros/make-private", 
     "macros/panic-to-result/panic-to-result-usage", 
     "macros/panic-to-result/panic-to-result-macro", 
+   # "bevy/quickstart/my_bevy_game", 
    # "macros/builder",
 ]
