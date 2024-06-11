@@ -24,6 +24,7 @@
 12. [WASM](wasm/README.md) 
 13. [Leptos](webdev/leptos/README.md)
 14. [macros](macros/README.md) (**in progress**)
+15. [Bevy 3D](bevy/README.md) (**in progress**)
 
 # Rust 🦀 study plan:
 
@@ -46,9 +47,9 @@
   - snakegame 
   - book https://rustwasm.github.io/docs/book/ 
 - [X] Leptos https://book.leptos.dev/
-- [ ] Rust Zero to Production (book)  https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60 (**in progress**)
+- [X] Rust Zero to Production (book)  https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60 (**in progress**)
 - [ ] Macros (**in progress**)
-  - https://danielkeep.github.io/tlborm/book/index.html
+  - https://www.manning.com/books/write-powerful-rust-macros ![macro book](https://images.app.goo.gl/ptQrAzYqbAzSzZTH8)
 - [ ] Bevy https://bevyengine.org/learn/
 
 ## Next ...
