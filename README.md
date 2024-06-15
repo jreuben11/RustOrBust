@@ -54,6 +54,7 @@
 - [ ] Bevy https://bevyengine.org/learn/  (**in progress**)
 
 ## Next ...
+- [ ] SeaORM + SQLX
 - [ ] WebGPU https://wgpu.rs/
 - [ ] Solana https://solana.com/docs/programs/lang-rust
 - [ ] Aya eBPF https://aya-rs.dev/book/
