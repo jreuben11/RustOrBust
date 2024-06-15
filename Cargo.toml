@@ -10,7 +10,8 @@ members = [
     "macros/make-public",
     "macros/make-private", 
     "macros/panic-to-result/panic-to-result-usage", 
-    "macros/panic-to-result/panic-to-result-macro", "bevy/three_d_shapes", 
+    "macros/panic-to-result/panic-to-result-macro", 
+    # "bevy/three_d_shapes", "bevy/pong", 
    # "bevy/quickstart/my_bevy_game", 
    # "macros/builder",
 ]

@@ -1,0 +1,9 @@
+[package]
+name = "pong"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+bevy = "0.13.2"
