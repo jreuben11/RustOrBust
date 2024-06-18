@@ -59,6 +59,10 @@ struct GreetTimer(Timer);
 ```
 
 # [three_d_shapes](three_d_shapes/src/main.rs)
+- from bevy example
 
 # [pong](pong/src/main.rs)
 - from tutorial https://taintedcoders.com/bevy/pong-tutorial/
+
+# [picking](picking/src/main.rs)
+- from **bevy_mod_picking** crate **event_listener** example https://github.com/aevyrie/bevy_mod_picking/blob/main/examples/event_listener.rs
