@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 futures = "0.3.30"
 sea-orm = {version="0.12.15" , features = [ "sqlx-mysql", "runtime-async-std-native-tls", "macros" ]}
+sea-orm-migration = "0.12.15"
