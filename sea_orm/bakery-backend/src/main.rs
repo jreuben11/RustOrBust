@@ -1,7 +1,9 @@
 #![allow(unused)]
 
+mod migrator;
 use futures::executor::block_on;
 use sea_orm::{ConnectionTrait, Database, DbBackend, DbErr, Statement};
+use sea_orm_migration::SchemaManager;
 
 const DATABASE_URL: &str = "mysql://root:password@localhost:3306";
 const DB_NAME: &str = "bakeries_db";
@@ -37,6 +39,12 @@ async fn run() -> Result<(), DbErr> {
         }
         DbBackend::Sqlite => db,
     };
+
+    let schema_manager = SchemaManager::new(db); // To investigate the schema
+
+    // Migrator::refresh(db).await?;
+    assert!(schema_manager.has_table("bakery").await?);
+    assert!(schema_manager.has_table("chef").await?);
     Ok(())
 }
 

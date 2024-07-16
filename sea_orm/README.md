@@ -12,12 +12,18 @@ cargo install sea-orm-cli
 $ sea-orm-cli migrate -h
 # Initialize the migration folder:
 $ sea-orm-cli migrate init
+
+# verify
 DATABASE_URL="mysql://root:password@localhost:3306/bakeries_db" sea-orm-cli migrate refresh
 mysql -u root -p --host 0.0.0.0 --port 3306
 use bakeries_db; show tables;
+
+sea-orm-cli generate entity \
+    -u mysql://root:password@localhost:3306/bakeries_db \
+    -o src/entities
 ```
 
-## [Cargo.toml](Cargo.toml)
+## [Cargo.toml](bakery-backend/Cargo.toml)
 ```toml
 [dependencies]
 futures = "0.3.30"
