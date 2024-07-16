@@ -10,8 +10,9 @@ members = [
     "macros/make-public",
     "macros/make-private", 
     "macros/panic-to-result/panic-to-result-usage", 
-    "macros/panic-to-result/panic-to-result-macro", "sea_orm/bakery-backend", 
+    "macros/panic-to-result/panic-to-result-macro", 
     # "bevy/three_d_shapes", "bevy/pong", 
    # "bevy/quickstart/my_bevy_game", 
    # "macros/builder",
-]
+   "sea_orm/bakery-backend", "sea_orm/bakery-backend/migration"
+   ]
