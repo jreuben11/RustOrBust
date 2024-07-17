@@ -11,10 +11,8 @@ use entities::{prelude::*, *};
 const DATABASE_URL: &str = "mysql://root:password@localhost:3306";
 const DB_NAME: &str = "bakeries_db";
 
-async fn run() -> Result<(), DbErr> {
-    let db = Database::connect(DATABASE_URL).await?;
-
-    let db = &match db.get_database_backend() {
+async fn get_db_backend(db: DatabaseConnection) -> Result<DatabaseConnection, DbErr> {
+    let db = match db.get_database_backend() {
         DbBackend::MySql => {
             db.execute(Statement::from_string(
                 db.get_database_backend(),
@@ -42,17 +40,18 @@ async fn run() -> Result<(), DbErr> {
         }
         DbBackend::Sqlite => db,
     };
+    return Ok(db);
+}
 
+async fn check_schema(db: &DatabaseConnection) -> Result<(), DbErr> {
     let schema_manager = SchemaManager::new(db); // To investigate the schema
 
-    // Migrator::refresh(db).await?;
     assert!(schema_manager.has_table("bakery").await?);
     assert!(schema_manager.has_table("chef").await?);
+    Ok(())
+}
 
-    // delete all
-    let res: DeleteResult = chef::Entity::delete_many().exec(db).await?;
-    let res: DeleteResult = bakery::Entity::delete_many().exec(db).await?;
-
+async fn insert_and_update(db: &DatabaseConnection) -> Result<i32, DbErr> {
     // Insert a bakery
     let happy_bakery = bakery::ActiveModel {
         name: ActiveValue::Set("Happy Bakery".to_owned()),
@@ -77,7 +76,10 @@ async fn run() -> Result<(), DbErr> {
     };
     let res = Chef::insert(john).exec(db).await?;
     let chef_id = res.last_insert_id;
+    Ok(chef_id)
+}
 
+async fn find(db: &DatabaseConnection) -> Result<i32, DbErr> {
     // Finding all is built-in
     let bakeries: Vec<bakery::Model> = Bakery::find().all(db).await?;
     assert_eq!(bakeries.len(), 1);
@@ -93,7 +95,10 @@ async fn run() -> Result<(), DbErr> {
         .one(db)
         .await?;
     assert_eq!(sad_bakery.unwrap().id, bakery_id);
+    Ok(bakery_id)
+}
 
+async fn delete(db: &DatabaseConnection, chef_id: i32, bakery_id: i32) -> Result<(), DbErr> {
     // Delete
     let john = chef::ActiveModel {
         id: ActiveValue::Set(chef_id), // The primary key must be set
@@ -109,7 +114,10 @@ async fn run() -> Result<(), DbErr> {
 
     let bakeries: Vec<bakery::Model> = Bakery::find().all(db).await?;
     assert!(bakeries.is_empty());
+    Ok(())
+}
 
+async fn relational_select(db: &DatabaseConnection) -> Result<(), DbErr> {
     // relational select
     let la_boulangerie = bakery::ActiveModel {
         name: ActiveValue::Set("La Boulangerie".to_owned()),
@@ -137,7 +145,10 @@ async fn run() -> Result<(), DbErr> {
     chef_names.sort_unstable();
 
     assert_eq!(chef_names, ["Charles", "Frederic", "Jolie", "Madeleine"]);
+    Ok(())
+}
 
+async fn load_many(db: &DatabaseConnection) -> Result<(), DbErr> {
     // loader
     // Inserting two bakeries and their chefs
     let la_boulangerie = bakery::ActiveModel {
@@ -192,7 +203,151 @@ async fn run() -> Result<(), DbErr> {
 
     assert_eq!(la_chef_names, ["Charles", "Frederic", "Jolie", "Madeleine"]);
     assert_eq!(arte_chef_names, ["Brian", "Charles", "Kate", "Samantha"]);
+    Ok(())
+}
 
+async fn mock() -> Result<(), DbErr> {
+    let db = &MockDatabase::new(DatabaseBackend::MySql)
+        .append_query_results([
+            // First query result
+            vec![bakery::Model {
+                id: 1,
+                name: "Happy Bakery".to_owned(),
+                profit_margin: 0.0,
+            }],
+            // Second query result
+            vec![
+                bakery::Model {
+                    id: 1,
+                    name: "Happy Bakery".to_owned(),
+                    profit_margin: 0.0,
+                },
+                bakery::Model {
+                    id: 2,
+                    name: "Sad Bakery".to_owned(),
+                    profit_margin: 100.0,
+                },
+                bakery::Model {
+                    id: 3,
+                    name: "La Boulangerie".to_owned(),
+                    profit_margin: 17.89,
+                },
+            ],
+        ])
+        .append_query_results([
+            // Third query result
+            vec![
+                chef::Model {
+                    id: 1,
+                    name: "Jolie".to_owned(),
+                    contact_details: None,
+                    bakery_id: 3,
+                },
+                chef::Model {
+                    id: 2,
+                    name: "Charles".to_owned(),
+                    contact_details: None,
+                    bakery_id: 3,
+                },
+                chef::Model {
+                    id: 3,
+                    name: "Madeleine".to_owned(),
+                    contact_details: None,
+                    bakery_id: 3,
+                },
+                chef::Model {
+                    id: 4,
+                    name: "Frederic".to_owned(),
+                    contact_details: None,
+                    bakery_id: 3,
+                },
+            ],
+        ])
+        .into_connection();
+
+    let happy_bakery: Option<bakery::Model> = Bakery::find().one(db).await?;
+    assert_eq!(
+        happy_bakery.unwrap(),
+        bakery::Model {
+            id: 1,
+            name: "Happy Bakery".to_owned(),
+            profit_margin: 0.0,
+        }
+    );
+
+    let all_bakeries: Vec<bakery::Model> = Bakery::find().all(db).await?;
+    assert_eq!(
+        all_bakeries,
+        vec![
+            bakery::Model {
+                id: 1,
+                name: "Happy Bakery".to_owned(),
+                profit_margin: 0.0,
+            },
+            bakery::Model {
+                id: 2,
+                name: "Sad Bakery".to_owned(),
+                profit_margin: 100.0,
+            },
+            bakery::Model {
+                id: 3,
+                name: "La Boulangerie".to_owned(),
+                profit_margin: 17.89,
+            },
+        ]
+    );
+
+    let la_boulangerie_chefs: Vec<chef::Model> = Chef::find().all(db).await?;
+    assert_eq!(
+        la_boulangerie_chefs,
+        vec![
+            chef::Model {
+                id: 1,
+                name: "Jolie".to_owned(),
+                contact_details: None,
+                bakery_id: 3,
+            },
+            chef::Model {
+                id: 2,
+                name: "Charles".to_owned(),
+                contact_details: None,
+                bakery_id: 3,
+            },
+            chef::Model {
+                id: 3,
+                name: "Madeleine".to_owned(),
+                contact_details: None,
+                bakery_id: 3,
+            },
+            chef::Model {
+                id: 4,
+                name: "Frederic".to_owned(),
+                contact_details: None,
+                bakery_id: 3,
+            },
+        ]
+    );
+    Ok(())
+}
+
+async fn run() -> Result<(), DbErr> {
+    let mut db = Database::connect(DATABASE_URL).await?;
+    db = get_db_backend(db).await?;
+    // Migrator::refresh(db).await?;
+
+    check_schema(&db).await?;
+
+    // delete all
+    let res: DeleteResult = chef::Entity::delete_many().exec(&db).await?;
+    let res: DeleteResult = bakery::Entity::delete_many().exec(&db).await?;
+
+    let chef_id = insert_and_update(&db).await?;
+    let bakery_id = find(&db).await?;
+    delete(&db, chef_id, bakery_id).await?;
+    relational_select(&db).await?;
+    load_many(&db).await?;
+
+    mock().await?;
     Ok(())
 }
 
