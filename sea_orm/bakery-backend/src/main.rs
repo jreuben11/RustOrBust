@@ -43,6 +43,12 @@ async fn get_db_backend(db: DatabaseConnection) -> Result<DatabaseConnection, Db
     return Ok(db);
 }
 
+async fn delete_all(db: &DatabaseConnection) -> Result<(), DbErr> {
+    let res: DeleteResult = chef::Entity::delete_many().exec(db).await?;
+    let res: DeleteResult = bakery::Entity::delete_many().exec(db).await?;
+    Ok(())
+}
+
 async fn check_schema(db: &DatabaseConnection) -> Result<(), DbErr> {
     let schema_manager = SchemaManager::new(db); // To investigate the schema
 
@@ -330,23 +336,64 @@ async fn mock() -> Result<(), DbErr> {
     Ok(())
 }
 
+use sea_query::{Alias, Expr, JoinType, MysqlQueryBuilder, Order, Query};
+#[derive(FromQueryResult)]
+struct ChefNameResult {
+    name: String,
+}
+async fn build_sql(db: &DatabaseConnection) -> Result<(), DbErr> {
+    use sea_query::{Alias, Query};
+
+    // insert
+    let columns: Vec<Alias> = ["name", "profit_margin"]
+        .into_iter()
+        .map(Alias::new)
+        .collect();
+    let mut stmt = Query::insert();
+    stmt.into_table(bakery::Entity).columns(columns);
+    stmt.values_panic(["SQL Bakery".into(), (-100.0).into()]);
+    println!("{}", stmt.to_string(MysqlQueryBuilder));
+    let builder = db.get_database_backend();
+    db.execute(builder.build(&stmt)).await?;
+
+    // select
+    let column = (chef::Entity, Alias::new("name"));
+    let mut stmt = Query::select();
+    stmt.column(column.clone()) // Use `expr_as` instead of `column` if renaming is necessary
+        .from(chef::Entity)
+        .join(
+            JoinType::Join,
+            bakery::Entity,
+            Expr::col((chef::Entity, Alias::new("bakery_id")))
+                .equals((bakery::Entity, Alias::new("id"))),
+        )
+        .order_by(column, Order::Asc);
+    println!("{}", stmt.to_string(MysqlQueryBuilder));
+    let builder = db.get_database_backend();
+    let chef = ChefNameResult::find_by_statement(builder.build(&stmt))
+        .all(db)
+        .await?;
+    let chef_names = chef.into_iter().map(|b| b.name).collect::<Vec<_>>();
+    assert_eq!(
+        chef_names,
+        vec!["Charles", "Frederic", "Jolie", "Madeleine"]
+    );
+
+    Ok(())
+}
+
 async fn run() -> Result<(), DbErr> {
     let mut db = Database::connect(DATABASE_URL).await?;
     db = get_db_backend(db).await?;
     // Migrator::refresh(db).await?;
-
     check_schema(&db).await?;
-
-    // delete all
-    let res: DeleteResult = chef::Entity::delete_many().exec(&db).await?;
-    let res: DeleteResult = bakery::Entity::delete_many().exec(&db).await?;
-
+    delete_all(&db).await?;
     let chef_id = insert_and_update(&db).await?;
     let bakery_id = find(&db).await?;
     delete(&db, chef_id, bakery_id).await?;
     relational_select(&db).await?;
+    build_sql(&db).await?;
     load_many(&db).await?;
-
     mock().await?;
     Ok(())
 }
