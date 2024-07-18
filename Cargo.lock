@@ -422,6 +422,7 @@ name = "bakery-backend"
 version = "0.1.0"
 dependencies = [
  "futures",
+ "rocket",
  "sea-orm",
  "sea-orm-migration",
 ]
@@ -2830,13 +2831,6 @@ dependencies = [
  "ubyte",
  "version_check",
  "yansi",
-]
-
-[[package]]
-name = "rocket-example"
-version = "0.1.0"
-dependencies = [
- "rocket",
 ]
 
 [[package]]

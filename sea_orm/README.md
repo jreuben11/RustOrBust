@@ -1,4 +1,4 @@
-# tutorial 1 - bakery backend
+# tutorial - bakery backend
 https://www.sea-ql.org/sea-orm-tutorial
 
 ## setup
@@ -80,4 +80,4 @@ async fn run() -> Result<(), DbErr> {
 }
 ```
 
-# tutorial 2 rocket-example
+## rocket web API
