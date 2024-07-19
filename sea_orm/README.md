@@ -1,4 +1,4 @@
-# tutorial 1 - bakery backend
+# tutorial - bakery backend
 https://www.sea-ql.org/sea-orm-tutorial
 
 ## setup
@@ -29,6 +29,9 @@ sea-orm-cli generate entity \
 futures = "0.3.30"
 sea-orm = {version="0.12.15" , features = [ "sqlx-mysql", "runtime-async-std-native-tls", "macros", "mock" ]}
 sea-orm-migration = "0.12.15"
+rocket = {version="0.5.1", features = ["json"]}
+async-graphql = "7.0.7"
+async-graphql-rocket = "7.0.7"
 ```
 
 ## [migrations](bakery-backend/migration/src/lib.rs)
@@ -80,4 +83,145 @@ async fn run() -> Result<(), DbErr> {
 }
 ```
 
-# tutorial 2 rocket-example
+## Rocket REST API
+```rust
+use rocket::*;
+use rocket::serde::json::Json;
+
+#[derive(Responder)]
+#[response(status = 500, content_type = "json")]
+struct ErrorResponder { ... }
+impl From<DbErr> for ErrorResponder {
+    fn from(err: DbErr) -> ErrorResponder { ... }
+}
+
+#[get("/bakeries")]
+async fn bakeries(db: &State<DatabaseConnection>) -> Result<Json<Vec<String>>, ErrorResponder> { ... }
+
+async fn rocket() -> _ {
+    if let Err(err) = block_on(database_access::init_data()) {
+        panic!("{}", err);
+    }
+    // TODO: - DatabaseConnection is not Clone, Sync, Send
+    let db1 = match database_access::get_db_connection().await {
+        Ok(db) => db,
+        Err(err) => panic!("{}", err),
+    };
+    let db2 = match database_access::get_db_connection().await {
+        Ok(db) => db,
+        Err(err) => panic!("{}", err),
+    };
+   
+   let schema = Schema::build(QueryRoot, MutationRoot, EmptySubscription)
+       .data(db2) // Add the database connection to the GraphQL global context
+       .finish();
+
+    rocket::build()
+        .manage(db1)
+        .manage(schema) // GraphQL
+        .mount("/", routes![index, bakeries, graphql_request, graphiql])
+}
+```
+
+
+
+## Rocket GraphQL API
+```rust
+mod schema;
+use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
+use async_graphql_rocket::*;
+use schema::*;
+use rocket::response::content;
+
+type SchemaType = Schema<QueryRoot, MutationRoot, EmptySubscription>;
+
+#[rocket::get("/graphiql")]
+fn graphiql() -> content::RawHtml<String> {
+    content::RawHtml(GraphiQLSource::build().endpoint("/graphql").finish())
+}
+
+#[rocket::post("/graphql", data = "<request>", format = "application/json")]
+async fn graphql_request(schema: &State<SchemaType>, request: GraphQLRequest) -> GraphQLResponse {
+   request.execute(schema.inner()).await
+}
+```
+- [schema.rs](bakery-backend/src/schema.rs)
+```rust
+use crate::entities::{prelude::*, *};
+use async_graphql::{Context, Object};
+use sea_orm::*;
+pub(crate) struct QueryRoot;
+pub(crate) struct MutationRoot;
+
+#[Object]
+impl QueryRoot {
+    async fn hello(&self) -> String {...}
+    async fn bakeries(&self, ctx: &Context<'_>) -> Result<Vec<bakery::Model>, DbErr> {...}
+    async fn bakery(&self, ctx: &Context<'_>, id: i32) -> Result<Option<bakery::Model>, DbErr> {...}
+}
+
+#[Object]
+impl MutationRoot {
+    async fn add_bakery(&self, ctx: &Context<'_>, name: String) -> Result<bakery::Model, DbErr> { ... }
+    async fn add_chef( &self, ctx: &Context<'_>, name: String, bakery_id: i32,) -> Result<chef::Model, DbErr> { ... }
+}
+
+```
+- add `SimpleObject` trait and `ComplexObject` trait implementation to generated [bakery.rs](bakery-backend/src/entities/bakery.rs)
+```rust
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, SimpleObject)]
+#[graphql(complex, name = "Bakery")]
+#[sea_orm(table_name = "bakery")]
+pub struct Model {
+    #[sea_orm(primary_key)]
+    pub id: i32,
+    pub name: String,
+    #[sea_orm(column_type = "Double")]
+    pub profit_margin: f64,
+}
+
+#[ComplexObject]
+impl Model {
+    async fn chefs(&self, ctx: &Context<'_>) -> Result<Vec<chef::Model>, DbErr> {
+        let db = ctx.data::<DatabaseConnection>().unwrap();
+        self.find_related(Chef).all(db).await
+    }
+}
+```
+- GraphQL queries http://127.0.0.1:8000/graphiql
+```graphql
+{
+  hello
+}
+...
+{
+  bakeries {
+    name, id
+  }
+}
+...
+{
+  bakery(id: 1) {
+    name
+  }
+}
+...
+{
+  bakery(id: 1) {
+    name,
+    chefs {
+      name
+    }
+  }
+}
+...
+ mutation {
+  addChef(name: "Excellent Bakery", bakeryId: 155) {
+    id,
+    name,
+    contactDetails
+  }
+}
+...
+
+```

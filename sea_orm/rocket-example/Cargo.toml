@@ -1,7 +1,0 @@
-[package]
-name = "rocket-example"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-rocket = {version="0.5.1", features = ["json"]}
