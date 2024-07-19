@@ -127,5 +127,84 @@ async fn rocket() -> _ {
 
 ## Rocket GraphQL API
 ```rust
+mod schema;
+use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Schema};
+use async_graphql_rocket::*;
+use schema::*;
+use rocket::response::content;
 
+type SchemaType = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
+
+#[rocket::get("/graphiql")]
+fn graphiql() -> content::RawHtml<String> {
+    content::RawHtml(GraphiQLSource::build().endpoint("/graphql").finish())
+}
+
+#[rocket::post("/graphql", data = "<request>", format = "application/json")]
+async fn graphql_request(schema: &State<SchemaType>, request: GraphQLRequest) -> GraphQLResponse {
+   request.execute(schema.inner()).await
+}
+```
+- [schema.rs](bakery-backend/src/schema.rs)
+```rust
+use crate::entities::{prelude::*, *};
+use async_graphql::{Context, Object};
+use sea_orm::*;
+pub(crate) struct QueryRoot;
+
+#[Object]
+impl QueryRoot {
+    async fn hello(&self) -> String {...}
+    async fn bakeries(&self, ctx: &Context<'_>) -> Result<Vec<bakery::Model>, DbErr> {...}
+    async fn bakery(&self, ctx: &Context<'_>, id: i32) -> Result<Option<bakery::Model>, DbErr> {...}
+}
+
+```
+- add `SimpleObject` trait and `ComplexObject` trait implementation to generated [bakery.rs](bakery-backend/src/entities/bakery.rs)
+```rust
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, SimpleObject)]
+#[graphql(complex, name = "Bakery")]
+#[sea_orm(table_name = "bakery")]
+pub struct Model {
+    #[sea_orm(primary_key)]
+    pub id: i32,
+    pub name: String,
+    #[sea_orm(column_type = "Double")]
+    pub profit_margin: f64,
+}
+
+#[ComplexObject]
+impl Model {
+    async fn chefs(&self, ctx: &Context<'_>) -> Result<Vec<chef::Model>, DbErr> {
+        let db = ctx.data::<DatabaseConnection>().unwrap();
+        self.find_related(Chef).all(db).await
+    }
+}
+```
+- GraphQL queries http://127.0.0.1:8000/graphiql
+```graphql
+{
+  hello
+}
+...
+{
+  bakeries {
+    name, id
+  }
+}
+...
+{
+  bakery(id: 1) {
+    name
+  }
+}
+...
+{
+  bakery(id: 1) {
+    name,
+    chefs {
+      name
+    }
+  }
+}
 ```
