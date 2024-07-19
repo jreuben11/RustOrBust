@@ -29,6 +29,9 @@ sea-orm-cli generate entity \
 futures = "0.3.30"
 sea-orm = {version="0.12.15" , features = [ "sqlx-mysql", "runtime-async-std-native-tls", "macros", "mock" ]}
 sea-orm-migration = "0.12.15"
+rocket = {version="0.5.1", features = ["json"]}
+async-graphql = "7.0.7"
+async-graphql-rocket = "7.0.7"
 ```
 
 ## [migrations](bakery-backend/migration/src/lib.rs)
@@ -80,4 +83,49 @@ async fn run() -> Result<(), DbErr> {
 }
 ```
 
-## rocket web API
+## Rocket REST API
+```rust
+use rocket::*;
+use rocket::serde::json::Json;
+
+#[derive(Responder)]
+#[response(status = 500, content_type = "json")]
+struct ErrorResponder { ... }
+impl From<DbErr> for ErrorResponder {
+    fn from(err: DbErr) -> ErrorResponder { ... }
+}
+
+#[get("/bakeries")]
+async fn bakeries(db: &State<DatabaseConnection>) -> Result<Json<Vec<String>>, ErrorResponder> { ... }
+
+async fn rocket() -> _ {
+    if let Err(err) = block_on(database_access::init_data()) {
+        panic!("{}", err);
+    }
+    // TODO: - DatabaseConnection is not Clone, Sync, Send
+    let db1 = match database_access::get_db_connection().await {
+        Ok(db) => db,
+        Err(err) => panic!("{}", err),
+    };
+    let db2 = match database_access::get_db_connection().await {
+        Ok(db) => db,
+        Err(err) => panic!("{}", err),
+    };
+   
+   let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
+       .data(db2) // Add the database connection to the GraphQL global context
+       .finish();
+
+    rocket::build()
+        .manage(db1)
+        .manage(schema) // GraphQL
+        .mount("/", routes![index, bakeries, graphql_request, graphiql])
+}
+```
+
+
+
+## Rocket GraphQL API
+```rust
+
+```

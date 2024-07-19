@@ -433,7 +433,7 @@ impl From<&str> for ErrorResponder {
     }
 }
 
-#[get("/")]
+#[get("/test")]
 async fn index() -> &'static str {
     "Hello, bakeries!"
 }
@@ -459,11 +459,40 @@ async fn rocket() -> _ {
     if let Err(err) = block_on(database_access::init_data()) {
         panic!("{}", err);
     }
-    let db = match database_access::get_db_connection().await {
+    // TODO: - DatabaseConnection is not Clone, Sync, Send
+    let db1 = match database_access::get_db_connection().await {
         Ok(db) => db,
         Err(err) => panic!("{}", err),
     };
+    let db2 = match database_access::get_db_connection().await {
+        Ok(db) => db,
+        Err(err) => panic!("{}", err),
+    };
+   
+   let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
+       .data(db2) // Add the database connection to the GraphQL global context
+       .finish();
+
     rocket::build()
-        .manage(db)
-        .mount("/", routes![index, bakeries])
+        .manage(db1)
+        .manage(schema) 
+        .mount("/", routes![index, bakeries, graphql_request, graphiql])
+}
+
+mod schema;
+use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Schema};
+use async_graphql_rocket::*;
+use schema::*;
+use rocket::response::content;
+
+type SchemaType = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
+
+#[rocket::get("/graphiql")]
+fn graphiql() -> content::RawHtml<String> {
+    content::RawHtml(GraphiQLSource::build().endpoint("/graphql").finish())
+}
+
+#[rocket::post("/graphql", data = "<request>", format = "application/json")]
+async fn graphql_request(schema: &State<SchemaType>, request: GraphQLRequest) -> GraphQLResponse {
+   request.execute(schema.inner()).await
 }
