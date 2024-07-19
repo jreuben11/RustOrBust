@@ -469,7 +469,7 @@ async fn rocket() -> _ {
         Err(err) => panic!("{}", err),
     };
    
-   let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
+   let schema = Schema::build(QueryRoot, MutationRoot, EmptySubscription)
        .data(db2) // Add the database connection to the GraphQL global context
        .finish();
 
@@ -480,12 +480,12 @@ async fn rocket() -> _ {
 }
 
 mod schema;
-use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Schema};
+use async_graphql::{http::GraphiQLSource,  EmptySubscription, Schema};
 use async_graphql_rocket::*;
 use schema::*;
 use rocket::response::content;
 
-type SchemaType = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
+type SchemaType = Schema<QueryRoot, MutationRoot, EmptySubscription>;
 
 #[rocket::get("/graphiql")]
 fn graphiql() -> content::RawHtml<String> {

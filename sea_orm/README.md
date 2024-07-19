@@ -112,7 +112,7 @@ async fn rocket() -> _ {
         Err(err) => panic!("{}", err),
     };
    
-   let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
+   let schema = Schema::build(QueryRoot, MutationRoot, EmptySubscription)
        .data(db2) // Add the database connection to the GraphQL global context
        .finish();
 
@@ -128,12 +128,12 @@ async fn rocket() -> _ {
 ## Rocket GraphQL API
 ```rust
 mod schema;
-use async_graphql::{http::GraphiQLSource, EmptyMutation, EmptySubscription, Schema};
+use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_rocket::*;
 use schema::*;
 use rocket::response::content;
 
-type SchemaType = Schema<QueryRoot, EmptyMutation, EmptySubscription>;
+type SchemaType = Schema<QueryRoot, MutationRoot, EmptySubscription>;
 
 #[rocket::get("/graphiql")]
 fn graphiql() -> content::RawHtml<String> {
@@ -151,12 +151,19 @@ use crate::entities::{prelude::*, *};
 use async_graphql::{Context, Object};
 use sea_orm::*;
 pub(crate) struct QueryRoot;
+pub(crate) struct MutationRoot;
 
 #[Object]
 impl QueryRoot {
     async fn hello(&self) -> String {...}
     async fn bakeries(&self, ctx: &Context<'_>) -> Result<Vec<bakery::Model>, DbErr> {...}
     async fn bakery(&self, ctx: &Context<'_>, id: i32) -> Result<Option<bakery::Model>, DbErr> {...}
+}
+
+#[Object]
+impl MutationRoot {
+    async fn add_bakery(&self, ctx: &Context<'_>, name: String) -> Result<bakery::Model, DbErr> { ... }
+    async fn add_chef( &self, ctx: &Context<'_>, name: String, bakery_id: i32,) -> Result<chef::Model, DbErr> { ... }
 }
 
 ```
@@ -207,4 +214,14 @@ impl Model {
     }
   }
 }
+...
+ mutation {
+  addChef(name: "Excellent Bakery", bakeryId: 155) {
+    id,
+    name,
+    contactDetails
+  }
+}
+...
+
 ```
