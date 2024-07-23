@@ -48,7 +48,7 @@
   - snakegame Udemy Course https://www.udemy.com/course/rust-webassembly-with-js-ts-the-practical-guide/?couponCode=OF53124
   - Programming WebAssembly with Rust (book) https://pragprog.com/titles/khrust/programming-webassembly-with-rust/ 
 - [X] Leptos https://book.leptos.dev/
-- [X] Rust Zero to Production (book)  https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60 (**in progress**)
+- [X] Rust Zero to Production (book)  https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60  
 - [ ] Macros
   - https://www.manning.com/books/write-powerful-rust-macros
 - [X] Rust Design Patterns https://rust-unofficial.github.io/patterns/ (**meh**)
