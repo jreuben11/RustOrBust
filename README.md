@@ -25,7 +25,7 @@
 13. [Leptos](webdev/leptos/README.md)
 14. [macros](macros/README.md) (**in progress**)
 15. [Bevy 3D](bevy/README.md) (**in progress**)
-16. [Sea-ORM](sea_orm/README.md) (**in progress**)
+16. [Sea-ORM](sea_orm/README.md) 
 
 # Rust 🦀 study plan:
 
@@ -53,7 +53,7 @@
   - https://www.manning.com/books/write-powerful-rust-macros
 - [X] Rust Design Patterns https://rust-unofficial.github.io/patterns/ (**meh**)
 - [ ] Bevy https://bevyengine.org/learn/  (**in progress**)
-- [ ] SeaORM + SQLX (**in progress**)
+- [X] SeaORM + SQLX 
 
 ## Next ...
 - [ ] WebGPU https://wgpu.rs/
