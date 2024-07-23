@@ -137,6 +137,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "any"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "98506a60eeeee353cb6397f635f9085f0b9b16dc088d4b838c1eda4e63ab37a3"
+
+[[package]]
 name = "anyhow"
 version = "1.0.86"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -524,9 +530,11 @@ dependencies = [
 name = "bakery-backend"
 version = "0.1.0"
 dependencies = [
+ "any",
  "async-graphql",
  "async-graphql-rocket",
  "futures",
+ "lazy_static",
  "rocket",
  "sea-orm",
  "sea-orm-migration",

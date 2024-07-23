@@ -3,9 +3,9 @@
 mod migrator;
 use futures::executor::block_on;
 mod entities;
+use entities::{prelude::*, *};
 use sea_orm::*;
 use sea_orm_migration::SchemaManager;
-use entities::{prelude::*, *};
 mod database_access {
 
     use super::*;
@@ -402,8 +402,8 @@ mod database_access {
     }
 }
 
-use rocket::*;
 use rocket::serde::json::Json;
+use rocket::*;
 
 #[derive(Responder)]
 #[response(status = 500, content_type = "json")]
@@ -445,7 +445,7 @@ async fn bakeries(db: &State<DatabaseConnection>) -> Result<Json<Vec<String>>, E
     let bakery_names = Bakery::find()
         .all(db)
         .await
-         .unwrap()
+        .unwrap()
         // .map_err(Into::into)?
         .into_iter()
         .map(|b| b.name)
@@ -468,22 +468,31 @@ async fn rocket() -> _ {
         Ok(db) => db,
         Err(err) => panic!("{}", err),
     };
-   
-   let schema = Schema::build(QueryRoot, MutationRoot, EmptySubscription)
-       .data(db2) // Add the database connection to the GraphQL global context
-       .finish();
+    lazy_static::lazy_static! {
+        static ref DB: DatabaseConnection = {
+            tokio::runtime::Runtime::new().unwrap().block_on(async {
+                match database_access::get_db_connection().await {
+                    Ok(db) => db,
+                    Err(err) => panic!("{}", err),
+                }
+            })
+        };
+    }
+    let schema = Schema::build(QueryRoot, MutationRoot, EmptySubscription)
+        .data(db2) // Add the database connection to the GraphQL global context
+        .finish();
 
     rocket::build()
         .manage(db1)
-        .manage(schema) 
+        .manage(schema)
         .mount("/", routes![index, bakeries, graphql_request, graphiql])
 }
 
 mod schema;
-use async_graphql::{http::GraphiQLSource,  EmptySubscription, Schema};
+use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
 use async_graphql_rocket::*;
-use schema::*;
 use rocket::response::content;
+use schema::*;
 
 type SchemaType = Schema<QueryRoot, MutationRoot, EmptySubscription>;
 
@@ -494,5 +503,5 @@ fn graphiql() -> content::RawHtml<String> {
 
 #[rocket::post("/graphql", data = "<request>", format = "application/json")]
 async fn graphql_request(schema: &State<SchemaType>, request: GraphQLRequest) -> GraphQLResponse {
-   request.execute(schema.inner()).await
+    request.execute(schema.inner()).await
 }
