@@ -53,27 +53,33 @@
   - https://www.manning.com/books/write-powerful-rust-macros
 - [X] Rust Design Patterns https://rust-unofficial.github.io/patterns/ (**meh**)
 - [ ] Bevy https://bevyengine.org/learn/  (**in progress**)
-- [X] SeaORM + SQLX 
+- [X] SeaORM + SQLX https://www.sea-ql.org/SeaORM/docs/index/
+- [ ] DataFusion https://datafusion.apache.org/ 
+- [ ] Effective Rust https://www.lurklurk.org/effective-rust/ (**in progress**)
 
 ## Next ...
 - [ ] WebGPU https://wgpu.rs/
-- [ ] Solana https://solana.com/docs/programs/lang-rust
+- [ ] Blockchain: Solana + Anchor + Polkadot https://solana.com/docs/programs/lang-rust
 - [ ] Aya eBPF https://aya-rs.dev/book/
-- [ ] Polars https://pola-rs.github.io/polars-book/user-guide/   DataFrame library for Rust and Python
-- [ ] DataFusion https://datafusion.apache.org/
-- [ ] Cxx https://cxx.rs/ Rust loves C++
-- [ ] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
-- [ ] Standard lib https://doc.rust-lang.org/std/index.html 
-- [ ] Edition guide https://doc.rust-lang.org/edition-guide/index.html 
+  
 - [ ] Cargo book https://doc.rust-lang.org/cargo/index.html 
 - [ ] Rustdoc book https://doc.rust-lang.org/rustdoc/index.html 
-- [ ] RustC book https://doc.rust-lang.org/rustc/index.html 
+- [ ] RustC book https://doc.rust-lang.org/rustc/index.html
+ 
+- [ ] Rustup https://rust-lang.github.io/rustup/ 
+- [ ] Clippy https://doc.rust-lang.org/clippy/
+      
+- [ ] Cxx https://cxx.rs/ Rust loves C++
+- [ ] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
+- [ ] Standard lib https://doc.rust-lang.org/std/index.html
+- [ ] Polars https://pola-rs.github.io/polars-book/user-guide/   DataFrame library for Rust and Python
+- [ ] Edition guide https://doc.rust-lang.org/edition-guide/index.html
+- [ ] Vulkano / Ash https://vulkano.rs/guide/introduction
+
 - [ ] Embedded book https://doc.rust-lang.org/embedded-book 
 - [ ] Unstable book https://doc.rust-lang.org/nightly/unstable-book/index.html 
 - [ ] Roadmap https://blog.rust-lang.org/inside-rust/2022/04/04/lang-roadmap-2024.html 
-- [ ] Vulkano https://vulkano.rs/guide/introduction 
-- [ ] Rustup https://rust-lang.github.io/rustup/ 
-- [ ] Clippy https://doc.rust-lang.org/clippy/
+
 - [ ] Rayon
 - [ ] Serde
 - [ ] API guidelines
