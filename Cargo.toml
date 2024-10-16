@@ -16,4 +16,4 @@ members = [
    # "macros/builder",
    "sea_orm/bakery-backend", "sea_orm/bakery-backend/migration"
 , "effective_rust",
-  "webgpu"]
+  "webgpu", "polars/polars_rs"]

@@ -1,0 +1,8 @@
+[package]
+name = "polars_rs"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.38"
+polars = { version = "0.43.1", features = ["lazy"] }
