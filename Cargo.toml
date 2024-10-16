@@ -15,4 +15,5 @@ members = [
    # "bevy/quickstart/my_bevy_game", 
    # "macros/builder",
    "sea_orm/bakery-backend", "sea_orm/bakery-backend/migration"
-, "effective_rust"]
+, "effective_rust",
+  "webgpu"]
