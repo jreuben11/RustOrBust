@@ -6,16 +6,17 @@ use polars::prelude::*;
 mod quickstart {
     use super::*;
 
-    pub fn basic_read_write() -> Result<(), Box<dyn std::error::Error>> {
+    pub fn basic_read_write() -> Result<DataFrame, Box<dyn std::error::Error>> {
         let mut df: DataFrame = df!(
-            "integer" => &[1, 2, 3],
-            "date" => &[
-                    NaiveDate::from_ymd_opt(2025, 1, 1).unwrap().and_hms_opt(0, 0, 0).unwrap(),
-                    NaiveDate::from_ymd_opt(2025, 1, 2).unwrap().and_hms_opt(0, 0, 0).unwrap(),
-                    NaiveDate::from_ymd_opt(2025, 1, 3).unwrap().and_hms_opt(0, 0, 0).unwrap(),
+           "name" => ["Alice Archer", "Ben Brown", "Chloe Cooper", "Daniel Donovan"],
+            "birthdate" => [
+                NaiveDate::from_ymd_opt(1997, 1, 10).unwrap(),
+                NaiveDate::from_ymd_opt(1985, 2, 15).unwrap(),
+                NaiveDate::from_ymd_opt(1983, 3, 22).unwrap(),
+                NaiveDate::from_ymd_opt(1981, 4, 30).unwrap(),
             ],
-            "float" => &[4.0, 5.0, 6.0],
-            "string" => &["a", "b", "c"],
+            "weight" => [57.9, 72.5, 53.6, 83.1],  // (kg)
+            "height" => [1.56, 1.77, 1.65, 1.75],  // (m)
         )
         .unwrap();
         println!("{}", df);
@@ -35,10 +36,54 @@ mod quickstart {
 
         println!("{}", df_csv);
 
+        Ok(df)
+    }
+
+    pub fn select(df: &DataFrame) -> Result<(), Box<dyn std::error::Error>> {
+        let result = df
+            .clone()
+            .lazy()
+            .select([
+                col("name"),
+                col("birthdate").dt().year().alias("birth_year"),
+                (col("weight") / col("height").pow(2)).alias("bmi"),
+            ])
+            .collect()?;
+        println!("{}", result);
+
+        let result = df
+            .clone()
+            .lazy()
+            .select([
+                col("name"),
+                (cols(["weight", "height"]) * lit(0.95))
+                    //.round(2)
+                    .name()
+                    .suffix("-5%"),
+            ])
+            .collect()?;
+        println!("{}", result);
+
+        Ok(())
+    }
+
+    pub fn with_columns(df: &DataFrame) -> Result<(), Box<dyn std::error::Error>> {
+        let result = df
+            .clone()
+            .lazy()
+            .with_columns([
+                col("birthdate").dt().year().alias("birth_year"),
+                (col("weight") / col("height").pow(2)).alias("bmi"),
+            ])
+            .collect()?;
+        println!("{}", result);
         Ok(())
     }
 }
 
 fn main() {
-    let _ = quickstart::basic_read_write().unwrap();
+    let df = quickstart::basic_read_write().unwrap();
+    let _ = quickstart::select(&df);
+    let _ = quickstart::with_columns(&df);
+    println!("bye!");
 }
