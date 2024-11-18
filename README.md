@@ -49,19 +49,20 @@
   - Programming WebAssembly with Rust (book) https://pragprog.com/titles/khrust/programming-webassembly-with-rust/ 
 - [X] Leptos https://book.leptos.dev/
 - [X] Rust Zero to Production (book)  https://www.zero2prod.com/index.html?country=Israel&discount_code=SEA60  
-- [ ] Macros
+- [ ] Macros (**in progress**)
   - https://www.manning.com/books/write-powerful-rust-macros
 - [X] Rust Design Patterns https://rust-unofficial.github.io/patterns/ (**meh**)
 - [ ] Bevy https://bevyengine.org/learn/  (**in progress**)
 - [X] SeaORM + SQLX https://www.sea-ql.org/SeaORM/docs/index/
-- [ ] DataFusion https://datafusion.apache.org/ 
+- [ ] Polars https://pola-rs.github.io/polars-book/user-guide/   DataFrame library for Rust and Python  (**in progress**)
+- [ ] DataFusion https://datafusion.apache.org/ (**in progress**)
 - [ ] Effective Rust https://www.lurklurk.org/effective-rust/ (**in progress**)
+- [ ] WebGPU https://wgpu.rs/  (**in progress**)
 
 ## Next ...
-- [ ] WebGPU https://wgpu.rs/
-- [ ] Blockchain: Solana + Anchor + Polkadot https://solana.com/docs/programs/lang-rust
-- [ ] Aya eBPF https://aya-rs.dev/book/
-  
+
+
+- [ ] Tauri 2.0 https://v2.tauri.app/start/
 - [ ] Cargo book https://doc.rust-lang.org/cargo/index.html 
 - [ ] Rustdoc book https://doc.rust-lang.org/rustdoc/index.html 
 - [ ] RustC book https://doc.rust-lang.org/rustc/index.html
@@ -72,7 +73,10 @@
 - [ ] Cxx https://cxx.rs/ Rust loves C++
 - [ ] Too many linked lists https://rust-unofficial.github.io/too-many-lists/
 - [ ] Standard lib https://doc.rust-lang.org/std/index.html
-- [ ] Polars https://pola-rs.github.io/polars-book/user-guide/   DataFrame library for Rust and Python
+
+- [ ] Blockchain: Solana + Anchor + Polkadot https://solana.com/docs/programs/lang-rust
+- [ ] Aya eBPF https://aya-rs.dev/book/
+
 - [ ] Edition guide https://doc.rust-lang.org/edition-guide/index.html
 - [ ] Vulkano / Ash https://vulkano.rs/guide/introduction
 
@@ -92,4 +96,4 @@
 - [ ] Comprehensive Rust course from Android https://google.github.io/comprehensive-rust/ 
 - [ ] MacroKata https://tfpk.github.io/macrokata/  a set of exercises to learn macros in Rust.
 
-> 2023-2024: Rust or Bust, baby ! ;)
+> 2023-2025: Rust or Bust, baby ! ;)
