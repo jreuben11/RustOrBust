@@ -16,10 +16,9 @@ use wasm_bindgen::prelude::*;
 // }
 
 #[wasm_bindgen(module = "/www/utils/rnd.js")]
-extern {
+extern "C" {
     fn rnd(max: usize) -> usize;
 }
-
 
 #[wasm_bindgen]
 #[derive(Clone, Copy)]
@@ -35,7 +34,7 @@ pub enum Direction {
     Up,
     Right,
     Down,
-    Left
+    Left,
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -48,7 +47,7 @@ struct Snake {
 
 impl Snake {
     fn new(spawn_index: usize, size: usize) -> Snake {
-        let mut body = vec!();
+        let mut body = vec![];
 
         for i in 0..size {
             body.push(SnakeCell(spawn_index - i));
@@ -61,7 +60,6 @@ impl Snake {
     }
 }
 
-
 #[wasm_bindgen]
 pub struct World {
     width: usize,
@@ -73,13 +71,12 @@ pub struct World {
     points: usize,
 }
 
-
 #[wasm_bindgen]
 impl World {
     pub fn new(width: usize, snake_idx: usize) -> World {
         let snake = Snake::new(snake_idx, 3);
         let size = width * width;
-       
+
         World {
             width,
             size,
@@ -99,8 +96,10 @@ impl World {
         let mut reward_cell;
 
         loop {
-          reward_cell = rnd(max);
-          if !snake_body.contains(&SnakeCell(reward_cell)) { break; }
+            reward_cell = rnd(max);
+            if !snake_body.contains(&SnakeCell(reward_cell)) {
+                break;
+            }
         }
 
         Some(reward_cell)
@@ -133,7 +132,9 @@ impl World {
 
     pub fn change_snake_dir(&mut self, direction: Direction) {
         let next_cell = self.gen_next_snake_cell(&direction);
-        if self.snake.body[1].0 == next_cell.0 { return; }
+        if self.snake.body[1].0 == next_cell.0 {
+            return;
+        }
         self.next_cell = Some(next_cell);
         self.snake.direction = direction;
     }
@@ -152,8 +153,6 @@ impl World {
     pub fn snake_cells(&self) -> *const SnakeCell {
         self.snake.body.as_ptr()
     }
-
-
 
     // pub fn update(&mut self) {
     //     let snake_idx = self.snake_head_idx();
@@ -194,17 +193,17 @@ impl World {
         match self.status {
             Some(GameStatus::Played) => {
                 let temp = self.snake.body.clone();
-        
+
                 match self.next_cell {
                     Some(cell) => {
                         self.snake.body[0] = cell;
                         self.next_cell = None;
-                    },
+                    }
                     None => {
                         self.snake.body[0] = self.gen_next_snake_cell(&self.snake.direction);
                     }
                 }
-        
+
                 for i in 1..self.snake_length() {
                     self.snake.body[i] = SnakeCell(temp[i - 1].0);
                 }
@@ -212,7 +211,7 @@ impl World {
                 if self.snake.body[1..self.snake_length()].contains(&self.snake.body[0]) {
                     self.status = Some(GameStatus::Lost)
                 }
-        
+
                 if self.reward_cell == Some(self.snake_head_idx()) {
                     if self.snake_length() < self.size {
                         self.points += 1;
@@ -223,8 +222,7 @@ impl World {
                     }
                     self.snake.body.push(SnakeCell(self.snake.body[1].0));
                 }
-
-            },
+            }
             _ => {}
         }
     }
@@ -245,7 +243,7 @@ impl World {
                 } else {
                     SnakeCell(snake_idx + 1)
                 }
-            },
+            }
             Direction::Left => {
                 let threshold = row * self.width;
                 if snake_idx == threshold {
@@ -253,7 +251,7 @@ impl World {
                 } else {
                     SnakeCell(snake_idx - 1)
                 }
-            },
+            }
             Direction::Up => {
                 let threshold = snake_idx - (row * self.width);
                 if snake_idx == threshold {
@@ -261,7 +259,7 @@ impl World {
                 } else {
                     SnakeCell(snake_idx - self.width)
                 }
-            },
+            }
             Direction::Down => {
                 let threshold = snake_idx + ((self.width - row) * self.width);
                 if snake_idx + self.width == threshold {
@@ -269,7 +267,7 @@ impl World {
                 } else {
                     SnakeCell(snake_idx + self.width)
                 }
-            },
+            }
         };
     }
 }

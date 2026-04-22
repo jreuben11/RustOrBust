@@ -62,8 +62,9 @@ fn build_static_lib() {
     println!("cargo:rerun-if-changed={}", headers_path_str);
 
     // Run `clang` to compile the `hello.c` file into a `hello.o` object file.
-    // Unwrap if it is not possible to spawn the process.
-    if !std::process::Command::new("clang")
+    // Use CLANG env var if set (e.g. when /usr/bin/clang alternative is broken).
+    let clang_bin = std::env::var("CLANG").unwrap_or_else(|_| "clang".to_string());
+    if !std::process::Command::new(&clang_bin)
         .arg("-c")
         .arg("-o")
         .arg(&obj_path)

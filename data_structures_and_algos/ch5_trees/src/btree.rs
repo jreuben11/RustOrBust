@@ -231,7 +231,7 @@ impl DeviceDatabase {
 
                 let mut total = (key_rules, usize::max_value(), level);
                 for n in node.children.iter().chain(vec![&node.left_child]) {
-                    if let Some(ref tree) = n {
+                    if let Some(tree) = n {
                         let stats = self.validate(tree, level + 1);
                         total = (
                             total.0 && stats.0,

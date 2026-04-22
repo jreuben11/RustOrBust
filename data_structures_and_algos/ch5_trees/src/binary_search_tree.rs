@@ -70,7 +70,7 @@ impl DeviceRegistry {
             _ => None,
         }
     }
-    
+
     pub fn walk(&self, callback: impl Fn(&IoTDevice) -> ()) {
         self.walk_in_order(&self.root, &callback);
     }

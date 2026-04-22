@@ -81,7 +81,6 @@ mod tests {
     use super::*;
     use pretty_assertions::assert_eq; // crate for test-only use. Cannot be used in non-test code.
 
-
     #[test]
     fn test_add() {
         assert_eq!(add(1, 2), 3);

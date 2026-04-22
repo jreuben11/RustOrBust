@@ -41,6 +41,6 @@ fn bindgen_test_layout_CoolStruct() {
         )
     );
 }
-extern "C" {
+unsafe extern "C" {
     pub fn cool_function(i: ::std::os::raw::c_int, c: ::std::os::raw::c_char, cs: *mut CoolStruct);
 }

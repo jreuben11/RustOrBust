@@ -1,11 +1,11 @@
 #![allow(dead_code)]
 #![feature(negative_impls)]
 
-use std::thread;
-use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::thread;
 
-fn race(){
+fn race() {
     let data = vec![1, 2, 3, 4];
     // Arc so that the memory the AtomicUsize is stored in still exists for
     // the other thread to increment, even if we completely finish executing
@@ -49,42 +49,42 @@ mod send_and_sync {
     impl !Send for SpecialThreadToken {}
     impl !Sync for SpecialThreadToken {}
 
+    use std::ops::{Deref, DerefMut};
     use std::{
         mem::{align_of, size_of},
         ptr,
     };
-    use std::ops::{Deref, DerefMut};
-    
+
     pub struct Carton<T>(ptr::NonNull<T>);
-    
+
     impl<T> Carton<T> {
         pub fn new(value: T) -> Self {
             // Allocate enough memory on the heap to store one T.
-            assert_ne!(size_of::<T>(), 0, "Zero-sized types are out of the scope of this example");
+            assert_ne!(
+                size_of::<T>(),
+                0,
+                "Zero-sized types are out of the scope of this example"
+            );
             let mut memptr: *mut T = ptr::null_mut();
             unsafe {
-                let ret = libc::posix_memalign(
-                    (&mut memptr).cast(),
-                    align_of::<T>(),
-                    size_of::<T>()
-                );
+                let ret =
+                    libc::posix_memalign((&mut memptr).cast(), align_of::<T>(), size_of::<T>());
                 assert_eq!(ret, 0, "Failed to allocate or invalid alignment");
             };
-    
+
             // NonNull is just a wrapper that enforces that the pointer isn't null.
             let ptr = {
                 // Safety: memptr is dereferenceable because we created it from a
                 // reference and have exclusive access.
-                ptr::NonNull::new(memptr)
-                    .expect("Guaranteed non-null if posix_memalign returns 0")
+                ptr::NonNull::new(memptr).expect("Guaranteed non-null if posix_memalign returns 0")
             };
-    
+
             // Move value from the stack to the location we allocated on the heap.
             unsafe {
                 // Safety: If non-null, posix_memalign gives us a ptr that is valid
                 // for writes and properly aligned.
                 ptr.as_ptr().write(value);
-            } 
+            }
             Self(ptr)
         }
     }
@@ -103,7 +103,7 @@ mod send_and_sync {
             }
         }
     }
-    
+
     impl<T> DerefMut for Carton<T> {
         fn deref_mut(&mut self) -> &mut Self::Target {
             unsafe {
@@ -136,7 +136,7 @@ mod send_and_sync {
     // Conversely, `Carton` itself does not use any interior mutability whatsoever:
     // all the mutations are performed through an exclusive reference (`&mut`). This
     // means it suffices that `T` be `Sync` for `Carton<T>` to be `Sync`:
-    unsafe impl<T> Sync for Carton<T> where T: Sync  {}
+    unsafe impl<T> Sync for Carton<T> where T: Sync {}
 }
 
 mod atomics {
@@ -148,7 +148,10 @@ mod atomics {
         let lock = Arc::new(AtomicBool::new(false)); // value answers "am I locked?"
         // ... distribute lock to threads somehow ...
         // Try to acquire the lock by setting it to true
-        while !lock.compare_exchange(false, true, Ordering::Acquire, Ordering::Acquire).is_err(){}
+        while !lock
+            .compare_exchange(false, true, Ordering::Acquire, Ordering::Acquire)
+            .is_err()
+        {}
         // broke out of the loop, so we successfully acquired the lock!
         // ... scary data accesses ...
         // ok we're done, release the lock

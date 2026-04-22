@@ -1,4 +1,4 @@
-fn main(){
+fn main() {
     random::gen_numeric();
     random::gen_numeric_range();
     random::gen_numeric_distribution().unwrap();
@@ -9,40 +9,42 @@ fn main(){
     vector_sort();
 }
 
-#[macro_use] extern crate function_name;
+#[macro_use]
+extern crate function_name;
 
-macro_rules! function_path {() => (concat!(
-    module_path!(), "::", function_name!()
-))}
+macro_rules! function_path {
+    () => {
+        concat!(module_path!(), "::", function_name!())
+    };
+}
 
 mod random {
-    use rand::{thread_rng, Rng};
-    
+    use rand::RngExt;
 
     #[named]
     pub fn gen_numeric() {
         println!("\n{}:", function_path!().to_uppercase());
 
-        let mut rng = rand::thread_rng();
+        let mut rng = rand::rng();
 
-        let n1: u8 = rng.gen();
-        let n2: u16 = rng.gen();
+        let n1: u8 = rng.random();
+        let n2: u16 = rng.random();
         println!("Random u8: {}", n1);
         println!("Random u16: {}", n2);
-        println!("Random u32: {}", rng.gen::<u32>());
-        println!("Random i32: {}", rng.gen::<i32>());
-        println!("Random float: {}", rng.gen::<f64>());
+        println!("Random u32: {}", rng.random::<u32>());
+        println!("Random i32: {}", rng.random::<i32>());
+        println!("Random float: {}", rng.random::<f64>());
     }
 
     #[named]
     pub fn gen_numeric_range() {
         println!("\n{}:", function_path!().to_uppercase());
-        use rand::distributions::{Distribution, Uniform};
+        use rand::distr::{Distribution, Uniform};
 
-        let mut rng = rand::thread_rng();
-        println!("Integer: {}", rng.gen_range(0..10));
-        println!("Float: {}", rng.gen_range(0.0..10.0));
-        let die = Uniform::from(1..7);
+        let mut rng = rand::rng();
+        println!("Integer: {}", rng.random_range(0..10));
+        println!("Float: {}", rng.random_range(0.0..10.0));
+        let die = Uniform::new(1, 7).unwrap();
 
         loop {
             let throw = die.sample(&mut rng);
@@ -60,19 +62,21 @@ mod random {
 
         use rand_distr::{Distribution, Normal};
 
-        let mut rng = thread_rng();
+        let mut rng = rand::rng();
         let normal = Normal::new(2.0, 3.0)?;
         let v = normal.sample(&mut rng);
         println!("{} is from a N(2, 9) distribution", v);
         Ok(())
     }
 
-    
     #[named]
     pub fn gen_random_values_of_t() {
         println!("\n{}:", function_path!().to_uppercase());
-        
-        use rand::distributions::{Distribution, Standard};
+
+        use rand::{
+            Rng,
+            distr::{Distribution, StandardUniform},
+        };
 
         #[allow(dead_code)]
         #[derive(Debug)]
@@ -81,35 +85,33 @@ mod random {
             y: i32,
         }
 
-        impl Distribution<Point> for Standard {
+        impl Distribution<Point> for StandardUniform {
             fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Point {
-                let (rand_x, rand_y) = rng.gen();
+                let (rand_x, rand_y) = rng.random();
                 Point {
                     x: rand_x,
                     y: rand_y,
                 }
             }
         }
-        let mut rng = rand::thread_rng();
-        let rand_tuple = rng.gen::<(i32, bool, f64)>();
-        let rand_point: Point = rng.gen();
+        let mut rng = rand::rng();
+        let rand_tuple = rng.random::<(i32, bool, f64)>();
+        let rand_point: Point = rng.random();
         println!("Random tuple: {:?}", rand_tuple);
         println!("Random Point: {:?}", rand_point);
     }
 
-    
-    
     #[named]
     pub fn gen_alphanumeric_distribution(len: usize) {
         println!("\n{}:", function_path!().to_uppercase());
-        
-        use rand::distributions::Alphanumeric;
-        let rand_string: String = thread_rng()
+
+        use rand::distr::Alphanumeric;
+        let rand_string: String = rand::rng()
             .sample_iter(&Alphanumeric)
             .take(len)
             .map(char::from)
             .collect();
-    
+
         println!("{}", rand_string);
     }
 
@@ -117,27 +119,26 @@ mod random {
     pub fn gen_alphanumeric_from_charset() {
         println!("\n{}:", function_path!().to_uppercase());
 
-        use rand::Rng;
+        use rand::RngExt;
         const CHARSET: &[u8] = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ\
                                 abcdefghijklmnopqrstuvwxyz\
                                 0123456789)(*&^%$#@!~";
         const PASSWORD_LEN: usize = 30;
-        let mut rng = rand::thread_rng();
-    
+        let mut rng = rand::rng();
+
         let password: String = (0..PASSWORD_LEN)
             .map(|_| {
-                let idx = rng.gen_range(0..CHARSET.len());
+                let idx = rng.random_range(0..CHARSET.len());
                 CHARSET[idx] as char
             })
             .collect();
-    
+
         println!("{:?}", password);
     }
-
 }
 
 #[named]
-fn vector_sort(){
+fn vector_sort() {
     println!("\n{}:", function_path!().to_uppercase());
 
     let mut int_vec = vec![1, 5, 10, 2, 15];
@@ -149,7 +150,10 @@ fn vector_sort(){
     assert_eq!(float_vec, vec![1.1, 1.123, 1.15, 2.0, 5.5]);
 
     #[derive(Debug, Eq, Ord, PartialEq, PartialOrd)]
-    struct Person {name: String, age: u32}
+    struct Person {
+        name: String,
+        age: u32,
+    }
     impl Person {
         pub fn new(name: String, age: u32) -> Self {
             Person { name, age }
@@ -171,7 +175,8 @@ fn vector_sort(){
             Person::new("Al".to_string(), 60),
             Person::new("John".to_string(), 1),
             Person::new("Zoe".to_string(), 25),
-        ]);
+        ]
+    );
 
     // Sort people by age
     people.sort_by(|a, b| b.age.cmp(&a.age));
@@ -182,5 +187,6 @@ fn vector_sort(){
             Person::new("Al".to_string(), 60),
             Person::new("Zoe".to_string(), 25),
             Person::new("John".to_string(), 1),
-        ]);
+        ]
+    );
 }

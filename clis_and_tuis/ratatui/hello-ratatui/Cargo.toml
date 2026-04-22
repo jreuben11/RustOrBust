@@ -1,8 +1,9 @@
 [package]
 name = "hello-ratatui"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-crossterm = "0.27.0"
-ratatui = "0.26.1"
+crossterm = "0.29"
+ratatui = "0.30"
+

@@ -1,30 +1,36 @@
 #![allow(dead_code)]
 
-mod call_c{
+mod call_c {
     use libc::{c_int, size_t};
 
     #[link(name = "snappy")]
-    extern {
-        fn snappy_compress(input: *const u8,
-                        input_length: size_t,
-                        compressed: *mut u8,
-                        compressed_length: *mut size_t) -> c_int;
-        fn snappy_uncompress(compressed: *const u8,
-                            compressed_length: size_t,
-                            uncompressed: *mut u8,
-                            uncompressed_length: *mut size_t) -> c_int;
+    unsafe extern "C" {
+        fn snappy_compress(
+            input: *const u8,
+            input_length: size_t,
+            compressed: *mut u8,
+            compressed_length: *mut size_t,
+        ) -> c_int;
+        fn snappy_uncompress(
+            compressed: *const u8,
+            compressed_length: size_t,
+            uncompressed: *mut u8,
+            uncompressed_length: *mut size_t,
+        ) -> c_int;
         pub fn snappy_max_compressed_length(source_length: size_t) -> size_t;
-        fn snappy_uncompressed_length(compressed: *const u8,
-                                    compressed_length: size_t,
-                                    result: *mut size_t) -> c_int;
-        fn snappy_validate_compressed_buffer(compressed: *const u8,
-                                            compressed_length: size_t) -> c_int;
+        fn snappy_uncompressed_length(
+            compressed: *const u8,
+            compressed_length: size_t,
+            result: *mut size_t,
+        ) -> c_int;
+        fn snappy_validate_compressed_buffer(
+            compressed: *const u8,
+            compressed_length: size_t,
+        ) -> c_int;
     }
 
     pub fn validate_compressed_buffer(src: &[u8]) -> bool {
-        unsafe {
-            snappy_validate_compressed_buffer(src.as_ptr(), src.len() as size_t) == 0
-        }
+        unsafe { snappy_validate_compressed_buffer(src.as_ptr(), src.len() as size_t) == 0 }
     }
 
     pub fn compress(src: &[u8]) -> Vec<u8> {
@@ -37,8 +43,8 @@ mod call_c{
             let pdst = dst.as_mut_ptr(); // mut pointer to Vec data
             // snappy_compress(
             // input: *const u8,
-            // input_length: size_t, 
-            // compressed: *mut u8, 
+            // input_length: size_t,
+            // compressed: *mut u8,
             // compressed_length: *mut size_t
             // ) -> c_int;
             snappy_compress(psrc, srclen, pdst, &mut dstlen);
@@ -68,25 +74,18 @@ mod call_c{
     }
 }
 
-
-
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn hello_from_rust() {
     println!("Hello from Rust!");
 }
 // gcc call_rust.c -o call_rust -lffi -L./target/debug
 // LD_LIBRARY_PATH=./target/debug ./call_rust
 
-
-use std::ffi::CString;
-use std::ptr;
 #[link(name = "readline")]
-extern {
+unsafe extern "C" {
     static rl_readline_version: libc::c_int;
     static mut rl_prompt: *const libc::c_char;
 }
-
-
 
 // ffi@0.1.0: Compiler version doesn't include clang or GCC: "cc" "--version"
 // ffi@0.1.0: Compiler version doesn't include clang or GCC: "c++" "--version"
@@ -97,7 +96,6 @@ mod tests {
     fn call_snappy() {
         let x = unsafe { call_c::snappy_max_compressed_length(100) };
         assert_eq!(x, 148); // max compressed length of a 100 byte buffer
-        
     }
 
     // TODO: these tests fail due to linker errors: "undefined reference to `operator delete(void*)'""
@@ -128,15 +126,16 @@ mod tests {
 
     #[test]
     fn call_readline() {
+        use std::ffi::CString;
         let version = unsafe { rl_readline_version as i32 };
         assert!(version > 0);
 
         let prompt = CString::new("[my-awesome-shell] $").unwrap();
         unsafe {
             rl_prompt = prompt.as_ptr();
-            println!("{:?}", rl_prompt);
-            rl_prompt = ptr::null();
+            let p = rl_prompt; // copy pointer value; avoids shared ref to static mut
+            println!("{p:?}");
+            rl_prompt = std::ptr::null();
         }
-
     }
 }

@@ -1,9 +1,9 @@
 mod binary_search_tree;
-mod red_black_tree;
-mod heap;
-mod trie;
 mod btree;
 mod graph;
+mod heap;
+mod red_black_tree;
+mod trie;
 
 #[derive(Clone, Debug)]
 pub struct IoTDevice {
@@ -26,8 +26,6 @@ impl PartialEq for IoTDevice {
     }
 }
 
-
-
 #[derive(Clone, Debug)]
 pub struct MessageNotification {
     pub no_messages: u64,
@@ -47,18 +45,15 @@ impl PartialEq for MessageNotification {
     }
 }
 
-
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use rand::thread_rng;
-    use rand::seq::SliceRandom;
     use rand::Rng;
+    use rand::seq::SliceRandom;
+    use rand::thread_rng;
     use std::cell::RefCell;
     use std::collections::HashSet;
     use std::iter::FromIterator;
-
 
     fn new_device_with_id(id: u64) -> IoTDevice {
         new_device_with_id_path(id, "")
@@ -121,9 +116,9 @@ mod tests {
             assert_eq!(tree.length, 7);
         }
     }
-    mod red_black_tree_tests{
+    mod red_black_tree_tests {
         use super::*;
-        
+
         #[test]
         fn red_black_tree_add() {
             let mut tree = red_black_tree::BetterDeviceRegistry::new_empty();
@@ -163,7 +158,7 @@ mod tests {
         #[test]
         fn red_black_tree_find() {
             let mut tree = red_black_tree::BetterDeviceRegistry::new_empty();
-    
+
             tree.add(new_device_with_id(3));
             tree.add(new_device_with_id(2));
             tree.add(new_device_with_id(1));
@@ -171,10 +166,10 @@ mod tests {
             tree.add(new_device_with_id(4));
             tree.add(new_device_with_id(5));
             tree.add(new_device_with_id(7));
-    
+
             assert!(tree.is_a_valid_red_black_tree());
             assert_eq!(tree.length, 7);
-    
+
             assert_eq!(tree.find(100), None);
             assert_eq!(tree.find(4), Some(new_device_with_id(4)));
             assert_eq!(tree.find(3), Some(new_device_with_id(3)));
@@ -184,14 +179,11 @@ mod tests {
             assert_eq!(tree.find(6), Some(new_device_with_id(6)));
             assert_eq!(tree.find(7), Some(new_device_with_id(7)));
         }
-
     }
-
 
     mod heap_tests {
         use super::*;
 
-        
         #[test]
         fn binary_heap_add() {
             let mut heap = heap::MessageChecker::new_empty();
@@ -224,7 +216,6 @@ mod tests {
             assert_eq!(heap.pop(), Some(c));
             assert_eq!(heap.pop(), Some(a));
         }
-
     }
 
     mod trie_tests {
@@ -293,7 +284,7 @@ mod tests {
             assert_eq!(trie.find("100"), None);
         }
     }
-    
+
     mod btree_tests {
         use super::*;
 
@@ -363,9 +354,12 @@ mod tests {
     mod graph_tests {
         use super::*;
 
-        fn build_graph(g: graph::InternetOfThings, items: &Vec<IoTDevice>) -> graph::InternetOfThings {
+        fn build_graph(
+            g: graph::InternetOfThings,
+            items: &Vec<IoTDevice>,
+        ) -> graph::InternetOfThings {
             let mut g = g;
-    
+
             g.set_nodes(items.iter().map(|n| n.numerical_id.clone()).collect());
             g.set_edges(
                 items[0].numerical_id.clone(),
@@ -376,7 +370,7 @@ mod tests {
                     (10, items[9].numerical_id.clone()),
                 ],
             );
-    
+
             g.set_edges(
                 items[1].numerical_id.clone(),
                 vec![(1, items[0].numerical_id.clone())],
@@ -493,5 +487,4 @@ mod tests {
             )
         }
     }
-
 }

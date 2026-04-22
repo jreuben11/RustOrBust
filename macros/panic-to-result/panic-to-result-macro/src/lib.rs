@@ -1,9 +1,9 @@
 use proc_macro::TokenStream;
-use proc_macro_error::emit_error;
-use proc_macro_error::proc_macro_error;
-use quote::{quote, ToTokens};
+use proc_macro_error2::emit_error;
+use proc_macro_error2::proc_macro_error;
+use quote::{ToTokens, quote};
 use syn::spanned::Spanned;
-use syn::{token::Semi, Expr, ItemFn, ReturnType, Stmt, StmtMacro, Visibility};
+use syn::{Expr, ItemFn, ReturnType, Stmt, StmtMacro, Visibility, token::Semi};
 
 fn signature_output_as_result(ast: &ItemFn) -> ReturnType {
     let output = match ast.sig.output {
@@ -23,7 +23,8 @@ fn signature_output_as_result(ast: &ItemFn) -> ReturnType {
                 //     )
                 //   );
 
-                emit_error!(ty,
+                emit_error!(
+                    ty,
                     format!(
                         "this macro can only be applied to a function that does not yet return a Result. Signature: {}",
                         quote!(#ty)

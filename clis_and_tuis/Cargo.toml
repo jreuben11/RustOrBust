@@ -1,0 +1,14 @@
+[workspace]
+resolver = "3"
+
+members = [
+    "basics/grrs",
+    "basics/misc",
+    "clap/builder",
+    "clap/derive",
+    "clap/quickstart",
+    "ratatui/async-ratatui-counter",
+    "ratatui/hello-ratatui",
+    "ratatui/ratatui-counter-app",
+    "ratatui/ratatui-json-editor",
+]

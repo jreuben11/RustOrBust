@@ -1,5 +1,5 @@
+use ansi_term::{Colour, Style};
 use clap::Parser;
-use ansi_term::{Colour,Style};
 
 /// Simple program to greet a person
 #[derive(Parser, Debug)]
@@ -19,17 +19,18 @@ fn main() {
     coloured_and_styled();
 }
 
-fn parse_args(){
+fn parse_args() {
     let args = MyArgs::parse();
     for _ in 0..args.count {
         println!("Hello {}!", args.name)
     }
 }
 
-fn coloured_and_styled(){
-    println!("{}, {} and {}",
-             Colour::Yellow.paint("This is colored"),
-             Style::new().bold().paint("this is bold"),
-             Colour::Red.bold().paint("this is bold and colored"));
+fn coloured_and_styled() {
+    println!(
+        "{}, {} and {}",
+        Colour::Yellow.paint("This is colored"),
+        Style::new().bold().paint("this is bold"),
+        Colour::Red.bold().paint("this is bold and colored")
+    );
 }
-

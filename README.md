@@ -25,7 +25,11 @@
 13. [Leptos](webdev/leptos/README.md)
 14. [macros](macros/README.md) (**in progress**)
 15. [Bevy 3D](bevy/README.md) (**in progress**)
-16. [Sea-ORM](sea_orm/README.md) 
+16. [Sea-ORM](sea_orm/README.md)
+17. [Effective Rust](effective_rust/)
+18. [Polars](polars/README.md)
+19. [Data Fusion](data_fusion/)
+20. [WebGPU](webgpu/)
 
 # Rust 🦀 study plan:
 
@@ -54,10 +58,10 @@
 - [X] Rust Design Patterns https://rust-unofficial.github.io/patterns/ (**meh**)
 - [ ] Bevy https://bevyengine.org/learn/  (**in progress**)
 - [X] SeaORM + SQLX https://www.sea-ql.org/SeaORM/docs/index/
-- [ ] Polars https://pola-rs.github.io/polars-book/user-guide/   DataFrame library for Rust and Python  (**in progress**)
-- [ ] DataFusion https://datafusion.apache.org/ (**in progress**)
-- [ ] Effective Rust https://www.lurklurk.org/effective-rust/ (**in progress**)
-- [ ] WebGPU https://wgpu.rs/  (**in progress**)
+- [x] Polars https://pola-rs.github.io/polars-book/user-guide/   DataFrame library for Rust and Python
+- [x] DataFusion https://datafusion.apache.org/
+- [x] Effective Rust https://www.lurklurk.org/effective-rust/
+- [x] WebGPU https://wgpu.rs/
 
 ## Next ...
 
@@ -96,4 +100,7 @@
 - [ ] Comprehensive Rust course from Android https://google.github.io/comprehensive-rust/ 
 - [ ] MacroKata https://tfpk.github.io/macrokata/  a set of exercises to learn macros in Rust.
 
-> 2023-2025: Rust or Bust, baby ! ;)
+> 2023-2026: Rust or Bust, baby ! ;)
+>
+> **April 2026 upgrade:** All projects migrated to Rust 1.97.0-nightly + edition 2024 + latest deps.
+> Key migrations: ratatui 0.30, pyo3 0.28, leptos 0.8, sea-orm 2.0-rc, rand 0.9/0.10, axum 0.8, tonic 0.13, wgpu 29, polars 0.53, datafusion 53.

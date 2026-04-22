@@ -1,0 +1,4 @@
+[env]
+# Use versioned clang when the /usr/bin/clang alternative is broken
+CLANG = "/usr/lib/llvm-22/bin/clang"
+LIBCLANG_PATH = "/usr/lib/llvm-22/lib"

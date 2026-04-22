@@ -1,5 +1,5 @@
 struct Door {
-    is_open: bool
+    is_open: bool,
 }
 
 impl Door {
@@ -17,7 +17,6 @@ impl Openable for Door {
         self.is_open = true;
     }
 }
-
 
 #[cfg(test)]
 mod tests {

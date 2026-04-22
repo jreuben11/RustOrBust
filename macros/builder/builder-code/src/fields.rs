@@ -6,7 +6,7 @@ use syn::{Field, Ident, Type};
 
 #[allow(dead_code)]
 fn matches_type(ty: &Type, type_name: &str) -> bool {
-    if let Type::Path(ref p) = ty {
+    if let Type::Path(p) = ty {
         let first_match = p.path.segments[0].ident.to_string();
         return first_match == *type_name;
     }

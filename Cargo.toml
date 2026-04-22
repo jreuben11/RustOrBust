@@ -1,5 +1,5 @@
 [workspace]
-resolver = "2"
+resolver = "3"
 
 members = [
     "hello_world",
@@ -8,12 +8,18 @@ members = [
     "macros/declerative",
     "macros/procedural-basic",
     "macros/make-public",
-    "macros/make-private", 
-    "macros/panic-to-result/panic-to-result-usage", 
-    "macros/panic-to-result/panic-to-result-macro", 
-    # "bevy/three_d_shapes", "bevy/pong", 
-   # "bevy/quickstart/my_bevy_game", 
-   # "macros/builder",
-   "sea_orm/bakery-backend", "sea_orm/bakery-backend/migration"
-, "effective_rust",
-  "webgpu", "polars/polars_rs", "data_fusion"]
+    "macros/make-private",
+    "macros/panic-to-result/panic-to-result-usage",
+    "macros/panic-to-result/panic-to-result-macro",
+    # "bevy/three_d_shapes", "bevy/pong",
+    # "bevy/quickstart/my_bevy_game",
+    # "macros/builder",
+    "sea_orm/bakery-backend", "sea_orm/bakery-backend/migration",
+    "effective_rust",
+    "webgpu",
+    "data_fusion",
+]
+
+exclude = [
+    "polars/polars_rs",  # conflicts with datafusion on chrono version; build standalone
+]

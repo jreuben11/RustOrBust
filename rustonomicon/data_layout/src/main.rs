@@ -45,7 +45,11 @@ enum MyReprOption<T> {
 }
 
 fn main() {
-    println!("sizes - A:{}, APadded:{}", size_of::<A>(), size_of::<APadded>());
+    println!(
+        "sizes - A:{}, APadded:{}",
+        size_of::<A>(),
+        size_of::<APadded>()
+    );
 
     const DST_SIZE: usize = 8;
     let static_sized: MySuperSliceable<[u8; DST_SIZE]> = MySuperSliceable {
@@ -63,5 +67,4 @@ fn main() {
 
     assert_eq!(8, size_of::<MyOption<&u16>>());
     assert_eq!(16, size_of::<MyReprOption<&u16>>());
-
 }

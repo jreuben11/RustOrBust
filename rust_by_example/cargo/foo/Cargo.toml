@@ -1,11 +1,12 @@
 [package]
 name = "foo"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-clap = "4.1.9" # from crates.io
-rand = { git = "https://github.com/rust-lang-nursery/rand" } # from online repo
+clap = "4.5" # from crates.io
+rand = "0.9" # from crates.io (rand 0.9 = stable alias for 0.9.x)
 bar = { path = "../bar" } # from a path in the local filesystem
+

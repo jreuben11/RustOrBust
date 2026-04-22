@@ -42,12 +42,12 @@ fn min_index(weights: &Vec<TentativeWeight>, nodes: &Vec<usize>) -> usize {
     for node in nodes.iter() {
         if let Some(n) = weights.get(*node) {
             if n < &min_weight.0 {
-            min_weight = ((&weights[*node]).clone(), node.clone())}
+                min_weight = ((&weights[*node]).clone(), node.clone())
+            }
         }
     }
     return min_weight.1;
 }
-
 
 pub struct InternetOfThings {
     adjacency_list: Vec<Vec<Edge>>,
@@ -67,7 +67,9 @@ impl InternetOfThings {
     }
 
     pub fn edges(&self) -> u64 {
-        self.adjacency_list.iter().fold(0u64, |p, c| p + c.len() as u64)
+        self.adjacency_list
+            .iter()
+            .fold(0u64, |p, c| p + c.len() as u64)
     }
 
     pub fn nodes(&self) -> usize {
@@ -80,12 +82,19 @@ impl InternetOfThings {
     }
 
     pub fn set_edges(&mut self, from: KeyType, edges: Vec<(u32, KeyType)>) {
-        let edges: Vec<Edge> = edges.into_iter().filter_map(|e| {
-            if let Some(to) = self.get_node_index(e.1) {
-                Some(Edge { weight: e.0, node: to }) 
+        let edges: Vec<Edge> = edges
+            .into_iter()
+            .filter_map(|e| {
+                if let Some(to) = self.get_node_index(e.1) {
+                    Some(Edge {
+                        weight: e.0,
+                        node: to,
+                    })
                 } else {
                     None
-                }}).collect();
+                }
+            })
+            .collect();
         match self.nodes.iter().position(|n| n == &from) {
             Some(i) => self.adjacency_list[i] = edges,
             None => {
@@ -136,7 +145,7 @@ impl InternetOfThings {
                         TentativeWeight::Number(n) => TentativeWeight::Number(n + e.weight),
                         _ => TentativeWeight::Infinite,
                     };
-                    
+
                     let old_distance = distance[e.node].clone();
 
                     if new_distance < old_distance {
@@ -171,7 +180,10 @@ impl InternetOfThings {
 
     pub fn connected(&self, from: KeyType, degree: usize) -> Option<HashSet<KeyType>> {
         self.nodes.iter().position(|n| n == &from).map(|i| {
-            self.connected_r(i, degree).into_iter().map(|n| self.nodes[n].clone()).collect()
+            self.connected_r(i, degree)
+                .into_iter()
+                .map(|n| self.nodes[n].clone())
+                .collect()
         })
     }
 
@@ -183,7 +195,8 @@ impl InternetOfThings {
                     let mut set = self.connected_r(e.node, degree - 1);
                     set.insert(e.node);
                     set
-                }).collect()
+                })
+                .collect()
         } else {
             HashSet::new()
         }

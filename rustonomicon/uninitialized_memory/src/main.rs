@@ -7,7 +7,7 @@ fn main() {
     unchecked_uninitialized_memory();
 }
 
-fn check_unitialized_memory(){
+fn check_unitialized_memory() {
     let x: i32;
     if true {
         x = 1;
@@ -45,34 +45,33 @@ fn check_unitialized_memory(){
     _y = Box::new(1); // reinitialize y
 }
 
-fn drop_flags(){
+fn drop_flags() {
     {
         let mut x = Box::new(0); // x was uninit; just overwrite.
-        let mut _y = x;           // y was uninit; just overwrite and make x uninit.
-        x = Box::new(0);         // x was uninit; just overwrite.
-        _y = x;                   // y was init; Drop y, overwrite it, and make x uninit!
-                                // y goes out of scope; y was init; Drop y!
-                                // x goes out of scope; x was uninit; do nothing.
+        let mut _y = x; // y was uninit; just overwrite and make x uninit.
+        x = Box::new(0); // x was uninit; just overwrite.
+        _y = x; // y was init; Drop y, overwrite it, and make x uninit!
+        // y goes out of scope; y was init; Drop y!
+        // x goes out of scope; x was uninit; do nothing.
     }
     {
-        let mut _x = Box::new(0);    // x was uninit; just overwrite.
+        let mut _x = Box::new(0); // x was uninit; just overwrite.
         if 1 < 0 {
-            drop(_x)                 // x gets moved out; make x uninit.
+            drop(_x) // x gets moved out; make x uninit.
         } else {
             println!("{}", _x);
-            drop(_x)                 // x gets moved out; make x uninit.
+            drop(_x) // x gets moved out; make x uninit.
         }
-        _x = Box::new(0);            // x was uninit; just overwrite.
-                                    // x goes out of scope; x was init; Drop x!
+        _x = Box::new(0); // x was uninit; just overwrite.
+        // x goes out of scope; x was init; Drop x!
     }
 }
-
 
 struct Demo {
     field: bool,
 }
 
-fn unchecked_uninitialized_memory(){
+fn unchecked_uninitialized_memory() {
     // Size of the array is hard-coded but easy to change (meaning, changing just
     // the constant is sufficient). This means we can't use [a, b, c] syntax to
     // initialize the array, though, as we would have to keep that in sync
@@ -83,9 +82,7 @@ fn unchecked_uninitialized_memory(){
         // Create an uninitialized array of `MaybeUninit`. The `assume_init` is
         // safe because the type we are claiming to have initialized here is a
         // bunch of `MaybeUninit`s, which do not require initialization.
-        let mut x: [MaybeUninit<Box<u32>>; SIZE] = unsafe {
-            MaybeUninit::uninit().assume_init()
-        };
+        let mut x: [MaybeUninit<Box<u32>>; SIZE] = unsafe { MaybeUninit::uninit().assume_init() };
 
         // Dropping a `MaybeUninit` does nothing. Thus using raw pointer
         // assignment instead of `ptr::write` does not cause the old
@@ -105,9 +102,9 @@ fn unchecked_uninitialized_memory(){
     // `&uninit.as_mut().field` would create a reference to an uninitialized `bool`,
     // and thus be Undefined Behavior!
     let f1_ptr = unsafe { ptr::addr_of_mut!((*uninit.as_mut_ptr()).field) };
-    unsafe { f1_ptr.write(true); }
-    
+    unsafe {
+        f1_ptr.write(true);
+    }
+
     let _init = unsafe { uninit.assume_init() };
 }
-
-

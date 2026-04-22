@@ -3,7 +3,7 @@
 use async_graphql::{ComplexObject, Context, SimpleObject};
 use sea_orm::entity::prelude::*;
 
-use crate::{chef, Chef};
+use crate::{Chef, chef};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, SimpleObject)]
 #[graphql(complex, name = "Bakery")]

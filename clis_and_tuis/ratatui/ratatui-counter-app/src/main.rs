@@ -1,16 +1,9 @@
 // use std::io;
+use color_eyre::eyre::{WrapErr, bail};
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind};
-use ratatui::{
-    prelude::*,
-    symbols::border,
-    widgets::{block::*, *},
-};
-use color_eyre::{
-    eyre::{bail, WrapErr},
-};
+use ratatui::{prelude::*, symbols::border, widgets::*};
 mod errors;
 mod tui;
-
 
 // fn main() -> io::Result<()> {
 fn main() -> color_eyre::Result<()> {
@@ -29,7 +22,7 @@ pub struct App {
 
 impl App {
     /// runs the application's main loop until the user quits
-//  pub fn run(&mut self, terminal: &mut tui::Tui) -> io::Result<()> {
+    //  pub fn run(&mut self, terminal: &mut tui::Tui) -> io::Result<()> {
     pub fn run(&mut self, terminal: &mut tui::Tui) -> color_eyre::Result<()> {
         while !self.exit {
             terminal.draw(|frame| self.render_frame(frame))?;
@@ -40,7 +33,7 @@ impl App {
     }
 
     fn render_frame(&self, frame: &mut Frame) {
-        frame.render_widget(self, frame.size());
+        frame.render_widget(self, frame.area());
     }
 
     /// updates the application's state based on user input
@@ -48,12 +41,10 @@ impl App {
         match event::read()? {
             // it's important to check that the event is a key press event as
             // crossterm also emits key release and repeat events on Windows.
-            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => {
-                self.handle_key_event(key_event).wrap_err_with(|| {
-                    format!("handling key event failed:\n{key_event:#?}")
-                })
-            }
-            _ => Ok(())
+            Event::Key(key_event) if key_event.kind == KeyEventKind::Press => self
+                .handle_key_event(key_event)
+                .wrap_err_with(|| format!("handling key event failed:\n{key_event:#?}")),
+            _ => Ok(()),
         } //;
         // Ok(())
     }
@@ -66,7 +57,6 @@ impl App {
         }
         Ok(())
     }
-
 
     fn exit(&mut self) {
         self.exit = true;
@@ -88,22 +78,19 @@ impl App {
 
 impl Widget for &App {
     fn render(self, area: Rect, buf: &mut Buffer) {
-        let title = Title::from(" Counter App Tutorial ".bold());
-        let instructions = Title::from(Line::from(vec![
+        let title = Line::from(" Counter App Tutorial ".bold()).centered();
+        let instructions = Line::from(vec![
             " Decrement ".into(),
             "<Left>".blue().bold(),
             " Increment ".into(),
             "<Right>".blue().bold(),
             " Quit ".into(),
             "<Q> ".blue().bold(),
-        ]));
+        ])
+        .centered();
         let block = Block::default()
-            .title(title.alignment(Alignment::Center))
-            .title(
-                instructions
-                    .alignment(Alignment::Center)
-                    .position(Position::Bottom),
-            )
+            .title_top(title)
+            .title_bottom(instructions)
             .borders(Borders::ALL)
             .border_set(border::THICK);
 

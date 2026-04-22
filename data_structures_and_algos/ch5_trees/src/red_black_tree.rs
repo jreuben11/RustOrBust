@@ -133,10 +133,11 @@ impl BetterDeviceRegistry {
             } else {
                 0
             };
-            let black_height = black_height + match n.color {
-                Color::Black => 1,
-                _ => 0,
-            };
+            let black_height = black_height
+                + match n.color {
+                    Color::Black => 1,
+                    _ => 0,
+                };
             let l = self.validate(&n.left, n.color.clone(), black_height);
             let r = self.validate(&n.right, n.color.clone(), black_height);
             (red_red + l.0 + r.0, cmp::min(l.1, r.1), cmp::max(l.2, r.2))

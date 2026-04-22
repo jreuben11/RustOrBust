@@ -1,0 +1,8 @@
+[workspace]
+resolver = "3"
+
+members = [
+    "py_number",
+    "quickstart_p2r",
+    "quickstart_r2p",
+]

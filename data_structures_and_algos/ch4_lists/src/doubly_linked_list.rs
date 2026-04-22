@@ -90,9 +90,7 @@ pub struct ListIterator {
 
 impl ListIterator {
     fn new(start_at: Link) -> ListIterator {
-        ListIterator {
-            current: start_at,
-        }
+        ListIterator { current: start_at }
     }
 }
 
@@ -103,12 +101,12 @@ impl Iterator for ListIterator {
         let current = &self.current;
         let mut result = None;
         self.current = match current {
-            Some(ref current) => {
+            Some(current) => {
                 let current = current.borrow();
                 result = Some(current.value.clone());
                 current.next.clone()
-            },
-            None => None
+            }
+            None => None,
         };
         result
     }
@@ -116,15 +114,15 @@ impl Iterator for ListIterator {
 
 impl DoubleEndedIterator for ListIterator {
     fn next_back(&mut self) -> Option<String> {
-       let current = &self.current;
+        let current = &self.current;
         let mut result = None;
         self.current = match current {
-            Some(ref current) => {
+            Some(current) => {
                 let current = current.borrow();
                 result = Some(current.value.clone());
                 current.prev.clone()
-            },
-            None => None
+            }
+            None => None,
         };
         result
     }

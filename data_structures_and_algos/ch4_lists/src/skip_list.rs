@@ -49,8 +49,8 @@ impl BestTransactionLog {
 
     pub fn append(&mut self, offset: u64, value: String) {
         let level = 1 + if self.head.is_none() {
-            self.max_level   // use the maximum level for the first node
-        } else { 
+            self.max_level // use the maximum level for the first node
+        } else {
             self.get_level() // determine the level by coin flips
         };
 
@@ -90,7 +90,7 @@ impl BestTransactionLog {
                         let next = n.clone();
                         match next.borrow().next[level] {
                             Some(ref next) if next.borrow().offset <= offset => n = next.clone(),
-                            _ => break
+                            _ => break,
                         };
                     }
                     if n.borrow().offset == offset {
@@ -109,7 +109,6 @@ impl BestTransactionLog {
         ListIterator::new(self.head.clone(), level)
     }
 }
-
 
 impl IntoIterator for BestTransactionLog {
     type Item = (u64, String);
@@ -141,17 +140,16 @@ impl Iterator for ListIterator {
         let current = &self.current;
         let mut result = None;
         self.current = match current {
-            Some(ref current) => {
+            Some(current) => {
                 let current = current.borrow();
                 result = Some((current.offset, current.command.clone()));
                 current.next[self.level].clone()
-            },
-            _ => None
+            }
+            _ => None,
         };
         result
     }
 }
-
 
 impl std::fmt::Debug for BestTransactionLog {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
@@ -166,7 +164,7 @@ impl std::fmt::Debug for BestTransactionLog {
                 }
                 Ok(())
             }
-            None => write!(f, "The list is empty: []")
+            None => write!(f, "The list is empty: []"),
         }
     }
 }

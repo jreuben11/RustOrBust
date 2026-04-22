@@ -13,18 +13,24 @@ enum Bar {
 }
 struct Unit;
 
-pub fn ctors_demo(){
-    let _foo = Foo { a: 0, b: 1, c: false };
+pub fn ctors_demo() {
+    let _foo = Foo {
+        a: 0,
+        b: 1,
+        c: false,
+    };
     let _bar = Bar::X(0);
     let _empty = Unit;
 }
 
-mod dtors{
+mod dtors {
     use std::alloc::{Allocator, Global, Layout};
     use std::mem;
-    use std::ptr::{drop_in_place, NonNull, Unique};
-    
-    struct Box<T>{ ptr: Unique<T> }
+    use std::ptr::{NonNull, Unique, drop_in_place};
+
+    struct Box<T> {
+        ptr: Unique<T>,
+    }
     impl<T> Drop for Box<T> {
         fn drop(&mut self) {
             unsafe {
@@ -35,7 +41,9 @@ mod dtors{
         }
     }
 
-    struct SuperBox<T> { my_box: Option<Box<T>> }
+    struct SuperBox<T> {
+        my_box: Option<Box<T>>,
+    }
     impl<T> Drop for SuperBox<T> {
         fn drop(&mut self) {
             unsafe {
@@ -59,7 +67,4 @@ mod dtors{
         Next(Box<Link>),
         None,
     }
-
-
 }
-

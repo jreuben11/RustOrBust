@@ -1,9 +1,9 @@
 use proc_macro::TokenStream;
-use quote::{quote, ToTokens};
+use quote::{ToTokens, quote};
 
 use syn::parse::{Parse, ParseStream};
 use syn::punctuated::Punctuated;
-use syn::{Ident, parse_macro_input, Token};
+use syn::{Ident, Token, parse_macro_input};
 
 struct ComposeInput {
     expressions: Punctuated<Ident, Token!(.)>,

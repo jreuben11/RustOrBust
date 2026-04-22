@@ -17,31 +17,23 @@ mod database_access {
         let mut db = Database::connect(DATABASE_URL).await?;
         let db = match db.get_database_backend() {
             DbBackend::MySql => {
-                db.execute(Statement::from_string(
-                    db.get_database_backend(),
-                    format!("CREATE DATABASE IF NOT EXISTS `{}`;", DB_NAME),
-                ))
-                .await?;
+                db.execute_unprepared(&format!("CREATE DATABASE IF NOT EXISTS `{}`;", DB_NAME))
+                    .await?;
 
                 let url = format!("{}/{}", DATABASE_URL, DB_NAME);
                 Database::connect(&url).await?
             }
             DbBackend::Postgres => {
-                db.execute(Statement::from_string(
-                    db.get_database_backend(),
-                    format!("DROP DATABASE IF EXISTS \"{}\";", DB_NAME),
-                ))
-                .await?;
-                db.execute(Statement::from_string(
-                    db.get_database_backend(),
-                    format!("CREATE DATABASE \"{}\";", DB_NAME),
-                ))
-                .await?;
+                db.execute_unprepared(&format!("DROP DATABASE IF EXISTS \"{}\";", DB_NAME))
+                    .await?;
+                db.execute_unprepared(&format!("CREATE DATABASE \"{}\";", DB_NAME))
+                    .await?;
 
                 let url = format!("{}/{}", DATABASE_URL, DB_NAME);
                 Database::connect(&url).await?
             }
             DbBackend::Sqlite => db,
+            _ => db,
         };
         return Ok(db);
     }
@@ -358,7 +350,8 @@ mod database_access {
         stmt.values_panic(["SQL Bakery".into(), (-100.0).into()]);
         println!("{}", stmt.to_string(MysqlQueryBuilder));
         let builder = db.get_database_backend();
-        db.execute(builder.build(&stmt)).await?;
+        db.execute_unprepared(&builder.build(&stmt).to_string())
+            .await?;
 
         // select
         let column = (chef::Entity, Alias::new("name"));
@@ -489,7 +482,7 @@ async fn rocket() -> _ {
 }
 
 mod schema;
-use async_graphql::{http::GraphiQLSource, EmptySubscription, Schema};
+use async_graphql::{EmptySubscription, Schema, http::GraphiQLSource};
 use async_graphql_rocket::*;
 use rocket::response::content;
 use schema::*;

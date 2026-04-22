@@ -1,5 +1,5 @@
-use std::future::Future;
 use futures::executor::block_on;
+use std::future::Future;
 
 async fn async_main() {
     bar().await;
@@ -8,14 +8,15 @@ async fn async_main() {
     move_block().await;
 }
 
-
 fn main() {
     block_on(async_main());
 }
 
 // `foo()` returns a type that implements `Future<Output = u8>`.
 // `foo().await` will result in a value of type `u8`.
-async fn foo() -> u8 { 5 }
+async fn foo() -> u8 {
+    5
+}
 
 fn bar() -> impl Future<Output = u8> {
     // This `async` block results in a type that implements
@@ -27,7 +28,9 @@ fn bar() -> impl Future<Output = u8> {
 }
 
 // This function:
-async fn foo2(x: &u8) -> u8 { *x }
+async fn foo2(x: &u8) -> u8 {
+    *x
+}
 // Is equivalent to this function:
 #[allow(dead_code)]
 fn foo2_expanded<'a>(x: &'a u8) -> impl Future<Output = u8> + 'a {
@@ -37,9 +40,7 @@ fn foo2_expanded<'a>(x: &'a u8) -> impl Future<Output = u8> + 'a {
 fn bar2() -> impl Future<Output = u8> {
     let x = 5;
     // foo2(&x) // borrowed value x does not live long enough
-    async move {
-        foo2(&x).await
-    }
+    async move { foo2(&x).await }
 }
 
 /// `async` block:

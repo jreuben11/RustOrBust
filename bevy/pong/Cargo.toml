@@ -1,9 +1,7 @@
 [package]
 name = "pong"
 version = "0.1.0"
-edition = "2021"
-
-[workspace]
+edition = "2024"
 
 [dependencies]
-bevy = "0.13.2"
+bevy = "0.18.1"

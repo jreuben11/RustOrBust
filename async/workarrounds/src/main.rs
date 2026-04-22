@@ -4,13 +4,16 @@ fn main() {
         bar().await?;
         Ok::<(), MyError>(()) // <- note the explicit type annotation here
     };
-
 }
 
 // explicit async results
-struct MyError{}
-async fn foo() -> Result<(), MyError> { Ok(())}
-async fn bar() -> Result<(), MyError> { Err(MyError{})}
+struct MyError {}
+async fn foo() -> Result<(), MyError> {
+    Ok(())
+}
+async fn bar() -> Result<(), MyError> {
+    Err(MyError {})
+}
 
 // send approximation
 use std::rc::Rc;
@@ -33,5 +36,6 @@ fn recursive() -> BoxFuture<'static, ()> {
     async move {
         recursive().await;
         recursive().await;
-    }.boxed()
+    }
+    .boxed()
 }

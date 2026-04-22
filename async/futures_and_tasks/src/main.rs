@@ -1,19 +1,17 @@
 use futures::{
     future::{BoxFuture, FutureExt},
-    task::{waker_ref, ArcWake},
+    task::{ArcWake, waker_ref},
 };
 
 use std::{
     future::Future,
     pin::Pin,
-    sync::mpsc::{sync_channel, Receiver, SyncSender},
+    sync::mpsc::{Receiver, SyncSender, sync_channel},
     sync::{Arc, Mutex},
     task::{Context, Poll, Waker},
     thread,
     time::Duration,
 };
-
-
 
 pub struct TimerFuture {
     shared_state: Arc<Mutex<SharedState>>,
@@ -185,7 +183,6 @@ fn main() {
     executor.run();
 }
 
-
 #[allow(dead_code)]
 mod naive {
 
@@ -193,13 +190,11 @@ mod naive {
         type Output;
         fn poll(&mut self, wake: fn()) -> Poll<Self::Output>;
     }
-    
+
     enum Poll<T> {
         Ready(T),
         Pending,
     }
-
-
 
     /// A SimpleFuture that runs two other futures to completion concurrently.
     ///
@@ -277,5 +272,4 @@ mod naive {
             self.second.poll(wake)
         }
     }
-
 }

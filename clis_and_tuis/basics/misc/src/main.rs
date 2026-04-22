@@ -1,10 +1,10 @@
-use std::time::Duration;
-use crossbeam_channel::{bounded, tick, Receiver, select};
 use anyhow::Result;
-use config::{Config};
-use std::collections::HashMap;
 use clap::Parser;
+use config::Config;
+use crossbeam_channel::{Receiver, bounded, select, tick};
 use serde_json::json;
+use std::collections::HashMap;
+use std::time::Duration;
 
 lazy_static::lazy_static! {
     #[derive(Debug)]
@@ -36,10 +36,10 @@ struct Cli {
 }
 
 fn main() -> Result<()> {
-
     let args = Cli::parse();
     if args.json {
-        println!("{}",
+        println!(
+            "{}",
             json!({
                 "type": "message",
                 "content": "blah",
@@ -48,7 +48,12 @@ fn main() -> Result<()> {
     }
 
     // Print out our settings (as a HashMap)
-    println!("{:?}",&<Config as Clone>::clone(&CONFIG).try_deserialize::<HashMap<String, String>>().unwrap());
+    println!(
+        "{:?}",
+        &<Config as Clone>::clone(&CONFIG)
+            .try_deserialize::<HashMap<String, String>>()
+            .unwrap()
+    );
 
     let ctrl_c_events = ctrl_channel()?;
     let ticks = tick(Duration::from_secs(get_from_config::<u64>("duration")));

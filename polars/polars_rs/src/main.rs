@@ -56,10 +56,8 @@ mod quickstart {
             .lazy()
             .select([
                 col("name"),
-                (cols(["weight", "height"]) * lit(0.95))
-                    //.round(2)
-                    .name()
-                    .suffix("-5%"),
+                (col("weight") * lit(0.95)).alias("weight-5%"),
+                (col("height") * lit(0.95)).alias("height-5%"),
             ])
             .collect()?;
         println!("{}", result);

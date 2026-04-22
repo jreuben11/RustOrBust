@@ -1,7 +1,7 @@
-use futures::{ join, try_join,select, pin_mut};
-use futures::future::{self, Fuse, FusedFuture, FutureExt, TryFutureExt };
-use futures::stream::{self, Stream, StreamExt, FusedStream};
 use futures::executor::block_on;
+use futures::future::{self, Fuse, FusedFuture, FutureExt, TryFutureExt};
+use futures::stream::{self, FusedStream, Stream, StreamExt};
+use futures::{join, pin_mut, select, try_join};
 
 async fn async_main() {
     serial().await;
@@ -16,8 +16,8 @@ async fn async_main() {
     loop_select_count().await;
     let s1 = stream::iter(vec![1, 2]).fuse();
     let s2 = stream::iter(vec![1, 2]).fuse();
-    add_two_fused_streams(s1, s2).await;  
-    let s3 = stream::iter(vec![(),(),()]).fuse();   
+    add_two_fused_streams(s1, s2).await;
+    let s3 = stream::iter(vec![(), (), ()]).fuse();
     timer_loop_select_next_some(s3, 10).await;
 }
 
@@ -28,8 +28,12 @@ fn main() {
 struct Book {}
 struct Music {}
 
-async fn get_book() -> Book {Book{}}
-async fn get_music() -> Music {Music{}}
+async fn get_book() -> Book {
+    Book {}
+}
+async fn get_music() -> Music {
+    Music {}
+}
 
 async fn serial() -> (Book, Music) {
     let book = get_book().await;
@@ -43,10 +47,14 @@ async fn parallel_join() -> (Book, Music) {
     join!(book_fut, music_fut)
 }
 
-
-
-async fn get_book2() -> Result<Book, String> { /* ... */ Ok(Book{}) }
-async fn get_music2() -> Result<Music, String> { /* ... */ Ok(Music{}) }
+async fn get_book2() -> Result<Book, String> {
+    /* ... */
+    Ok(Book {})
+}
+async fn get_music2() -> Result<Music, String> {
+    /* ... */
+    Ok(Music {})
+}
 
 async fn parallel_try_join() -> Result<(Book, Music), String> {
     let book_fut = get_book2();
@@ -54,7 +62,10 @@ async fn parallel_try_join() -> Result<(Book, Music), String> {
     try_join!(book_fut, music_fut)
 }
 
-async fn get_book3() -> Result<Book, ()> { /* ... */ Err(()) }
+async fn get_book3() -> Result<Book, ()> {
+    /* ... */
+    Err(())
+}
 
 async fn parallel_try_join_consolidate_error_type() -> Result<(Book, Music), String> {
     let book_fut = get_book3().map_err(|()| "Unable to get book".to_string());
@@ -62,26 +73,31 @@ async fn parallel_try_join_consolidate_error_type() -> Result<(Book, Music), Str
     try_join!(book_fut, music_fut)
 }
 
-async fn task_one() -> u8 { 1 }
-async fn task_two() -> u8 { 2 }
+async fn task_one() -> u8 {
+    1
+}
+async fn task_two() -> u8 {
+    2
+}
 
 async fn race_tasks() {
-     let t1 = task_one().fuse();     
-     let t2 = task_two().fuse();
+    let t1 = task_one().fuse();
+    let t2 = task_two().fuse();
 
     pin_mut!(t1, t2);
-    
+
     select! {
         i = t1 => println!("task one completed first with {i}"),
         i = t2 => println!("task two completed first  with {i}"),
     }
 }
 
-async fn do_thing(foo: &mut i32) {println!("{foo}");}
+async fn do_thing(foo: &mut i32) {
+    println!("{foo}");
+}
 async fn something_else() {}
 
 async fn select_fused_mutable() {
-    
     let mut foo = 1;
     select! {
         _x = do_thing(&mut foo).fuse() => {
@@ -92,8 +108,6 @@ async fn select_fused_mutable() {
         },
     }
     println!("foo:{foo}");
-    
-    
 }
 
 async fn loop_select_count() {
@@ -111,8 +125,6 @@ async fn loop_select_count() {
     }
     assert_eq!(total, 10);
 }
-
-
 
 async fn add_two_fused_streams(
     mut s1: impl Stream<Item = u8> + FusedStream + Unpin,
@@ -135,8 +147,13 @@ async fn add_two_fused_streams(
     total
 }
 
-async fn get_new_num() -> u8 { /* ... */ 5 }
-async fn run_on_new_num(i: u8) { println!("{i}"); }
+async fn get_new_num() -> u8 {
+    /* ... */
+    5
+}
+async fn run_on_new_num(i: u8) {
+    println!("{i}");
+}
 
 async fn timer_loop_select_next_some(
     mut interval_timer: impl Stream<Item = ()> + FusedStream + Unpin,

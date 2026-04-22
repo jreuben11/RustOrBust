@@ -30,7 +30,7 @@ pub enum Action {
 
 // App ui render function
 fn ui(f: &mut Frame, app: &mut App) {
-    let area = f.size();
+    let area = f.area();
     f.render_widget(
         Paragraph::new(format!(
             "Press j or k to increment or decrement.\n\nCounter: {}",
@@ -151,4 +151,3 @@ async fn main() -> Result<()> {
 
     Ok(())
 }
-

@@ -2,7 +2,7 @@
 
 mod aliasing {
     fn compute1(input: &u32, output: &mut u32) {
-        let mut temp = *output; 
+        let mut temp = *output;
         if *input > 10 {
             temp = 1;
         }
@@ -22,15 +22,15 @@ mod aliasing {
         }
     }
 
-    pub fn demo(){
-        let v = vec![0,6,11];
-        let mut i: u32; 
-        let mut o: u32 = 1; 
+    pub fn demo() {
+        let v = vec![0, 6, 11];
+        let mut i: u32;
+        let mut o: u32 = 1;
         for v_i in v {
             i = v_i;
-            compute1(&i,&mut o);
+            compute1(&i, &mut o);
             println!("compute1: {}->{}", i, o);
-            compute2(&i,&mut o);
+            compute2(&i, &mut o);
             println!("compute2: {}->{}", i, o);
         }
     }
@@ -45,19 +45,19 @@ mod lifetimes {
     }
 
     fn bernoulli_sample() -> bool {
-        use rand::distributions::{Bernoulli, Distribution};
+        use rand::distr::{Bernoulli, Distribution};
         let d = Bernoulli::new(0.5).unwrap();
-        let v = d.sample(&mut rand::thread_rng());
+        let v = d.sample(&mut rand::rng());
         v
     }
 
-    pub fn demo(){
+    pub fn demo() {
         let mut data = vec![1, 2, 3];
         let x = &data[0];
         // scope optimization of lifetimes
         if bernoulli_sample() {
             println!("{}", x); // This is the last use of `x` in this branch
-            data.push(4);      // So we can push here
+            data.push(4); // So we can push here
         } else {
             // There's no use of `x` in here, so effectively the last use is the
             // creation of x at the top of the example.
@@ -70,11 +70,13 @@ mod lifetime_limits {
     #[derive(Debug)]
     struct NaiveFoo;
     impl NaiveFoo {
-        fn mutate_and_share(&mut self) -> &Self { &*self }
+        fn mutate_and_share(&mut self) -> &Self {
+            &*self
+        }
         fn share(&self) {}
     }
 
-    pub fn demo(){
+    pub fn demo() {
         let mut foo = NaiveFoo;
         let _loan = foo.mutate_and_share(); // --- mutable borrow occurs here
         foo.share(); // --- mutable borrow occurs here
@@ -88,13 +90,13 @@ mod lifetime_ellision {
 }
 
 mod unbounded_lifetimes {
-    
+
     // Unbounded Lifetime
     fn get_str<'a>(s: *const String) -> &'a str {
         unsafe { &*s }
     }
 
-    pub fn demo(){
+    pub fn demo() {
         let soon_dropped = String::from("hello");
         let dangling = get_str(&soon_dropped);
         drop(soon_dropped);
@@ -109,26 +111,34 @@ mod higher_rank_trait_bounds {
         func: F,
     }
     impl<F> Closure<F>
-        where F: Fn(&(u8, u16)) -> &u8,
+    where
+        F: Fn(&(u8, u16)) -> &u8,
     {
         fn call(&self) -> &u8 {
             (self.func)(&self.data)
         }
     }
-    fn do_it(data: &(u8, u16)) -> &u8 { &data.0 }
+    fn do_it(data: &(u8, u16)) -> &u8 {
+        &data.0
+    }
 
-    pub fn demo(){
-        let clo = Closure { data: (0, 1), func: do_it };
+    pub fn demo() {
+        let clo = Closure {
+            data: (0, 1),
+            func: do_it,
+        };
         println!("{}", clo.call());
     }
 }
 
 mod subtyping_and_variance {
 
-    fn debug<'a>(a: &'a str, b: &'a str) { // immutable -> covariant arg to param (can pass longer lived)
+    fn debug<'a>(a: &'a str, b: &'a str) {
+        // immutable -> covariant arg to param (can pass longer lived)
         println!("a = {a:?} b = {b:?}");
     }
-    fn assign<T>(input: &mut T, val: T) {  // mutable -> invariant arg to param (must be exactly the same)
+    fn assign<T>(input: &mut T, val: T) {
+        // mutable -> invariant arg to param (must be exactly the same)
         *input = val;
     }
 
@@ -151,30 +161,29 @@ mod subtyping_and_variance {
         a: &'a A,     // covariant over 'a and A
         b: &'b mut B, // covariant over 'b and invariant over B
 
-        c: *const C,  // covariant over C
-        d: *mut D,    // invariant over D
+        c: *const C, // covariant over C
+        d: *mut D,   // invariant over D
 
-        e: E,         // covariant over E
-        f: Vec<F>,    // covariant over F
-        g: Cell<G>,   // invariant over G
+        e: E,       // covariant over E
+        f: Vec<F>,  // covariant over F
+        g: Cell<G>, // invariant over G
 
-        h1: H,        // would also be covariant over H except...
-        h2: Cell<H>,  // invariant over H, because invariance wins all conflicts
+        h1: H,       // would also be covariant over H except...
+        h2: Cell<H>, // invariant over H, because invariance wins all conflicts
 
-        i: fn(In) -> Out,       // contravariant over In, covariant over Out
+        i: fn(In) -> Out, // contravariant over In, covariant over Out
 
         k1: fn(Mixed) -> usize, // would be contravariant over Mixed except..
         k2: Mixed,              // invariant over Mixed, because invariance wins all conflicts
     }
 
-    pub fn demo(){
-
+    pub fn demo() {
         let hello: &'static str = "hello";
         {
             let world = String::from("world");
             let world = &world; // 'world has a shorter lifetime than 'static
             debug(hello, world); // hello silently downgrades from SUBTYPE `&'static str` into SUPERTYPE `&'world str`
-        } 
+        }
         let mut hello: &'static str = "hello";
         let mut bob = String::from("bob");
         {
@@ -183,12 +192,12 @@ mod subtyping_and_variance {
         }
         // assign(&mut hello, &bob); // compiler error --- invariant lifetimes: bob borrowed value does not live long enough compared to static
         assign(&mut bob, (&mut hello).to_string()); // ok: string literal from static has same lifetime
-        println!("{bob}");  
-    
+        println!("{bob}");
+
         let hello: Box<&'static str> = Box::new("hello");
         let mut _world: Box<&str>;
         _world = hello; // move ownership of hello, destroying the static ref string
-        
+
         call_closure("hello", store); // "hello" is 'static. Can call `store` fine
         let _smuggle = String::from("smuggle");
         // call_closure(&_smuggle, store); // compiler error: contravariance --- `fn(&'static str)` cannot be a subtype of `fn(&'a str)`
@@ -200,19 +209,19 @@ mod drop_check {
     #![feature(dropck_eyepatch)]
     #![allow(unused_attributes)]
     struct Inspector<'a>(&'a u8, &'static str);
-    
+
     // NIGhTLY ONLY: #[may_dangle]
     // unsafe impl<#[may_dangle] 'a> Drop for Inspector<'a> {
     //     fn drop(&mut self) {
     //         println!("Inspector(_, {}) knows when *not* to inspect.", self.1);
     //     }
     // }
-    
+
     struct World<'a> {
         days: Box<u8>,
         inspector: Option<Inspector<'a>>,
     }
-    
+
     pub fn demo() {
         let mut world = World {
             inspector: None,
@@ -220,7 +229,6 @@ mod drop_check {
         };
         world.inspector = Some(Inspector(&world.days, "gadget"));
     }
-
 }
 
 mod phantom_data {
@@ -233,16 +241,15 @@ mod phantom_data {
     }
 
     struct MyVec<T> {
-        data: *const T, // `*const` for variance 
+        data: *const T, // `*const` for variance
         len: usize,
         cap: usize,
     }
-    
-    impl<T> Drop for MyVec<T> { 
+
+    impl<T> Drop for MyVec<T> {
         fn drop(&mut self) {}
     }
 }
-
 
 fn main() {
     aliasing::demo();

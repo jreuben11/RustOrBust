@@ -861,14 +861,14 @@ pub mod advanced { // CH19
         assert_eq!(a, &mut [1, 2, 3]);
         assert_eq!(b, &mut [4, 5, 6]);
 
-        extern "C" {
+        unsafe extern "C" {
             fn abs(input: i32) -> i32;
         }
         unsafe {
             println!("Absolute value of -3 according to C: {}", abs(-3));
         }
 
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub extern "C" fn call_from_c() {
             println!("Just called a Rust function from C!");
         }
@@ -881,7 +881,8 @@ pub mod advanced { // CH19
         }
         add_to_count(3);
         unsafe {
-            println!("COUNTER: {}", COUNTER);
+            let counter = COUNTER;
+            println!("COUNTER: {}", counter);
         }
 
         unsafe trait Foo {

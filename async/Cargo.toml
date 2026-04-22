@@ -1,0 +1,14 @@
+[workspace]
+resolver = "3"
+
+members = [
+    "async_await",
+    "async_await_intro",
+    "async_std_chat",
+    "concurrent_web_server",
+    "futures_and_tasks",
+    "multi_async_ops",
+    "pinning",
+    "stream_trait",
+    "workarrounds",
+]

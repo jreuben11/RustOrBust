@@ -1,52 +1,57 @@
 # leptos client tutorial
 
+> **Migrated to leptos 0.8.19** (April 2026). Key API changes from 0.6:
+> - `use leptos::*` → `use leptos::prelude::*`
+> - `create_signal(v)` → `signal(v)`; `create_rw_signal(v)` → `RwSignal::new(v)`
+> - `create_effect` → `Effect::new`; `create_memo` → `Memo::new`
+> - `create_node_ref::<T>()` → `NodeRef::<T>::new()`; node ref call `ref()` → `ref.get()`
+> - `with!` macro removed → use `.get()` per-signal
+> - `mount_to_body` → `leptos::mount::mount_to_body`
+> - Custom `Show` component conflicts with built-in `Show` — rename or remove
+
 ```bash
 cargo install trunk
 rustup target add wasm32-unknown-unknown
 cargo install leptosfmt
-cargo install cargo-generate
-# cargo generate --git https://github.com/leptos-community/start-csr
-trunk serve --port 3000 --open 
+trunk serve --port 3000 --open
 ```
 
 - [Cargo.toml](leptos-tutorial/Cargo.toml)
 ```toml
 [dependencies]
 console_error_panic_hook = "0.1.7"
-leptos = { version = "0.6.11", features = ["csr", "nightly"] }
+leptos = { version = "0.8", features = ["csr", "nightly"] }
 ```
 - [main.rs](leptos-tutorial/src/main.rs)
 - [components.rs](leptos-tutorial/src/components.rs)
 
 ## Basic Component
 ```rust
-use leptos::*;
+use leptos::prelude::*;
 
-// `main` function just mounts component to the <body> - defined it as `fn App`, use it in a template as <App/>
 fn main() {
     console_error_panic_hook::set_once();
-    mount_to_body(|| view! { <p>"Hello, world!"</p> })
+    leptos::mount::mount_to_body(|| view! { <p>"Hello, world!"</p> })
 }
 ```
 
 ## view: Dynamic Classes, Styles and Attributes
 ```rust
-leptos::mount_to_body(|| view! { <App/> })
+leptos::mount::mount_to_body(|| view! { <App/> })
 
-...
 #[component]
 fn App() -> impl IntoView {
-    let (count, set_count) = create_signal(0);
+    let (count, set_count) = signal(0);  // was: create_signal(0)
     view! {
-        <button 
-            on:click=move |_| { set_count.update(|n| *n += 1); } 
-            class:red=move || count() % 2 == 1 
+        <button
+            on:click=move |_| { set_count.update(|n| *n += 1); }
+            class:red=move || count.get() % 2 == 1
         >
             "Click me"
         </button>
         <p>
             <strong>"Reactive: "</strong>
-            {move || count()}
+            {move || count.get()}
         </p>
         <p>
             <strong>"Reactive shorthand: "</strong>

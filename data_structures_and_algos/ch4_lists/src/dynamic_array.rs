@@ -1,6 +1,6 @@
 use std::boxed::Box;
-use std::cmp;
 use std::cell::Cell;
+use std::cmp;
 
 const MIN_SIZE: usize = 10;
 

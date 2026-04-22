@@ -1,0 +1,15 @@
+[workspace]
+resolver = "3"
+
+members = [
+    "concurrency_and_parallelism",
+    "data_layout",
+    "lifetimes",
+    "my_arc",
+    "my_vec",
+    "orbm",
+    "safe_but_unsound",
+    "type_conversions",
+    "uninitialized_memory",
+    "ffi",
+]

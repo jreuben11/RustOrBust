@@ -1,16 +1,13 @@
 use crossterm::{
-    event::{self, KeyCode, KeyEventKind},
-    terminal::{
-        disable_raw_mode, enable_raw_mode, EnterAlternateScreen,
-        LeaveAlternateScreen,
-    },
     ExecutableCommand,
+    event::{self, KeyCode, KeyEventKind},
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen, disable_raw_mode, enable_raw_mode},
 };
 use ratatui::{
     prelude::{CrosstermBackend, Stylize, Terminal},
     widgets::Paragraph,
 };
-use std::io::{stdout, Result};
+use std::io::{Result, stdout};
 
 fn main() -> Result<()> {
     stdout().execute(EnterAlternateScreen)?;
@@ -22,7 +19,7 @@ fn main() -> Result<()> {
     loop {
         // draw the UI
         terminal.draw(|frame| {
-            let area = frame.size();
+            let area = frame.area();
             frame.render_widget(
                 Paragraph::new("Hello Ratatui! (press 'q' to quit)")
                     .white()

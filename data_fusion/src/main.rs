@@ -138,9 +138,10 @@ async fn main() -> datafusion::error::Result<()> {
                 DataFusionError::External(_) => {}
                 DataFusionError::Context(_, _) => {}
                 DataFusionError::Substrait(_) => {}
-                // note: 2 new enum vals not in rustdoc:
+                // note: new enum vals not in rustdoc; catch-all for forward compat
                 DataFusionError::ParquetError(_) => {}
                 DataFusionError::ObjectStore(_) => {}
+                _ => {}
             };
             println!("{}", e.message())
         }
@@ -194,12 +195,10 @@ mod tests {
 
         let is_schema_error = match df_greatest(&batch, "blah").await {
             Ok(_) => false,
-            Err(e) => {
-                match e {
-                    DataFusionError::SchemaError(_, _) => true,
-                    _ => false,
-                }
-            }
+            Err(e) => match e {
+                DataFusionError::SchemaError(_, _) => true,
+                _ => false,
+            },
         };
         assert!(is_schema_error == true);
     }

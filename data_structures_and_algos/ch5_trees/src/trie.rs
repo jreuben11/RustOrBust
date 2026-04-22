@@ -75,13 +75,13 @@ impl BestDeviceRegistry {
     }
 
     pub fn walk(&self, callback: impl Fn(&IoTDevice) -> ()) {
-        for r in  self.root.values() {
+        for r in self.root.values() {
             self.walk_r(&r, &callback);
         }
     }
 
     fn walk_r(&self, node: &Link, callback: &impl Fn(&IoTDevice) -> ()) {
-        for n in  node.next.values() {
+        for n in node.next.values() {
             self.walk_r(&n, callback);
         }
         if let Some(ref dev) = node.value {

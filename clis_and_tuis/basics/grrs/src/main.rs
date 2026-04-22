@@ -1,9 +1,8 @@
-use clap::Parser;
 use anyhow::{Context, Result};
-use std::io::{Write};
-use std::{thread, time::Duration};
+use clap::Parser;
 use log::{info, warn};
-
+use std::io::Write;
+use std::{thread, time::Duration};
 
 #[derive(Parser)]
 struct Cli {
@@ -37,7 +36,6 @@ fn main() -> Result<()> {
     let handle = std::io::stdout().lock();
     find_matches(&content, &args.pattern, handle)?;
 
-
     let n = 10;
     let pb = indicatif::ProgressBar::new(n);
     for i in 0..n {
@@ -53,7 +51,6 @@ fn main() -> Result<()> {
 
     Ok(())
 }
-
 
 #[test]
 fn find_a_match() {

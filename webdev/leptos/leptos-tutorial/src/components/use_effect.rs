@@ -1,19 +1,14 @@
 use leptos::html::Input;
-use leptos::*;
+use leptos::prelude::*;
 
 #[derive(Copy, Clone)]
 struct LogContext(RwSignal<Vec<String>>);
 
 #[component]
 pub fn UseEffect() -> impl IntoView {
-    // Just making a visible log here
-    // You can ignore this...
-    let log = create_rw_signal::<Vec<String>>(vec![]);
-    let logged = move || log().join("\n");
+    let log = RwSignal::new(vec![]);
+    let logged = move || log.get().join("\n");
 
-    // the newtype pattern isn't *necessary* here but is a good practice
-    // it avoids confusion with other possible future `RwSignal<Vec<String>>` contexts
-    // and makes it easier to refer to it
     provide_context(LogContext(log));
 
     view! {
@@ -24,17 +19,15 @@ pub fn UseEffect() -> impl IntoView {
 
 #[component]
 fn CreateAnEffect() -> impl IntoView {
-    let (first, set_first) = create_signal(String::new());
-    let (last, set_last) = create_signal(String::new());
-    let (use_last, set_use_last) = create_signal(true);
+    let (first, set_first) = signal(String::new());
+    let (last, set_last) = signal(String::new());
+    let (use_last, set_use_last) = signal(true);
 
-    // this will add the name to the log
-    // any time one of the source signals changes
-    create_effect(move |_| {
-        log(if use_last() {
-            with!(|first, last| format!("{first} {last}"))
+    Effect::new(move |_| {
+        log_msg(if use_last.get() {
+            format!("{} {}", first.get(), last.get())
         } else {
-            first()
+            first.get()
         })
     });
 
@@ -62,7 +55,7 @@ fn CreateAnEffect() -> impl IntoView {
                     on:change=move |ev| set_last(event_target_value(&ev))
                 />
             </label>
-            <label> set_optional_my_value
+            <label>
                 "Show Last Name"
                 <input
                     type="checkbox"
@@ -77,13 +70,13 @@ fn CreateAnEffect() -> impl IntoView {
 
 #[component]
 fn ManualVersion() -> impl IntoView {
-    let first = create_node_ref::<Input>();
-    let last = create_node_ref::<Input>();
-    let use_last = create_node_ref::<Input>();
+    let first = NodeRef::<Input>::new();
+    let last = NodeRef::<Input>::new();
+    let use_last = NodeRef::<Input>::new();
 
     let mut prev_name = String::new();
     let on_change = move |_| {
-        log("      listener");
+        log_msg("      listener");
         let first = first.get().unwrap();
         let last = last.get().unwrap();
         let use_last = use_last.get().unwrap();
@@ -94,7 +87,7 @@ fn ManualVersion() -> impl IntoView {
         };
 
         if this_one != prev_name {
-            log(&this_one);
+            log_msg(&this_one);
             prev_name = this_one;
         }
     };
@@ -113,19 +106,8 @@ fn ManualVersion() -> impl IntoView {
 
 #[component]
 fn EffectVsDerivedSignal() -> impl IntoView {
-    let (my_value, set_my_value) = create_signal(String::new());
-    // Don't do this.
-    /*let (my_optional_value, set_optional_my_value) = create_signal(Option::<String>::None);
+    let (my_value, set_my_value) = signal(String::new());
 
-    create_effect(move |_| {
-        if !my_value.get().is_empty() {
-            set_optional_my_value(Some(my_value.get()));
-        } else {
-            set_optional_my_value(None);
-        }
-    });*/
-
-    // Do this
     let my_optional_value =
         move || (!my_value.with(String::is_empty)).then(|| Some(my_value.get()));
 
@@ -137,8 +119,8 @@ fn EffectVsDerivedSignal() -> impl IntoView {
             " is "
             <code>
                 <Show
-			when=move || my_optional_value().is_some() 
-			fallback=|| view! { "None" }>
+                    when=move || my_optional_value().is_some()
+                    fallback=|| view! { "None" }>
                     "Some(\""
                     {my_optional_value().unwrap()}
                     "\")"
@@ -148,29 +130,7 @@ fn EffectVsDerivedSignal() -> impl IntoView {
     }
 }
 
-#[component]
-pub fn Show<F, W, IV>(
-    /// The components Show wraps
-    children: Box<dyn Fn() -> Fragment>,
-    /// A closure that returns a bool that determines whether this thing runs
-    when: W,
-    /// A closure that returns what gets rendered if the when statement is false
-    fallback: F,
-) -> impl IntoView
-where
-    W: Fn() -> bool + 'static,
-    F: Fn() -> IV + 'static,
-    IV: IntoView,
-{
-    let memoized_when = create_memo(move |_| when());
-
-    move || match memoized_when.get() {
-        true => children().into_view(),
-        false => fallback().into_view(),
-    }
-}
-
-fn log(msg: impl std::fmt::Display) {
+fn log_msg(msg: impl std::fmt::Display) {
     let log = use_context::<LogContext>().unwrap().0;
     log.update(|log| log.push(msg.to_string()));
 }

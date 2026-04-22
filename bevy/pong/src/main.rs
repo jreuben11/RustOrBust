@@ -1,20 +1,24 @@
 use bevy::math::bounding::{Aabb2d, BoundingCircle, BoundingVolume, IntersectsVolume};
 use bevy::prelude::*;
-use bevy::sprite::MaterialMesh2dBundle;
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .init_resource::<Score>()
-        .add_event::<Scored>()
+        .add_message::<Scored>()
         .add_systems(
             Startup,
-            (spawn_ball, spawn_paddles, spawn_gutters, spawn_scoreboard, spawn_camera),
+            (
+                spawn_ball,
+                spawn_paddles,
+                spawn_gutters,
+                spawn_scoreboard,
+                spawn_camera,
+            ),
         )
         .add_systems(
             Update,
             (
-                // keyboard_iter,
                 move_ball,
                 handle_player_input,
                 detect_scoring,
@@ -31,7 +35,7 @@ fn main() {
 }
 
 fn spawn_camera(mut commands: Commands) {
-    commands.spawn_empty().insert(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 }
 
 #[derive(Component)]
@@ -78,26 +82,18 @@ fn spawn_ball(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    println!("Spawning ball...");
-
-    let shape = Mesh::from(Circle::new(BALL_SIZE));
-    let color = ColorMaterial::from(Color::rgb(1., 0., 0.));
-    let mesh_handle = meshes.add(shape);
-    let material_handle = materials.add(color);
+    let mesh = meshes.add(Circle::new(BALL_SIZE));
+    let material = materials.add(Color::srgb(1., 0., 0.));
 
     commands.spawn((
         BallBundle::new(1., 0.),
-        MaterialMesh2dBundle {
-            mesh: mesh_handle.into(),
-            material: material_handle,
-            ..default()
-        },
+        Mesh2d(mesh),
+        MeshMaterial2d(material),
     ));
 }
 
 fn move_ball(mut ball: Query<(&mut Position, &Velocity), With<Ball>>) {
-    if let Ok((mut position, velocity)) = ball.get_single_mut() {
-        // println!("position {:?}", position.0);
+    if let Ok((mut position, velocity)) = ball.single_mut() {
         position.0 += velocity.0
     }
 }
@@ -133,39 +129,30 @@ fn spawn_paddles(
     mut materials: ResMut<Assets<ColorMaterial>>,
     window: Query<&Window>,
 ) {
-    println!("Spawning paddles...");
-
-    if let Ok(window) = window.get_single() {
+    if let Ok(window) = window.single() {
         let window_width = window.resolution.width();
         let padding = 50.;
         let right_paddle_x = window_width / 2. - padding;
         let left_paddle_x = -window_width / 2. + padding;
 
-        let mesh = Mesh::from(Rectangle::new(PADDLE_WIDTH, PADDLE_HEIGHT));
-
-        let mesh_handle = meshes.add(mesh);
+        let mesh = meshes.add(Rectangle::new(PADDLE_WIDTH, PADDLE_HEIGHT));
 
         commands.spawn((
             Player,
             PaddleBundle::new(right_paddle_x, 0.),
-            MaterialMesh2dBundle {
-                mesh: mesh_handle.clone().into(),
-                material: materials.add(ColorMaterial::from(Color::rgb(0., 1., 0.))),
-                ..default()
-            },
+            Mesh2d(mesh.clone()),
+            MeshMaterial2d(materials.add(Color::srgb(0., 1., 0.))),
         ));
 
         commands.spawn((
             Ai,
             PaddleBundle::new(left_paddle_x, 0.),
-            MaterialMesh2dBundle {
-                mesh: mesh_handle.into(),
-                material: materials.add(ColorMaterial::from(Color::rgb(0., 0., 1.))),
-                ..default()
-            },
+            Mesh2d(mesh),
+            MeshMaterial2d(materials.add(Color::srgb(0., 0., 1.))),
         ));
     }
 }
+
 fn project_positions(mut ball: Query<(&mut Transform, &Position)>) {
     for (mut transform, position) in &mut ball {
         transform.translation = position.0.extend(0.);
@@ -180,9 +167,6 @@ enum Collision {
     Bottom,
 }
 
-// Returns `Some` if `ball` collides with `wall`
-// The returned `Collision` is the side of `wall`
-// that the `ball` hit.
 fn collide_with_side(ball: BoundingCircle, wall: Aabb2d) -> Option<Collision> {
     if !ball.intersects(&wall) {
         return None;
@@ -210,25 +194,15 @@ fn handle_collisions(
     mut ball: Query<(&mut Velocity, &Position, &Shape), With<Ball>>,
     other_things: Query<(&Position, &Shape), Without<Ball>>,
 ) {
-    if let Ok((mut ball_velocity, ball_position, ball_shape)) = ball.get_single_mut() {
+    if let Ok((mut ball_velocity, ball_position, ball_shape)) = ball.single_mut() {
         for (position, shape) in &other_things {
             if let Some(collision) = collide_with_side(
                 BoundingCircle::new(ball_position.0, ball_shape.0.x),
                 Aabb2d::new(position.0, shape.0 / 2.),
             ) {
                 match collision {
-                    Collision::Left => {
-                        ball_velocity.0.x *= -1.;
-                    }
-                    Collision::Right => {
-                        ball_velocity.0.x *= -1.;
-                    }
-                    Collision::Top => {
-                        ball_velocity.0.y *= -1.;
-                    }
-                    Collision::Bottom => {
-                        ball_velocity.0.y *= -1.;
-                    }
+                    Collision::Left | Collision::Right => ball_velocity.0.x *= -1.,
+                    Collision::Top | Collision::Bottom => ball_velocity.0.y *= -1.,
                 }
             }
         }
@@ -263,89 +237,24 @@ fn spawn_gutters(
     mut materials: ResMut<Assets<ColorMaterial>>,
     window: Query<&Window>,
 ) {
-    if let Ok(window) = window.get_single() {
+    if let Ok(window) = window.single() {
         let window_width = window.resolution.width();
         let window_height = window.resolution.height();
 
-        // We take half the window height because the center of our screen
-        // is (0, 0). The padding would be half the height of the gutter as its
-        // origin is also center rather than top left
         let top_gutter_y = window_height / 2. - GUTTER_HEIGHT / 2.;
         let bottom_gutter_y = -window_height / 2. + GUTTER_HEIGHT / 2.;
 
         let top_gutter = GutterBundle::new(0., top_gutter_y, window_width);
         let bottom_gutter = GutterBundle::new(0., bottom_gutter_y, window_width);
 
-        let mesh = Mesh::from(Rectangle::from_size(top_gutter.shape.0));
-        let material = ColorMaterial::from(Color::rgb(0., 0., 0.));
+        let mesh = meshes.add(Rectangle::from_size(top_gutter.shape.0));
+        let material = materials.add(Color::BLACK);
 
-        // We can share these meshes between our gutters by cloning them
-        let mesh_handle = meshes.add(mesh);
-        let material_handle = materials.add(material);
+        let mesh_handle = mesh;
+        let material_handle = material;
 
-        commands.spawn((
-            top_gutter,
-            MaterialMesh2dBundle {
-                mesh: mesh_handle.clone().into(),
-                material: material_handle.clone(),
-                ..default()
-            },
-        ));
-
-        commands.spawn((
-            bottom_gutter,
-            MaterialMesh2dBundle {
-                mesh: mesh_handle.into(),
-                material: material_handle.clone(),
-                ..default()
-            },
-        ));
-    }
-}
-
-fn keyboard_iter(keys: Res<ButtonInput<KeyCode>>) {
-    for key in keys.get_pressed() {
-        println!("{:?} is currently held down", key);
-    }
-    for key in keys.get_just_pressed() {
-        println!("{:?} was pressed", key);
-    }
-    for key in keys.get_just_released() {
-        println!("{:?} was released", key);
-    }
-}
-
-const PADDLE_SPEED: f32 = 5.;
-
-fn handle_player_input(
-    keys: Res<ButtonInput<KeyCode>>,
-    mut paddle: Query<&mut Velocity, With<Player>>,
-) {
-    if let Ok(mut velocity) = paddle.get_single_mut() {
-        if keys.pressed(KeyCode::ArrowUp) {
-            velocity.0.y = 1.;
-        } else if keys.pressed(KeyCode::ArrowDown) {
-            velocity.0.y = -1.;
-        } else {
-            velocity.0.y = 0.;
-        }
-    };
-}
-
-fn move_paddles(
-    mut paddle: Query<(&mut Position, &Velocity), With<Paddle>>,
-    window: Query<&Window>,
-) {
-    if let Ok(window) = window.get_single() {
-        let window_height = window.resolution.height();
-        let max_y = window_height / 2. - GUTTER_HEIGHT - PADDLE_HEIGHT / 2.;
-
-        for (mut position, velocity) in &mut paddle {
-            let new_position = position.0 + velocity.0 * PADDLE_SPEED;
-            if new_position.y.abs() < max_y {
-                position.0 = new_position;
-            }
-        }
+        commands.spawn((top_gutter, Mesh2d(mesh_handle.clone()), MeshMaterial2d(material_handle.clone())));
+        commands.spawn((bottom_gutter, Mesh2d(mesh_handle), MeshMaterial2d(material_handle)));
     }
 }
 
@@ -360,7 +269,7 @@ enum Scorer {
     Player,
 }
 
-#[derive(Event)]
+#[derive(Message)]
 struct Scored(Scorer);
 
 #[derive(Resource, Default)]
@@ -372,17 +281,16 @@ struct Score {
 fn detect_scoring(
     mut ball: Query<&mut Position, With<Ball>>,
     window: Query<&Window>,
-    mut events: EventWriter<Scored>,
+    mut events: MessageWriter<Scored>,
 ) {
-    if let Ok(window) = window.get_single() {
+    if let Ok(window) = window.single() {
         let window_width = window.resolution.width();
 
-        if let Ok(ball) = ball.get_single_mut() {
-            // Here we write the events using our EventWriter
+        if let Ok(ball) = ball.single_mut() {
             if ball.0.x > window_width / 2. {
-                events.send(Scored(Scorer::Ai));
+                events.write(Scored(Scorer::Ai));
             } else if ball.0.x < -window_width / 2. {
-                events.send(Scored(Scorer::Player));
+                events.write(Scored(Scorer::Player));
             }
         }
     }
@@ -390,17 +298,17 @@ fn detect_scoring(
 
 fn reset_ball(
     mut ball: Query<(&mut Position, &mut Velocity), With<Ball>>,
-    mut events: EventReader<Scored>,
+    mut events: MessageReader<Scored>,
 ) {
     for event in events.read() {
-        if let Ok((mut position, mut velocity)) = ball.get_single_mut() {
+        if let Ok((mut position, mut velocity)) = ball.single_mut() {
             match event.0 {
                 Scorer::Ai => {
-                    position.0 = Vec2::new(0., 0.);
+                    position.0 = Vec2::ZERO;
                     velocity.0 = Vec2::new(-1., 1.);
                 }
                 Scorer::Player => {
-                    position.0 = Vec2::new(0., 0.);
+                    position.0 = Vec2::ZERO;
                     velocity.0 = Vec2::new(1., 1.);
                 }
             }
@@ -408,17 +316,15 @@ fn reset_ball(
     }
 }
 
-fn update_score(mut score: ResMut<Score>, mut events: EventReader<Scored>) {
+fn update_score(mut score: ResMut<Score>, mut events: MessageReader<Scored>) {
     for event in events.read() {
         match event.0 {
             Scorer::Ai => score.ai += 1,
             Scorer::Player => score.player += 1,
         }
     }
-
     println!("Score: {} - {}", score.player, score.ai);
 }
-
 
 fn update_scoreboard(
     mut player_score: Query<&mut Text, With<PlayerScore>>,
@@ -426,58 +332,47 @@ fn update_scoreboard(
     score: Res<Score>,
 ) {
     if score.is_changed() {
-        if let Ok(mut player_score) = player_score.get_single_mut() {
-            player_score.sections[0].value = score.player.to_string();
+        if let Ok(mut text) = player_score.single_mut() {
+            *text = Text::new(score.player.to_string());
         }
-
-        if let Ok(mut ai_score) = ai_score.get_single_mut() {
-            ai_score.sections[0].value = score.ai.to_string();
+        if let Ok(mut text) = ai_score.single_mut() {
+            *text = Text::new(score.ai.to_string());
         }
     }
 }
 
 fn spawn_scoreboard(mut commands: Commands) {
     commands.spawn((
-        // Create a TextBundle that has a Text with a
-        // single section.
-        TextBundle::from_section(
-            // Accepts a `String` or any type that converts
-            // into a `String`, such as `&str`
-            "0",
-            TextStyle {
-                font_size: 72.0,
-                color: Color::WHITE,
-                ..default()
-            },
-        ) // Set the alignment of the Text
-        .with_text_justify(JustifyText::Center)
-        // Set the style of the TextBundle itself.
-        .with_style(Style {
+        Text::new("0"),
+        TextFont {
+            font_size: 72.0,
+            ..default()
+        },
+        TextColor(Color::WHITE),
+        TextLayout::new_with_justify(Justify::Center),
+        Node {
             position_type: PositionType::Absolute,
             top: Val::Px(5.0),
             right: Val::Px(15.0),
             ..default()
-        }),
+        },
         PlayerScore,
     ));
 
-    // Then we do it again for the AI score
     commands.spawn((
-        TextBundle::from_section(
-            "0",
-            TextStyle {
-                font_size: 72.0,
-                color: Color::WHITE,
-                ..default()
-            },
-        )
-        .with_text_justify(JustifyText::Center)
-        .with_style(Style {
+        Text::new("0"),
+        TextFont {
+            font_size: 72.0,
+            ..default()
+        },
+        TextColor(Color::WHITE),
+        TextLayout::new_with_justify(Justify::Center),
+        Node {
             position_type: PositionType::Absolute,
             top: Val::Px(5.0),
             left: Val::Px(15.0),
             ..default()
-        }),
+        },
         AiScore,
     ));
 }
@@ -486,11 +381,44 @@ fn move_ai(
     mut ai: Query<(&mut Velocity, &Position), With<Ai>>,
     ball: Query<&Position, With<Ball>>,
 ) {
-    if let Ok((mut velocity, position)) = ai.get_single_mut() {
-        if let Ok(ball_position) = ball.get_single() {
+    if let Ok((mut velocity, position)) = ai.single_mut() {
+        if let Ok(ball_position) = ball.single() {
             let a_to_b = ball_position.0 - position.0;
-            println!("a_to_b: {0}", a_to_b);
             velocity.0.y = a_to_b.y.signum();
+        }
+    }
+}
+
+const PADDLE_SPEED: f32 = 5.;
+
+fn handle_player_input(
+    keys: Res<ButtonInput<KeyCode>>,
+    mut paddle: Query<&mut Velocity, With<Player>>,
+) {
+    if let Ok(mut velocity) = paddle.single_mut() {
+        if keys.pressed(KeyCode::ArrowUp) {
+            velocity.0.y = 1.;
+        } else if keys.pressed(KeyCode::ArrowDown) {
+            velocity.0.y = -1.;
+        } else {
+            velocity.0.y = 0.;
+        }
+    }
+}
+
+fn move_paddles(
+    mut paddle: Query<(&mut Position, &Velocity), With<Paddle>>,
+    window: Query<&Window>,
+) {
+    if let Ok(window) = window.single() {
+        let window_height = window.resolution.height();
+        let max_y = window_height / 2. - GUTTER_HEIGHT - PADDLE_HEIGHT / 2.;
+
+        for (mut position, velocity) in &mut paddle {
+            let new_position = position.0 + velocity.0 * PADDLE_SPEED;
+            if new_position.y.abs() < max_y {
+                position.0 = new_position;
+            }
         }
     }
 }

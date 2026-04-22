@@ -195,16 +195,11 @@ impl<T> IntoIterator for Vec<T> {
     type Item = T;
     type IntoIter = IntoIter<T>;
     fn into_iter(self) -> IntoIter<T> {
-        let (iter, buf) = unsafe {
-            (RawValIter::new(&self), ptr::read(&self.buf))
-        };
+        let (iter, buf) = unsafe { (RawValIter::new(&self), ptr::read(&self.buf)) };
 
         mem::forget(self);
 
-        IntoIter {
-            iter,
-            _buf: buf,
-        }
+        IntoIter { iter, _buf: buf }
     }
 }
 
@@ -215,15 +210,17 @@ struct RawValIter<T> {
 
 impl<T> RawValIter<T> {
     unsafe fn new(slice: &[T]) -> Self {
-        RawValIter {
-            start: slice.as_ptr(),
-            end: if mem::size_of::<T>() == 0 {
-                ((slice.as_ptr() as usize) + slice.len()) as *const _
-            } else if slice.len() == 0 {
-                slice.as_ptr()
-            } else {
-                slice.as_ptr().add(slice.len())
-            },
+        unsafe {
+            RawValIter {
+                start: slice.as_ptr(),
+                end: if mem::size_of::<T>() == 0 {
+                    ((slice.as_ptr() as usize) + slice.len()) as *const _
+                } else if slice.len() == 0 {
+                    slice.as_ptr()
+                } else {
+                    slice.as_ptr().add(slice.len())
+                },
+            }
         }
     }
 }
@@ -249,8 +246,8 @@ impl<T> Iterator for RawValIter<T> {
 
     fn size_hint(&self) -> (usize, Option<usize>) {
         let elem_size = mem::size_of::<T>();
-        let len = (self.end as usize - self.start as usize)
-                  / if elem_size == 0 { 1 } else { elem_size };
+        let len =
+            (self.end as usize - self.start as usize) / if elem_size == 0 { 1 } else { elem_size };
         (len, Some(len))
     }
 }

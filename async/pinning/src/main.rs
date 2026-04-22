@@ -1,10 +1,11 @@
+#[macro_use]
+extern crate function_name;
 
-
-#[macro_use] extern crate function_name;
-
-macro_rules! function_path {() => (concat!(
-    module_path!(), "::", function_name!()
-))}
+macro_rules! function_path {
+    () => {
+        concat!(module_path!(), "::", function_name!())
+    };
+}
 
 fn main() {
     naive::swap();
@@ -40,7 +41,10 @@ mod naive {
         }
 
         fn b(&self) -> &String {
-            assert!(!self.b.is_null(), "Test::b called without Test::init being called first");
+            assert!(
+                !self.b.is_null(),
+                "Test::b called without Test::init being called first"
+            );
             unsafe { &*(self.b) }
         }
     }
@@ -53,10 +57,10 @@ mod naive {
         test1.init();
         let mut test2 = Test::new("test2");
         test2.init();
-    
+
         println!("a: {}, b: {}", test1.a(), test1.b());
         println!("a: {}, b: {}", test2.a(), test2.b());
-    
+
         std::mem::swap(&mut test1, &mut test2);
         test1.a = "I've totally changed now!".to_string();
         println!("a: {}, b: {}", test2.a(), test2.b());
@@ -64,8 +68,8 @@ mod naive {
 }
 
 mod stack_pinned {
-    use std::pin::Pin;
     use std::marker::PhantomPinned;
+    use std::pin::Pin;
 
     #[derive(Debug)]
     struct Test {
@@ -82,19 +86,22 @@ mod stack_pinned {
                 _marker: PhantomPinned, // This makes our type `!Unpin`
             }
         }
-    
+
         fn init(self: Pin<&mut Self>) {
             let self_ptr: *const String = &self.a;
             let this = unsafe { self.get_unchecked_mut() };
             this.b = self_ptr;
         }
-    
+
         fn a(self: Pin<&Self>) -> &str {
             &self.get_ref().a
         }
-    
+
         fn b(self: Pin<&Self>) -> &String {
-            assert!(!self.b.is_null(), "Test::b called without Test::init being called first");
+            assert!(
+                !self.b.is_null(),
+                "Test::b called without Test::init being called first"
+            );
             unsafe { &*(self.b) }
         }
     }
@@ -108,21 +115,29 @@ mod stack_pinned {
         // Notice how we shadow `test1` to prevent it from being accessed again
         let mut test1 = unsafe { Pin::new_unchecked(&mut test1) };
         Test::init(test1.as_mut());
-    
+
         let mut test2 = Test::new("test2");
         let mut test2 = unsafe { Pin::new_unchecked(&mut test2) };
         Test::init(test2.as_mut());
-    
-        println!("a: {}, b: {}", Test::a(test1.as_ref()), Test::b(test1.as_ref()));
+
+        println!(
+            "a: {}, b: {}",
+            Test::a(test1.as_ref()),
+            Test::b(test1.as_ref())
+        );
         // the following will give compile error: PhantomPinned` cannot be unpinned
         // std::mem::swap(test1.get_mut(), test2.get_mut());
-        println!("a: {}, b: {}", Test::a(test2.as_ref()), Test::b(test2.as_ref()));
+        println!(
+            "a: {}, b: {}",
+            Test::a(test2.as_ref()),
+            Test::b(test2.as_ref())
+        );
     }
 }
 
 mod heap_pinned {
-    use std::pin::Pin;
     use std::marker::PhantomPinned;
+    use std::pin::Pin;
 
     #[derive(Debug)]
     struct Test {
@@ -160,22 +175,23 @@ mod heap_pinned {
 
         let test1 = Test::new("test1");
         let test2 = Test::new("test2");
-    
-        println!("a: {}, b: {}",test1.as_ref().a(), test1.as_ref().b());
-        println!("a: {}, b: {}",test2.as_ref().a(), test2.as_ref().b());
+
+        println!("a: {}, b: {}", test1.as_ref().a(), test1.as_ref().b());
+        println!("a: {}, b: {}", test2.as_ref().a(), test2.as_ref().b());
     }
 }
 
-fn pass_unpinable_futures(){
-    use std::future::Future;
-    use pin_utils::pin_mut; // `pin_utils` is a handy crate available on crates.io
+fn pass_unpinable_futures() {
+    use pin_utils::pin_mut;
+    use std::future::Future; // `pin_utils` is a handy crate available on crates.io
 
     // A function which takes a `Future` that implements `Unpin`.
-    fn execute_unpin_future(_x: impl Future<Output = ()> + Unpin) { /* ... */ }
+    fn execute_unpin_future(_x: impl Future<Output = ()> + Unpin) { /* ... */
+    }
 
     let _fut = async { /* ... */ };
     // Error: `fut` does not implement `Unpin` trait
-    // execute_unpin_future(_fut); 
+    // execute_unpin_future(_fut);
 
     // Pinning with `Box`:
     let fut = async { /* ... */ };

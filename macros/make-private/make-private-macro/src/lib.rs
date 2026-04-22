@@ -1,10 +1,10 @@
 use proc_macro::TokenStream;
 use quote::quote;
+use syn::__private::{Span, TokenStream2};
 use syn::Data::Struct;
 use syn::Fields::Named;
-use syn::__private::{Span, TokenStream2};
-use syn::{parse_macro_input, DeriveInput, Type};
 use syn::{DataStruct, FieldsNamed, Ident};
+use syn::{DeriveInput, Type, parse_macro_input};
 
 fn get_field_info(ast: &DeriveInput) -> Vec<(&Ident, &Type)> {
     match ast.data {

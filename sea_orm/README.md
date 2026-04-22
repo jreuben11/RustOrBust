@@ -23,13 +23,18 @@ sea-orm-cli generate entity \
     -o src/entities
 ```
 
+> **Upgraded to sea-orm 2.0.0-rc.38** (April 2026). Key API changes from 0.12:
+> - `db.execute(Statement::from_string(...))` → `db.execute_unprepared(&str)` for raw SQL
+> - `DatabaseBackend` is now `#[non_exhaustive]` → add `_ => db` catch-all arm
+> - Requires MySQL via Docker: `docker start mysql` (or `docker run ...` on first use)
+
 ## [Cargo.toml](bakery-backend/Cargo.toml)
 ```toml
 [dependencies]
 futures = "0.3.30"
-sea-orm = {version="0.12.15" , features = [ "sqlx-mysql", "runtime-async-std-native-tls", "macros", "mock" ]}
-sea-orm-migration = "0.12.15"
-rocket = {version="0.5.1", features = ["json"]}
+sea-orm = { version = "2.0.0-rc.38", features = ["sqlx-mysql", "runtime-async-std-native-tls", "macros", "mock"] }
+sea-orm-migration = "2.0.0-rc.38"
+rocket = { version = "0.5.1", features = ["json"] }
 async-graphql = "7.0.7"
 async-graphql-rocket = "7.0.7"
 ```

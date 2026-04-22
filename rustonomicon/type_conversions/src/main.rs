@@ -15,7 +15,6 @@ fn reinterpret(foo: Foo) -> Bar {
     Bar { a: x, b: y }
 }
 
-
 #[derive(Clone)]
 struct ContainerA<T>(Arc<T>);
 #[allow(noop_method_call)]
@@ -35,5 +34,5 @@ fn clone_containers_b<T>(foo: &ContainerB<i32>, bar: &ContainerB<T>) {
 }
 
 fn main() {
-    let _bar: Bar = reinterpret(Foo{x:1, y:2});
+    let _bar: Bar = reinterpret(Foo { x: 1, y: 2 });
 }

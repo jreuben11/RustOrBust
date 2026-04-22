@@ -1,12 +1,11 @@
-mod singly_linked_list;
 mod doubly_linked_list;
-mod skip_list;
 mod dynamic_array;
+mod singly_linked_list;
+mod skip_list;
 
 #[cfg(test)]
 mod tests {
     use crate::*;
-    
 
     #[test]
     fn transaction_log_append() {
@@ -53,7 +52,6 @@ mod tests {
         assert_eq!(list.pop(), None);
     }
 
-
     #[test]
     fn better_transaction_log_append() {
         let mut transaction_log = doubly_linked_list::BetterTransactionLog::new_empty();
@@ -77,7 +75,6 @@ mod tests {
         assert_eq!(transaction_log.pop(), None);
     }
 
-
     #[test]
     fn better_transaction_log_pop() {
         let mut list = doubly_linked_list::BetterTransactionLog::new_empty();
@@ -99,7 +96,6 @@ mod tests {
         );
         assert_eq!(list.pop(), None);
     }
-
 
     #[test]
     fn better_transaction_log_iterator() {
@@ -137,7 +133,6 @@ mod tests {
         );
     }
 
-
     #[test]
     fn skip_list_append() {
         let mut list = skip_list::BestTransactionLog::new_empty(3);
@@ -150,7 +145,6 @@ mod tests {
         list.append(7, "INSERT INTO mytable VALUES (1,2,3)".to_owned());
         assert_eq!(list.length, 7);
     }
-
 
     #[test]
     fn skip_list_find() {
@@ -193,7 +187,6 @@ mod tests {
         );
     }
 
-
     #[test]
     fn dynamic_array_append() {
         let mut list = dynamic_array::TimestampSaver::new_empty();
@@ -217,7 +210,7 @@ mod tests {
         }
         assert_eq!(list.at(max + 1), None);
     }
-     #[test]
+    #[test]
     fn dynamic_array_iterate() {
         let mut list = dynamic_array::TimestampSaver::new_empty();
         list.append(1);
@@ -231,6 +224,5 @@ mod tests {
         assert_eq!(iter.next(), Some(3));
         assert_eq!(iter.next(), Some(4));
         assert_eq!(iter.next(), None);
-
     }
 }

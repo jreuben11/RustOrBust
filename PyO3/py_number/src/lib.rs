@@ -1,12 +1,12 @@
-use pyo3::prelude::*;
 use pyo3::class::basic::CompareOp;
-use pyo3::types::PyComplex;
-use pyo3::exceptions::{PyZeroDivisionError, PyValueError};
+use pyo3::exceptions::{PyValueError, PyZeroDivisionError};
 use pyo3::ffi;
+use pyo3::prelude::*;
+use pyo3::types::PyComplex;
 
-use std::os::raw::c_ulong;
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
+use std::os::raw::c_ulong;
 #[pyclass]
 struct Number(i32);
 
@@ -34,7 +34,7 @@ fn wrap(obj: &Bound<'_, PyAny>) -> PyResult<i32> {
 #[pymethods]
 impl Number {
     #[new]
-    fn new(#[pyo3(from_py_with = "wrap")] value: i32) -> Self {
+    fn new(#[pyo3(from_py_with = wrap)] value: i32) -> Self {
         Self(value)
     }
 
@@ -48,7 +48,7 @@ impl Number {
     // the `Number`, like `Number(5)` for example.
     fn __repr__(slf: &Bound<'_, Self>) -> PyResult<String> {
         // This is the equivalent of `self.__class__.__name__` in Python.
-        let class_name: String = slf.get_type().qualname()?;
+        let class_name: String = slf.get_type().qualname()?.extract()?;
         // To access fields of the Rust struct, we need to borrow the `PyCell`.
         Ok(format!("{}({})", class_name, slf.borrow().0))
     }
@@ -132,19 +132,18 @@ impl Number {
     }
 
     fn __complex__<'py>(&self, py: Python<'py>) -> Bound<'py, PyComplex> {
-        PyComplex::from_doubles_bound(py, self.0 as f64, 0.0)
+        PyComplex::from_doubles(py, self.0 as f64, 0.0)
     }
 }
 
-
 use pyo3::types::{PyDict, PyTuple};
-use std::cell::Cell;
+use std::sync::atomic::{AtomicU64, Ordering};
 
 /// A function decorator that keeps track how often it is called.
 #[pyclass(name = "Counter")]
 pub struct PyCounter {
     // Keeps track of how many calls have gone through.
-    count: Cell<u64>,
+    count: AtomicU64,
     // This is the actual function being wrapped.
     wraps: Py<PyAny>,
 }
@@ -159,14 +158,14 @@ impl PyCounter {
     #[new]
     fn __new__(wraps: Py<PyAny>) -> Self {
         PyCounter {
-            count: Cell::new(0),
+            count: AtomicU64::new(0),
             wraps,
         }
     }
 
     #[getter]
     fn count(&self) -> u64 {
-        self.count.get()
+        self.count.load(Ordering::Relaxed)
     }
 
     #[pyo3(signature = (*args, **kwargs))]
@@ -176,15 +175,13 @@ impl PyCounter {
         args: &Bound<'_, PyTuple>,
         kwargs: Option<&Bound<'_, PyDict>>,
     ) -> PyResult<Py<PyAny>> {
-        let old_count = self.count.get();
-        let new_count = old_count + 1;
-        self.count.set(new_count);
+        let new_count = self.count.fetch_add(1, Ordering::Relaxed) + 1;
         let name = self.wraps.getattr(py, "__name__")?;
 
         println!("{} has been called {} time(s).", name, new_count);
 
         // After doing something, we finally forward the call to the wrapped function
-        let ret = self.wraps.call_bound(py, args, kwargs)?;
+        let ret = self.wraps.call(py, args, kwargs)?;
 
         // We could do something with the return value of
         // the function before returning it
@@ -192,12 +189,9 @@ impl PyCounter {
     }
 }
 
-
 #[pymodule]
 fn py_number(_py: Python, module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<Number>()?;
     module.add_class::<PyCounter>()?;
     Ok(())
 }
-
-

@@ -4,9 +4,13 @@
 use futures::executor::block_on;
 
 struct Song {}
-async fn learn_song() -> Song { Song{} }
-async fn sing_song(_song: Song) { /* ... */ }
-async fn dance() { /* ... */ }
+async fn learn_song() -> Song {
+    Song {}
+}
+async fn sing_song(_song: Song) { /* ... */
+}
+async fn dance() { /* ... */
+}
 
 async fn learn_and_sing() {
     // Wait until the song has been learned before singing it.

@@ -1,17 +1,17 @@
-use futures::stream::{self, Stream, StreamExt};
-use std::pin::Pin;
-use std::io;
-use futures::pin_mut;
-use futures::executor::block_on;
-use futures::channel::mpsc;
 use futures::SinkExt;
+use futures::channel::mpsc;
+use futures::executor::block_on;
+use futures::pin_mut;
+use futures::stream::{self, Stream, StreamExt};
+use std::io;
+use std::pin::Pin;
 
 async fn async_main() {
     send_recv().await;
     let s1 = stream::iter(vec![1, 2, 3]).fuse();
     pin_mut!(s1);
     let x = sum_with_next(s1).await;
-    println!("{x}"); 
+    println!("{x}");
     //TODO: construct an IO stream of results as input
 }
 
@@ -20,9 +20,8 @@ fn main() {
 }
 
 async fn send_recv() {
-
     const BUFFER_SIZE: usize = 10;
-    let (mut tx, mut rx) = mpsc::channel::<i32>(BUFFER_SIZE);  
+    let (mut tx, mut rx) = mpsc::channel::<i32>(BUFFER_SIZE);
 
     tx.send(1).await.unwrap();
     tx.send(2).await.unwrap();
@@ -35,9 +34,6 @@ async fn send_recv() {
     assert_eq!(None, rx.next().await);
 }
 
-
-
-
 async fn sum_with_next(mut stream: Pin<&mut dyn Stream<Item = i32>>) -> i32 {
     let mut sum = 0;
     while let Some(item) = stream.next().await {
@@ -45,7 +41,6 @@ async fn sum_with_next(mut stream: Pin<&mut dyn Stream<Item = i32>>) -> i32 {
     }
     sum
 }
-
 
 #[allow(dead_code)]
 async fn sum_with_try_next(
@@ -61,8 +56,7 @@ async fn sum_with_try_next(
 
 #[allow(dead_code)]
 async fn jump_around(
-    #[allow(unused_mut)]
-    mut stream: Pin<&mut dyn Stream<Item = Result<u8, io::Error>>>,
+    #[allow(unused_mut)] mut stream: Pin<&mut dyn Stream<Item = Result<u8, io::Error>>>,
 ) -> Result<(), io::Error> {
     use futures::stream::TryStreamExt; // for `try_for_each_concurrent`
     const MAX_CONCURRENT_JUMPERS: usize = 100;
@@ -74,11 +68,13 @@ async fn jump_around(
         println!("{num}");
         Ok(num)
     }
-    stream.try_for_each_concurrent(MAX_CONCURRENT_JUMPERS, |num| async move {
-        jump_n_times(num).await?;
-        report_n_jumps(num).await?;
-        Ok(())
-    }).await?;
+    stream
+        .try_for_each_concurrent(MAX_CONCURRENT_JUMPERS, |num| async move {
+            jump_n_times(num).await?;
+            report_n_jumps(num).await?;
+            Ok(())
+        })
+        .await?;
 
     Ok(())
 }
